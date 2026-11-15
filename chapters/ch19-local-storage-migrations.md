@@ -297,15 +297,17 @@ From the companion repository root in PowerShell:
 
 ```powershell
 dotnet --version
-dotnet restore tests/GnazzosWorld.Core.Tests/GnazzosWorld.Core.Tests.csproj
-dotnet build tests/GnazzosWorld.Core.Tests/GnazzosWorld.Core.Tests.csproj -c Release --no-restore
-dotnet run --project tests/GnazzosWorld.Core.Tests/GnazzosWorld.Core.Tests.csproj -c Release --no-build
+$tests = "tests/GnazzosWorld.Core.Tests/GnazzosWorld.Core.Tests.csproj"
+dotnet restore $tests
+dotnet build $tests -c Release --no-restore
+dotnet run --project $tests -c Release --no-build
 ```
 
 For the app's separate Android compilation, use the matching SDK, JDK and Android workload described in Chapter 3:
 
 ```powershell
-dotnet build src/GnazzosWorld.App/GnazzosWorld.App.csproj -f net11.0-android -c Debug
+$app = "src/GnazzosWorld.App/GnazzosWorld.App.csproj"
+dotnet build $app -f net11.0-android -c Debug
 ```
 
 **What a successful portable run establishes:** The compiled code exercises actual SQLite files and the listed migration, snapshot, progress and favorite behaviors on the CI operating system. The suite does not verify Android/iOS native SQLite loading, UI responsiveness, encryption, cloud backup configuration, an actual disk-full condition, or application restart UX on a phone. The Android build verifies compilation and packaging dependencies, not device execution.
