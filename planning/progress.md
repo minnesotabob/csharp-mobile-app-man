@@ -1,3 +1,47 @@
+# Part VI / Chapter 27 - foreground audio and podcast progress - November 15, 2026 (Central)
+
+Added Part VI's media roadmap, Chapter 27's source-ownership diagram, foreground
+native player/lab, original generated WAV fixtures with provenance/hash manifest,
+absolute-time SQLite progress, guided work, failure recovery, troubleshooting and
+worked exercises. Streaming-service links are not treated as playable audio files.
+
+Corrected companion source: `c73f3cd25e175d7e89de84f3cbdaa9bacdd86af6`.
+Initial compilation exposed a documentation namespace/parameter mismatch; the sample
+uses CommunityToolkit.Maui and isAndroidForegroundServiceEnabled: false. It pins
+MediaElement 12.0.0 with SDK 11.0.100 and MAUI 11.0.10. Android minimum becomes API 26.
+
+- Portable Release compilation: 0 warnings/errors; **394 cases pass**, including 34
+  new playback/storage/fixture cases; no errors/failures/skips/not-run cases. Both
+  earlier console labs execute successfully.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43764322521
+- API/probe Release builds: 0 warnings/errors; **46 API cases pass**; public loopback
+  smoke passes with no errors/failures/skips/not run.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43764322453
+- Android Debug compilation: success; **0 final compiler warnings/errors**. Dependency
+  setup retains the documented unresolved cmdline-tools;21.0 warning.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43764322496
+
+The proof contains **280 pages, 36 bookmarks and 25 distinct images**: three Part
+illustrations and twenty-two authored technical figures. Part VI begins on page 268;
+Chapter 27 begins on page 270. All 13 new pages were rendered for inspection; the
+source diagram, bootstrap, evidence, summary/exercises and references received larger
+page review. All-page 8x10 trim/text-boundary and figure-reference checks pass.
+
+Limits: tests supply native observations and inspect real SQLite/source WAV bytes;
+they do not listen or prove a phone decoded the packaged assets. Foreground page owns
+one player, source tickets reject late events, and checkpoints are anonymous/local,
+unencrypted and not account-synchronized. Periodic/boundary save is not a guarantee at
+arbitrary process death. Native listening, seeks, lifecycle/cleanup, audio focus/calls,
+headphones, iOS and screenshots remain pending. No background controls, remote stream,
+private media transport or download feature is enabled here.
+
+Next: Chapter 28 - Background Playback and System Controls, with explicit platform
+setup, long-lived player ownership and real interruption/lock-screen acceptance work.
+Preserve the editorial review's concrete app narrative, visual architecture and separate
+build/test/device evidence.
+
+## Earlier milestone record
+
 # Chapter 26 - threat modeling and security verification - November 15, 2026 (Central)
 
 Added the final initial Part V chapter, an authored trust-boundary diagram, focused
