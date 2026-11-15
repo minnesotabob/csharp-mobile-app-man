@@ -1,0 +1,72 @@
+name: Build 8x10 manuscript proof
+on:
+  push:
+    branches:
+      - work/chapter16-pricing
+    paths:
+      - 'chapters/**'
+      - 'front-matter/**'
+      - 'parts/**'
+      - 'assets/illustrations/**'
+      - 'production/render_opening.py'
+      - '.github/workflows/manuscript-proof.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install renderer and inspection tools
+        run: python -m pip install reportlab pillow pymupdf
+      - name: Retrieve the three open-source specimen fonts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p production/fonts
+          curl --fail --location --retry 3 --silent --show-error \
+            https://raw.githubusercontent.com/adobe-fonts/source-serif/release/TTF/SourceSerif4-Regular.ttf \
+            -o production/fonts/SourceSerif4-Regular.ttf
+          curl --fail --location --retry 3 --silent --show-error \
+            https://raw.githubusercontent.com/adobe-fonts/source-sans/release/TTF/SourceSans3-Regular.ttf \
+            -o production/fonts/SourceSans3-Regular.ttf
+          curl --fail --location --retry 3 --silent --show-error \
+            https://raw.githubusercontent.com/adobe-fonts/source-code-pro/release/TTF/SourceCodePro-Regular.ttf \
+            -o production/fonts/SourceCodePro-Regular.ttf
+      - name: Build the paperback layout specimen
+        run: python production/render_opening.py
+      - name: Inspect PDF page size, contents, and text boundaries
+        run: |
+          python - <<'PY'
+          import fitz
+          from pathlib import Path
+          p=Path("production/opening-draft-8x10.pdf")
+          assert p.is_file() and p.stat().st_size > 10000, "Missing or empty PDF"
+          pdf=fitz.open(p)
+          assert len(pdf)>=40, f"Unexpected short manuscript: {len(pdf)} pages"
+          text="\n".join(page.get_text() for page in pdf)
+          for name in ("Chapter 1", "Chapter 6", "Chapter 12", "Chapter 18"):
+              assert name in text, f"Missing {name}"
+          for i,page in enumerate(pdf):
+              assert abs(page.rect.width-576)<0.1 and abs(page.rect.height-720)<0.1, f"Page {i+1}: wrong trim"
+              for ln in page.get_text("dict")["blocks"]:
+                  if ln.get("type")!=0: continue
+                  for row in ln.get("lines", []):
+                      x0,y0,x1,y1=row["bbox"]
+                      if x0 < 18 or x1 > 558 or y0 < 12 or y1 > 713:
+                          raise AssertionError(f"Page {i+1} text bounds: {row['bbox']}")
+          print(f"PASS: {len(pdf)} pages, 8x10 inch, expected chapter markers, and outer text boundaries")
+          pdf.close()
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: manuscript-8x10-proof
+          path: production/opening-draft-8x10.pdf
+          retention-days: 14
