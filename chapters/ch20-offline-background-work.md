@@ -278,6 +278,18 @@ Inspect the clock theory. Predict the results at 1,439 and 1,440 minutes and for
 
 Design a persistent retry cooldown for transient refresh failures. Record the next eligible UTC time, inject the clock, and distinguish permanent payload/status failures from eligible transport failures. Add tests for restart, clock correction and a user-requested override. Keep the one-attempt worker bounded and avoid storing customer transactions in this queue.
 
+## Native verification worksheet
+
+Use this worksheet after a native host wires the portable service into a screen. These are acceptance checks to perform, not device observations from this milestone. Record the source commit, OS version, device model, database path policy and endpoint configuration with each result. Use public fixtures and a disposable test installation.
+
+1. Launch with a fresh installation and no connection. Confirm that bundled records appear and the screen identifies their origin. Check that the empty cache causes no hidden repeated requests. Turn on a connection, request Refresh and record the resulting revision and displayed retrieval time.
+2. Close and reopen the app with connectivity disabled. Confirm that the downloaded revision remains available and has a saved origin. Search and open a detail page without replacing the saved document with an empty result. Distinguish an unavailable external website from an unavailable local title.
+3. Begin a deliberately delayed fixture refresh, then background the app. Confirm that page cancellation produces no false completion message. Terminate and restart the test process. Inspect the retained refresh intent and run one explicit recovery attempt. Reboot testing requires its own recorded result.
+4. Repeat with large system text, a screen reader and a slow database fixture. Verify that status changes are announced, Refresh remains reachable and the UI stays responsive. A portable test cannot establish those observations.
+5. Exercise a controlled storage-write failure in a test build. Verify that the earlier document remains readable, intent remains pending and the customer receives an actionable storage error. Restore the fixture and confirm that a later successful attempt clears only the matching intent.
+
+For scheduler integration, add separate Android and iOS entries. Document when the OS actually granted execution and how cancellation was signaled. A successful foreground recovery does not prove that a native scheduler ran. Preserve a pending result when equipment or a platform adapter is unavailable.
+
 ## Official references
 
 - .NET MAUI app lifecycle: https://learn.microsoft.com/dotnet/maui/fundamentals/app-lifecycle
