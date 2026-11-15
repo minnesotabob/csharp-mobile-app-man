@@ -198,9 +198,11 @@ TestServer is an in-process server transport. It does not prove that a socket li
 
 The Companion API checks workflow builds the service, executable integration tests and catalog probe, runs the suite, then runs the Kestrel check. Portable tests and Android compilation retain their separate workflows. Record the exact revision and output for each; an API integration pass cannot become an iOS build result by association.
 
-## Summary and exercises
+## Chapter Summary
 
 The application now has a small executable service contract and a consumer that can validate it. The API makes format, content revision, paging and errors explicit; the client preserves its time, size and retry budgets. The verification separates portable rules, the ASP.NET Core pipeline and a real local listener before native networking is introduced.
+
+## Exercises and Review Questions
 
 1. Start the API and inspect its first two-item page. Use the returned revision and nextOffset to retrieve every ID. Compare the sequence with the complete document and explain when nextOffset becomes null.
 2. Send limit=0, duplicate limit values and a stale revision. Identify which responses are 400 and which is 409. Explain why a changed revision needs a different recovery action from a malformed number.
