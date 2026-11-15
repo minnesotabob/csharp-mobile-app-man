@@ -75,9 +75,13 @@ Application buttons are only one source of playback intent. Another application 
 The background element uses a custom handler that extends the toolkit's public handler. After the base creates its platform view and player, it locates the public native `PlayerView` within the host and configures that existing `IExoPlayer`:
 
 ```csharp
-var attributes =
-    new AndroidX.Media3.Common.AudioAttributes.Builder()
-        .SetUsage(1).SetContentType(1).Build();
+using var attributesBuilder =
+    new AndroidX.Media3.Common.AudioAttributes.Builder();
+attributesBuilder.SetUsage(1);
+attributesBuilder.SetContentType(1);
+var attributes = attributesBuilder.Build()
+    ?? throw new InvalidOperationException(
+        "Audio attributes could not be created.");
 native.SetAudioAttributes(attributes, true);
 native.SetHandleAudioBecomingNoisy(true);
 ```

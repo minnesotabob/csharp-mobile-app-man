@@ -104,3 +104,14 @@ The chapter includes a concrete code map, guided lab, signed-token middleware te
 troubleshooting, worked exercises and a native/provider evidence matrix. Default
 customer storage is empty; test records and signing keys remain test-only. Auth0,
 SecureStorage and TLS/device observations are still explicitly pending.
+
+## Chapter 28 application of the review
+
+The Minnesota Bob listening journey now carries into a pocket/other-app scenario.
+Figure 28.1 distinguishes window visibility from ownership of the mounted native
+host. The chapter explains foreground-only load, opt-in continuation, cancellation,
+public lock-screen metadata, native focus and route policy, and task/power limits.
+It names the pinned toolkit's public native-view compatibility dependency rather
+than claiming an inaccessible player API. A guided device matrix, troubleshooting,
+124-word summary and worked/independent exercises separate portable policy evidence,
+merged-manifest/compile checks and still-pending Android/iPhone observations.

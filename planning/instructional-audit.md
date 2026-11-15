@@ -56,3 +56,12 @@ The revised walkthroughs describe reader exercises and expected results honestly
 Next substantive revision: Chapters 6–11, preserving the advanced scope while
 explaining XAML/resources, binding/MVVM, navigation, collections, accessibility
 and adaptive layouts through matching runnable milestones and worked checks.
+
+## Chapter 28 initial instructional revision
+
+Added learning outcomes, concrete listening narrative, ownership diagram, explained
+portable lifecycle code and native focus configuration, source walkthrough, guided
+acceptance sequence, boundary-specific troubleshooting, 124-word summary, one worked
+cancellation exercise and three independent extensions. The separate sample preserves
+Chapter 27's foreground behavior. Native listening, system controls, interruptions,
+routes, power behavior and iOS compilation remain pending; this is an initial draft.
