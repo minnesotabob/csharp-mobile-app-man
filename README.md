@@ -24,6 +24,8 @@ This repository holds the manuscript, planning records, and production specifica
 - [Chapter 10 draft](chapters/ch10-accessibility-localization.md)
 - [Chapter 11 draft](chapters/ch11-adaptive-layouts.md)
 - [Part II introduction](parts/part-02/introduction.md)
+- [Part III introduction](parts/part-03/introduction.md)
+- [Chapter 12 — Catalog models](chapters/ch12-catalog-models.md)
 - [Companion code](https://github.com/minnesotabob/csharp-mobile-app-code)
 
 All material is copyright 2026 John F. Gnazzo. Public visibility does not grant republication rights. ISBNs, publication date, legal notices, and final third-party credits remain production decisions.
