@@ -239,6 +239,12 @@ For accessibility, follow focus from the title through metadata, sample heading,
 
 Chapter 15 moves from discovering content to entering a custom-song request. The form will need a richer state model because a customer's unfinished input must survive validation and navigation rather than being replaced by another catalog selection.
 
+## Troubleshooting the guided lab
+
+- **A detail shows the wrong item after rapid navigation:** Trace stable IDs and the active-operation revision. Reject a late completion for a no-longer-selected record.
+- **An external link does nothing:** Check destination allowlisting, the adapter's explicit failure/cancel result, and the target platform's browser handoff separately.
+- **A reading sample renders as markup:** Verify that only the bundled authorized plain-text content reaches the presentation layer; do not interpret arbitrary HTML.
+
 ## Chapter Summary
 
 Content details turn catalog identity into a useful decision screen without claiming ownership of external content. Stable IDs are resolved before presentation, and missing metadata stays missing rather than becoming a fabricated fact. Bundled plain-text reading samples carry provenance and do not imply a complete ebook reader. Reviewed external destinations pass through a constrained, testable adapter; a canceled launch, failed handoff or stale asynchronous completion must not erase the reader's context. The guided lab exercises these boundaries with controlled failures. Portable test doubles verify business and presentation decisions, while real Android and iOS browser behavior, long-text accessibility and return navigation still require native checks.
