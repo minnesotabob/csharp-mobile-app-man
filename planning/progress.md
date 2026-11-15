@@ -1,3 +1,13 @@
+# Chapter 19 draft and SQLite companion implementation — November 15, 2026 (Central)
+
+**Manuscript:** Chapter 19, `chapters/ch19-local-storage-migrations.md`, has been added. It teaches SQLite 11.0.0 storage for validated public catalog snapshots, local favorites and reading progress, version 0/1 to 2 migrations, transactions, scope boundaries, error handling and worked exercises. Existing chapters remain unchanged except for production metadata. The renderer now includes Chapter 19 and its preflight requires that marker.
+
+**Code:** The companion `work/chapter16-pricing` branch adds `src/GnazzosWorld.Core/Storage/LocalCatalogDatabase.cs`, SQLite dependency 11.0.0, eight real-file integration cases, and MAUI DI registration (the browsing UI and sensitive JSON draft flow are unchanged). Fresh CI on code revision `3f7b162dc2f9c7553b3e170ef7b44dcc59c9f26b`: **253 portable tests passed** and **Android Debug compilation passed**. See companion `docs/verification.md` for exact evidence. No iOS/device runtime or database encryption claim.
+
+**Proof:** The first new renderer run for 19 chapters found a right-edge overflow from a long PowerShell command. The command was shortened and the PDF workflow rerun; check the latest workflow artifact before quoting any new page count. This is a typesetting proof, not a KDP-ready interior.
+
+## Earlier milestone record
+
 # Visual paperback proof revision — November 15, 2026 (Central)
 
 The **159-page** specimen was downloaded and inspected locally using rendered page images, PDF text positions and page-density scans. All 18 chapters started at the top of their own pages with consistent 54-point heading positions, PDF bookmarks numbered 25, and no discovered text outside the intended mirrored body frame. The inspection found one genuine orphan: **page 122 contained only the last Chapter 14 reference**.
