@@ -1,6 +1,6 @@
 # Reproduce the opening typography specimen
 
-The opening PDF is an editorial draft, not the final paperback or accessible EPUB. It tests 8 × 10 pages, mirrored 0.95-inch inner/0.65-inch outer margins, 11/14-point body text, 9.5/12.5-point code, tables, and new-page starts. Short code examples stay together. The Part I and II illustrations, the Part III introduction, the Part IV planning diagram/introduction, Chapters 1–20, PDF bookmarks, and a linked table of contents are included. Other Part illustrations and verified app screenshots are pending.
+The opening PDF is an editorial draft, not the final paperback or accessible EPUB. It tests 8 × 10 pages, mirrored 0.95-inch inner/0.65-inch outer margins, 11/14-point body text, 9.5/12.5-point code, tables, and new-page starts. Short code examples stay together. The Part I and II illustrations, the Part III introduction, the Part IV planning diagram/introduction, Chapters 1–21, PDF bookmarks, and a linked table of contents are included. Other Part illustrations and verified app screenshots are pending.
 
 Install Python/reportlab, download the following static TTFs into production/fonts, then run python production/render_opening.py from this repository. The renderer reads the Markdown sources; fonts/PDF are excluded from Git by the production .gitignore. This is a specimen renderer, not the final ebook or print production pipeline.
 
@@ -16,7 +16,7 @@ The rendered PDF has been visually inspected. It is not tagged for accessibility
 
 ## Authored technical figures
 
-Nine grayscale technical diagrams/recaps are under `assets/figures`. Their complete
+Twelve grayscale technical diagrams/recaps are under `assets/figures`. Their complete
 reproducible source is `production/draw_editorial_figures.py` (Python/Pillow plus
 DejaVu Sans fonts at the documented Linux paths). The assets are 1800x1200 pixels
 with 300-DPI metadata, placed at 6.4x4.267 inches in the print proof. They are authored

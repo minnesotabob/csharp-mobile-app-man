@@ -75,3 +75,12 @@ not the later schema-3 implementation.
 The proof now has eleven authored technical figures, plus the three Part illustrations.
 Native screenshot capture remains outstanding. Next implementation work is Chapter 21;
 its user-state synchronization must remain separate from public catalog replacement.
+
+## Chapter 21 application of the review
+
+The new chapter uses the anniversary-song draft and Northern Lights favorite as
+running journeys. Figure 21.1 traces the two-device conflict. The guided console lab,
+worked replay and progress-policy exercises, troubleshooting matrix and native capture
+worksheet distinguish portable evidence from pending screenshots and authentication.
+No service-provider, performance, native-runtime or production claim is inferred from
+the fixture. The chapter completes Part IV; the planned security Part follows.

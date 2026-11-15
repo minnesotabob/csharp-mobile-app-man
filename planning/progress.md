@@ -1,3 +1,37 @@
+# Chapter 21 — synchronization and conflict resolution — November 15, 2026 (Central)
+
+The new Chapter 21 completes Part IV with a guided two-replica lab, a conflict diagram,
+version/operation-ID reasoning, durable outboxes, explicit resolution, tombstones,
+atomic feed/cursor application, failure diagnostics, worked exercises and a native
+acceptance/screenshot worksheet. It preserves the supplied editorial review's emphasis
+on visual architecture, concrete Gnazzo's World journeys and verified boundaries.
+
+Companion implementation: `84a3278e5d00b64699ccf8cee963a657da9fdec8`.
+
+- Portable Release build: 0 warnings/errors; **284 cases passed**, no failures/errors/
+  skipped/not-run cases. This includes 18 new synchronization cases.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43737262027
+- The console lab executed its expected draft-conflict and favorite-deletion transcript.
+- Existing API regression suite: **26 passed**, no failures/errors/skips/not run.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43737262061
+- Android Debug compilation: success; final compilation 0 warnings/errors. Dependency
+  setup retains the recorded unresolved cmdline-tools;21.0 warning.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43737262069
+
+The proof now contains **205 pages, 28 bookmarks and 15 distinct images** (three Part
+illustrations plus twelve authored figures). Chapter 21 starts on page 195. Its opening,
+conflict diagram, commands/transcript, troubleshooting, summary, exercises and final
+worksheet were rendered for visual inspection. All pages passed trim and text-boundary
+checks. The manuscript proof workflow now also runs for updates on main.
+
+Limits: two actual SQLite files on Windows CI, but a process-local in-memory server
+and simulated account context. No sync endpoint, durable hosted server, real identity,
+native sync wiring, phone-runtime tests or screenshots are claimed. The teaching
+replicas do not migrate existing MAUI favorites/drafts. Chapter 22 begins Part V with
+managed identity and native-app authentication; provider setup must be verified.
+
+## Earlier milestone record
+
 # Editorial follow-through — November 15, 2026 (Central)
 
 Added a Chapter 19 migration/rollback figure, a Chapters 17-20 progress recap and a

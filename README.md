@@ -38,3 +38,5 @@ This repository holds the manuscript, planning records, and production specifica
 - [Companion code](https://github.com/minnesotabob/csharp-mobile-app-code)
 
 All material is copyright 2026 John F. Gnazzo. Public visibility does not grant republication rights. ISBNs, publication date, legal notices, and final third-party credits remain production decisions.
+
+- [Chapter 21 — Synchronization and conflict resolution](chapters/ch21-synchronization-conflicts.md)
