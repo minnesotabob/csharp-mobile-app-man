@@ -135,9 +135,11 @@ A particularly useful test saves one draft, changes the story, then makes the ne
 
 The test double does not prove file replacement, native navigation, screen-reader output, or restart behavior on Android or iOS. Run the portable suite first, compile the Android app, then complete the device scenarios in docs/device-checks.md. Record toolchain, source revision, platform, and actual result. See the current verification log for the recorded portable run and native compilation results; device behavior must still be observed independently.
 
-## Summary and exercises
+## Chapter Summary
 
 The request builder separates editing, validation, persistence, and review. Customers can change musical direction, navigate between steps, and save an incomplete draft. Failures preserve their work. A review is a validated snapshot that becomes invalid when input changes; it is not an order confirmation.
+
+## Exercises and Review Questions
 
 1. Save a draft, edit its story without saving, leave the form, and return. Confirm that the unsaved story remains during the same process. Then restart the app and distinguish the last saved story from unsaved edits.
 2. Add field-level focus routing for validation errors. Verify the first invalid field with TalkBack and VoiceOver, including the announcement and the next navigation gesture.
