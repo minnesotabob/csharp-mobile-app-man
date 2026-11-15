@@ -69,7 +69,7 @@ ys=[270,450,630,810]
 for y,t,sub in zip(ys,['HTTP response','Bounded body','Valid catalog','Return accepted list'],['Expected status and JSON media type','Read within byte and time limits','Parse, validate metadata and IDs','Caller decides whether it still owns the result']):
  f.box(100,y,1040,145,t,(sub,))
  if y<810:f.arrow([(620,y+145),(620,y+180)])
-f.box(1280,455,420,280,'Failure',('Classify the cause','Dispose response','Keep prior data'))
+f.box(1280,455,420,280,'Failure',('Classify the cause','Dispose response','Caller keeps prior data'))
 f.arrow([(1140,342),(1220,342),(1220,550),(1280,550)])
 f.arrow([(1140,522),(1280,522)])
 f.arrow([(1140,702),(1220,702),(1220,650),(1280,650)])

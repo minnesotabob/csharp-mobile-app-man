@@ -54,7 +54,10 @@ def markdown(text, source=None):
             if not path.is_relative_to(ROOT): raise ValueError('Image outside manuscript')
             width = 460.8 if path.parent.name == 'figures' else 368.64
             height = width * 2 / 3
-            result.append(KeepTogether([Image(str(path),width=width,height=height,hAlign='CENTER'), Paragraph(fmt(match.group(1)),styles['small'])]))
+            group = [Image(str(path),width=width,height=height,hAlign='CENTER'), Paragraph(fmt(match.group(1)),styles['small'])]
+            if result and isinstance(result[-1], Paragraph) and result[-1].style.name in ('h2', 'h3'):
+                group.insert(0, result.pop())
+            result.append(KeepTogether(group))
             i+=1;continue
         elif line.startswith('```'):
             flush(); i+=1; code=[]
