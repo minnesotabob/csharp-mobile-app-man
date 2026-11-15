@@ -7,6 +7,27 @@ Chapter 15 preserved a customer's writing and produced a reviewed request. This 
 
 **Prerequisites:** the request model, validation rules, explicit draft storage, and review screen from Chapter 15; familiarity with async methods, records, interfaces, and portable tests. **Learning goals:** calculate archived prices with decimal arithmetic, bind a quote to an immutable request, distinguish rejection from uncertainty, and reuse an operation identity safely. **Delivered capability:** the reviewed form can display a demo quote and simulate submission, including controlled duplicate and lost-response scenarios.
 
+## What You'll Learn
+
+You will learn to calculate versioned sample prices with decimal arithmetic; distinguish an estimate from an expiring server-authoritative quote; model stable operation IDs; prevent duplicate submissions; and explain why a timeout is not evidence of either acceptance or rejection.
+
+**Prerequisites:** Chapter 15's validated request snapshot and the companion portable tests. **Deliverable:** A fully local simulated quote-and-submit flow with testable duplicate and uncertain-result behavior.
+
+### Guided lab: reproduce a lost response
+
+1. Choose one validated request and record its content and operation ID. Obtain an example quote and identify its price-table version and expiry.
+2. Compute a multi-song total by hand before inspecting the pricing tests. Verify each discount rule on decimal values, then check the displayed currency formatting separately.
+3. Submit through the simulated service's lost-response fixture. The service accepts the operation but the first caller receives an exception.
+4. Repeat the same logical operation with its original ID. Verify that the simulator returns the existing receipt rather than accepting another request.
+5. Change the request after review. Confirm that the previous quote and reviewed snapshot are no longer valid for the changed input.
+6. Try an expired quote with controlled time. Confirm rejection at the service boundary rather than trusting the phone clock.
+
+**Expected result:** The service fixture recognizes a replay of one operation, while a changed request requires a new review and quote. The simulator's state disappears on restart; no live payment, order or customer transmission occurs.
+
+### Worked reasoning: cancellation is not reversal
+
+The caller can cancel waiting for a response after a server has already accepted an operation. Retrying with a new ID may therefore create a duplicate, even when the original request appeared to fail. Idempotency works only when the same logical operation retains its identity and the service stores acceptance durably enough for the real deployment's recovery requirements.
+
 ## Give the price a source and a version
 
 The companion application already contains SongPricing from the early foundation tests. Its values came from the supplied website archive. Retain that provenance as the constant website-snapshot-2026-11-14. These are historical teaching fixtures, not a claim about today's prices or a recommendation for John's business. Changing an archived value silently would make the earlier tests and later quote snapshots harder to interpret.
