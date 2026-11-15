@@ -7,6 +7,27 @@ We will build a small ASP.NET Core Minimal API over the same public teaching fix
 
 **Prerequisites:** the catalog validation rules from Chapter 12 and bounded HTTP client from Chapter 17; the pinned SDK and basic dependency injection. **Learning goals:** assemble a reproducible web host, define a wire contract, validate paging inputs, return predictable errors, test the real request pipeline, and distinguish workstation networking from phone networking. **Delivered capability:** a runnable public-fixture API, executable integration tests, a local Kestrel startup check, and a command-line HTTPS catalog probe.
 
+## What You'll Learn
+
+You will learn to expose a versioned public catalog through ASP.NET Core Minimal APIs; keep transport documents distinct from internal models; use explicit pagination and validation errors; run an API locally; and distinguish in-memory pipeline tests from real-socket and device tests.
+
+**Prerequisites:** Chapters 12 and 17, an SDK matching the companion repository, and a Windows terminal. **Deliverable:** A development catalog API with documented contracts and reproducible integration checks.
+
+### Guided lab: validate the service boundary
+
+1. Find the companion API project and read the local run instructions and exact test commands in `docs/local-api.md`. Start with a verified checkout rather than assuming every branch has the same endpoints.
+2. Run the API's integration suite. Compare a successful catalog response with its published wire-contract fixture and version field.
+3. Request a malformed query or out-of-range page. Inspect the structured problem response and verify that it does not leak stack traces or sensitive internals.
+4. Request two pages from one catalog revision. Confirm the continuation logic and the behavior when a revision changes between requests.
+5. Run the temporary-loopback HTTP smoke check to distinguish actual socket startup from an in-memory `TestServer` test.
+6. For native-device integration, determine whether the service can be reached from the emulator or phone and whether development HTTPS trust is configured. Record these checks as pending until a device actually succeeds.
+
+**Expected result:** Portable integration tests prove the middleware and endpoints' contract; loopback proves a limited real-socket path; neither proves that a phone can reach or trust the host.
+
+### Worked reasoning: three levels of confidence
+
+A handler test can exercise application logic without sockets. An in-memory API host runs routing, middleware and serialization but does not prove machine networking. A Kestrel loopback request adds real TCP behavior while still omitting a physical device, local-network routing and certificate trust. Report each result at its own level instead of treating one green test as complete mobile verification.
+
 ## Introduce the service project
 
 The new src/GnazzosWorld.Api project uses Microsoft.NET.Sdk.Web and targets net11.0. It references GnazzosWorld.Core and pins Microsoft.AspNetCore.OpenApi to 11.0.0. The portable core remains free of ASP.NET Core types. An API test project references the service and pins Microsoft.AspNetCore.Mvc.Testing to the matching 11.0.0 family.
