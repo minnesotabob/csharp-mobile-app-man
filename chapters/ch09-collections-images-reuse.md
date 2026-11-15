@@ -5,6 +5,27 @@ A catalog row appears simple until the same information must work in several pla
 
 This chapter extracts CatalogCard and DetailsView, explains their binding boundaries, and develops a realistic plan for images and larger collections. The implementation still uses five bundled records and a local decorative placeholder. Remote artwork and incremental retrieval are explicitly future extensions.
 
+## What You'll Learn
+
+By the end of this chapter, you will be able to explain why CollectionView owns visual recycling but not search policy; give each DataTemplate the correct binding type; preserve stable item identity across filter changes; choose sensible placeholder and image sizing strategies; and distinguish bundled assets from remote-artwork features not yet implemented.
+
+**Prerequisites:** Complete the preceding chapters and use the matching Part II source revision from `docs/milestones.md`. **Deliverable:** A testable improvement or diagnostic exercise in the Gnazzo's World application, without assuming native-device verification.
+
+### Guided lab: inspect a reusable catalog row
+
+1. Open `CatalogCard`, `DetailsView`, the browser page and their view models at the Part II milestone.
+2. Follow one `CatalogItem` from the result collection into the row template. Record which view supplies `BindingContext` and which binding paths are compiled against a declared type.
+3. Add two synthetic test records with the same title and different IDs. Verify that selection and navigation rely on ID rather than the row index or visible text.
+4. Inspect the bundled placeholder asset and its build action. Identify what appears when actual artwork is absent. Do not assume remote images have already been downloaded.
+5. Sketch an asynchronous artwork adapter that receives an item ID and cancellation token. If a reused row now represents another ID when bytes arrive, the older image result must not be displayed there.
+6. Increase the catalog size in a disposable fixture. Compare a bounded `CollectionView` with an unbounded nested scrolling layout and note why measurement and virtualization matter.
+
+**Expected result:** The reader can state which reusable views own presentation, where state belongs, and how to prevent recycled visuals from implying the wrong catalog item.
+
+### Troubleshooting the walkthrough
+
+A correct list with incorrect row text often indicates template binding scope. A selected highlight attached to the wrong row suggests visual state has become detached from item identity. Missing artwork may be a missing packaged resource, not a network issue. Blank or sluggish large lists warrant checking their viewport and nested scroll containers before micro-optimizing the data model.
+
 ## 9.1 Choose the collection's responsibility
 
 CollectionView displays a sequence and manages selection. The browser view model supplies its current result list and selected record. The row template supplies presentation.
@@ -115,6 +136,10 @@ CatalogCard and DetailsView now provide two purposeful reusable components. Thei
 3. Design an artwork response arriving after a row has been rebound to another record.
 4. Specify pagination behavior when a query changes during an in-flight request.
 5. Compare large-text and screen-reader behavior in narrow and wide layouts.
+
+## Chapter Summary
+
+Reusable views help a catalog maintain consistent display and semantics, but they must not quietly become a second data layer. A `CollectionView` owns row presentation and selection interaction; search, identity and navigation are handled elsewhere. Explicit template binding types and stable IDs protect the relationship between data and visuals. Placeholder images and deterministic sizing give the current bundled sample predictable behavior. Future remote artwork needs lifetime, cancellation and stale-result policies because recycled views can represent different records over time. The guided lab examines template scope and identity, then separates actual bundled assets from planned network retrieval and pagination. Native scrolling performance and screen-reader behavior remain device-verification tasks.
 
 ## References and index terms
 
