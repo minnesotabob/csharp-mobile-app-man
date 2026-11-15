@@ -165,6 +165,12 @@ Chapter 18 will define the companion API's route, response schema, validation, e
 
 The client already gives us the contract boundary on which to build: one operation, typed outcomes, bounded memory, one total time budget, and controlled retries for a public GET. The next chapter can focus on what the service promises because the application is no longer assuming that every response is immediate, trustworthy or complete.
 
+## Troubleshooting the guided lab
+
+- **HTTP 200 produces invalid catalog data:** Inspect content type, response byte bounds, JSON schema and domain validation separately; success status alone is not a usable document.
+- **Retries continue beyond the expected deadline:** Check the shared cancellation token for header and body reads and the total operation time budget. Do not substitute repeated fresh per-attempt timeouts.
+- **A network failure erases the catalog:** Keep the bundled or last-valid data distinct from remote refresh status. A failed fetch is not evidence that the remote catalog is empty.
+
 ## Chapter Summary
 
 HTTP success, valid data and current UI ownership are separate conditions. The catalog adapter validates each response before returning a complete list, stops within explicit time and memory budgets, and retries a narrow set of read failures. The native demo makes that path inspectable while preserving bundled browsing and clearly identifying the simulated transport.
