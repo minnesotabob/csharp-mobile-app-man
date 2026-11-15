@@ -86,7 +86,7 @@ ContentAvailability Availability = ContentAvailability.Unknown,
 ContentAdvisory Advisory = ContentAdvisory.Unknown
 ```
 
-These declarations are the optional tail of CatalogItem's constructor. They are not a complete stand-alone record declaration. Open CatalogItem.cs to inspect the entire type.
+These declarations are a **Chapter 12 milestone excerpt**, not a complete stand-alone record declaration. At the later Chapter 18 companion revision, `CatalogItem.cs` also ends with `ReadingSample? Sample = null`, added for Chapter 14's owned book sample. Readers using the evolving review branch should inspect the complete current constructor; the extra optional field does not invalidate this earlier lesson.
 
 ReleaseDate uses DateOnly because an editorial release date is a calendar value. It is not a timestamp showing the instant an API response arrived. If a later provider offers territory-specific release times, preserve that distinct meaning in a separate field.
 
