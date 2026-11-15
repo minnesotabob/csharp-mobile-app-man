@@ -5,6 +5,27 @@ A coherent interface is a set of decisions that continues to work when its condi
 
 This chapter connects shared styles with meaningful interaction and resource-based strings. The implementation includes English/Spanish application resources and portable lookup tests. Full translation review and native accessibility verification remain separate tasks.
 
+## What You'll Learn
+
+By the end of this chapter, you will be able to distinguish visual style from task accessibility; test text scaling and semantic descriptions; find and edit RESX resources; explain culture-specific result summaries and pluralization; and design real-device checks for screen readers, contrast, focus and translated text expansion.
+
+**Prerequisites:** Complete the preceding chapters and use the matching Part II source revision from `docs/milestones.md`. **Deliverable:** A testable improvement or diagnostic exercise in the Gnazzo's World application, without assuming native-device verification.
+
+### Guided lab: test one user journey in two languages
+
+1. Open the shared appearance resources and the English/Spanish RESX files. Find the browser filter label and result-summary strings in both.
+2. Run the portable localization tests for zero, one and multiple results. Explain why a translated label cannot be built by blindly appending an English plural suffix.
+3. Add a longer temporary Spanish label in a development checkout. Inspect the layout at increased text size; restore the fixture after observing wrapping and clipping.
+4. Follow the resource lookup path from a view-model label to the current UI culture. Explain why changing `CurrentUICulture` at runtime may not update a static label already assigned on screen.
+5. Identify a decorative thumbnail and a meaningful action. Describe which should receive semantic text and which could create noise if both parent and child announce the same content.
+6. On a device, navigate catalog, selection and details with TalkBack or VoiceOver. Record device, OS, source revision, focus order, announcements and any clipped content. Leave results pending if these checks were not performed.
+
+**Expected result:** Portable tests demonstrate resource selection and summary grammar; native checks are separately required to establish a genuinely accessible end-to-end experience.
+
+### Troubleshooting the walkthrough
+
+An untranslated word usually points to a missing resource or incorrect lookup, not to a layout defect. A string that changes only after page recreation suggests resource refresh semantics. A visually correct control that a screen reader cannot discover suggests an accessibility or focus problem. Check the full task, not just the presence of semantic properties.
+
 ## 10.1 Define roles before individual colors
 
 App.xaml groups background, foreground, action, and selection colors. These roles allow us to evaluate a change across the application instead of hunting for scattered literal values.
@@ -127,6 +148,10 @@ The application now has a shared appearance foundation and real English/Spanish 
 3. Trace why changing CurrentUICulture does not refresh an existing static label.
 4. Record an entire screen-reader browsing journey.
 5. Identify one image that should be described and one that should be decorative.
+
+## Chapter Summary
+
+A design system is more than a palette, and accessibility is more than attaching labels. Shared resources establish consistent roles, while text scaling, focus, screen-reader semantics and complete journeys determine whether people can actually use the interface. This chapter introduces localized English/Spanish resources, explicit singular/plural messages and the difference between interface language and authored catalog content. The guided lab checks resource behavior in portable tests, creates a deliberate long translation and plans a complete assistive-technology journey. Existing tests support resource lookup, but they do not establish native screen-reader output, sufficient contrast in every state, right-to-left layout, or dynamic language refresh. Those outcomes must be measured on target devices.
 
 ## References and index terms
 
