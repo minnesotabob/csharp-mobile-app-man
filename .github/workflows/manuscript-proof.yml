@@ -52,7 +52,7 @@ jobs:
           pdf=fitz.open(p)
           assert len(pdf)>=40, f"Unexpected short manuscript: {len(pdf)} pages"
           text="\n".join(page.get_text() for page in pdf)
-          for name in ("Chapter 1", "Chapter 6", "Chapter 12", "Chapter 18", "Chapter 19"):
+          for name in ("Chapter 1", "Chapter 6", "Chapter 12", "Chapter 18", "Chapter 19", "Chapter 20"):
               assert name in text, f"Missing {name}"
           for i,page in enumerate(pdf):
               assert abs(page.rect.width-576)<0.1 and abs(page.rect.height-720)<0.1, f"Page {i+1}: wrong trim"
@@ -70,3 +70,4 @@ jobs:
           name: manuscript-8x10-proof
           path: production/opening-draft-8x10.pdf
           retention-days: 14
+
