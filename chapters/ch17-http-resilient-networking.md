@@ -165,9 +165,11 @@ Chapter 18 will define the companion API's route, response schema, validation, e
 
 The client already gives us the contract boundary on which to build: one operation, typed outcomes, bounded memory, one total time budget, and controlled retries for a public GET. The next chapter can focus on what the service promises because the application is no longer assuming that every response is immediate, trustworthy or complete.
 
-## Summary and exercises
+## Chapter Summary
 
 HTTP success, valid data and current UI ownership are separate conditions. The catalog adapter validates each response before returning a complete list, stops within explicit time and memory budgets, and retries a narrow set of read failures. The native demo makes that path inspectable while preserving bundled browsing and clearly identifying the simulated transport.
+
+## Exercises and Review Questions
 
 1. Configure a fake response with status 200 and text/html. Confirm that it produces InvalidPayload, does not retry, and leaves the main catalog available. Explain why converting this outcome to an empty array would mislead a customer.
 2. Compare a Retry-After duration of two seconds with sixty seconds. Predict attempts and waits before running the corresponding tests. Explain why the client must not shorten the longer instruction into an early retry.
