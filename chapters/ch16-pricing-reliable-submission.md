@@ -176,6 +176,12 @@ A production service needs a unique constraint scoped to the authenticated custo
 
 The demo receipt is also not proof of payment. Payment state will depend on the later service's verified payment events, not a browser return, a button press, or this receipt. Keeping that boundary explicit allows the teaching application to grow without treating an early simulation as a finished checkout.
 
+## Troubleshooting the guided lab
+
+- **Displayed totals differ from tests:** Check the archived price-table version, decimal arithmetic and whether discounts are applied marginally rather than as a flat basket rate.
+- **A timeout appears to create a second order:** Reuse the original operation ID when reconciling an uncertain outcome. The process-local simulator is not proof of durable deduplication across restarts.
+- **An old quote remains after changes:** Compare the request snapshot and quote expiry using the service's controlled clock; invalidate stale terms before accepting.
+
 ## Chapter Summary
 
 The application now turns a reviewed draft into versioned example terms and one identifiable simulated acceptance. Pricing stays separate from display, service-owned quote state determines the accepted amount, and repeated delivery can return the same result. A missing response leaves a question to resolve rather than permission to create another request.
