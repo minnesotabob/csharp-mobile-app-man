@@ -5,6 +5,27 @@ Navigation is a contract between an action, a destination, and the state needed 
 
 Our current scope is public in-app navigation. We introduce named Shell routes and validated catalog IDs. Authenticated links, notifications, persistent restoration, and account-dependent continuation remain later features.
 
+## What You'll Learn
+
+By the end of this chapter, you will be able to identify the Shell composition root and named routes; pass stable IDs rather than serialized catalog objects; validate missing or malformed route parameters; distinguish top-level navigation from pushed detail destinations; and design interrupted navigation without claiming full restoration is implemented.
+
+**Prerequisites:** Complete the preceding chapters and use the matching Part II source revision from `docs/milestones.md`. **Deliverable:** A testable improvement or diagnostic exercise in the Gnazzo's World application, without assuming native-device verification.
+
+### Guided lab: follow a route and reject an invalid destination
+
+1. Open `AppShell`, the detail route registration, the navigation adapter and detail view model in the Part II source milestone.
+2. From a catalog selection, trace the stable item ID into the route payload and back through the destination's validation path. Note which component owns lookup versus screen presentation.
+3. Compare a top-level tab switch with opening a pushed detail screen. Draw the expected back stack for each; a route name is not a user-facing translated tab label.
+4. Supply an unknown ID in a route test, then follow it with a valid ID. Confirm that the unknown destination produces an unavailable state rather than displaying stale data from the previous item.
+5. Reverse the sequence: open a valid item, then an unknown ID. Verify stale detail fields are cleared.
+6. Draft a restoration record containing only the stable route identifier and any small permitted view state. Explain what should happen if that catalog item has been removed before restart.
+
+**Expected result:** The destination can reject malformed or unavailable identities without leaking a previous selection. The draft restoration rule is a design exercise, not a completed platform feature.
+
+### Troubleshooting the walkthrough
+
+Unexpected back behavior usually belongs to the Shell route stack, not to catalog searching. Empty details can originate in parameter parsing, ID lookup or state reset. If a second activation opens duplicate pages, check the navigation guard as well as platform tap handling. Test actual hardware back and lifecycle transitions separately.
+
 ## 8.1 Preserve earlier examples through milestones
 
 The Part I application used NavigationPage around MainPage. Part II moves startup to AppShell and different pages. Both designs remain understandable only if a reader knows which source revision belongs to which explanation.
@@ -117,6 +138,10 @@ The app has named top-level destinations, a public detail route, a stable-ID pay
 3. Explain why a translated tab title should not rename its route.
 4. Design a saved-route record that handles a removed catalog item.
 5. Describe what must change for two simultaneously active windows.
+
+## Chapter Summary
+
+Navigation describes both where the user goes and what minimal identity the destination needs. This chapter moves from the earlier `NavigationPage` starter to named Shell routes, keeping the source milestones explicit. Stable IDs travel across route boundaries; full catalog objects and translated labels do not define destination identity. Parsing failures, removed records, repeated taps and stale details are normal cases rather than exceptions to hide. The guided lab traces an item through route registration and lookup, exercises invalid IDs, and designs a minimal restoration record. Portable routing tests support these rules, while hardware back behavior, process termination, multiwindow state and authenticated deep links require later implementation and device checks.
 
 ## References and index terms
 
