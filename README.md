@@ -29,6 +29,10 @@ This repository holds the manuscript, planning records, and production specifica
 - [Chapter 13 — Search, filters, sorting, and favorites](chapters/ch13-search-filters-favorites.md)
 - [Chapter 14 — Content details, samples, and links](chapters/ch14-content-details-samples-links.md)
 - [Chapter 15 — Custom-song request form](chapters/ch15-custom-song-request.md)
+- [Chapter 16 — Pricing and reliable submission](chapters/ch16-pricing-reliable-submission.md)
+- [Part IV introduction](parts/part-04/introduction.md)
+- [Chapter 17 — HTTP APIs and resilient networking](chapters/ch17-http-resilient-networking.md)
+- [Chapter 18 — Companion ASP.NET Core API](chapters/ch18-companion-aspnet-core-api.md)
 - [Companion code](https://github.com/minnesotabob/csharp-mobile-app-code)
 
 All material is copyright 2026 John F. Gnazzo. Public visibility does not grant republication rights. ISBNs, publication date, legal notices, and final third-party credits remain production decisions.
