@@ -1,3 +1,49 @@
+# Chapter 13 draft milestone — November 14, 2026 (Central)
+
+## Written and typeset
+
+First drafts now cover Chapters 1–13, the preface, reader guide, introduction and Parts I–III introductions.
+The selected 8 × 10 PDF is 84 pages with linked contents and bookmarks. Chapter 13 adds approximately
+2,400 words covering combined search criteria, Unicode matching, deterministic ordering, input ownership,
+favorites storage/failure behavior, native presentation, tests, exercises and review questions.
+
+Parts I and II retain their original grayscale illustrations. Part III artwork, actual app screenshots,
+remaining chapters, final front/back matter, index and accessible EPUB are pending. This remains an editorial
+proof, not a finished book or final chapter-length forecast.
+
+The new chapter, contents, code, table, exercise and final-reference pages were visually reviewed.
+All 84 pages were checked for text outside the mirrored body margins. The PDF has 19 outline entries
+and 38 internal links. References now use the small reference style, avoiding a nearly empty final page.
+
+## Verified companion source
+
+Revision: 51870ac298eff6198e098a063bdc391fecc665f8 in csharp-mobile-app-code.
+
+- Windows portable Release compilation: 0 warnings/errors.
+- Executable xUnit suite: 112 tests; 0 errors/failures/skipped/not run.
+- Portable evidence: https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43678204364
+- Android Debug compilation: success; final compilation 0 warnings/errors.
+- Android evidence: https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43678204305
+
+Chapter 13 adds 29 portable cases. The app combines text, kind, ordinal creator identity, title/release
+sorting and favorites. A page-owned debounce applies the latest input and cancels pending work on departure.
+Favorites use a bounded, versioned local Preferences adapter; failed saves preserve visible state and
+unreadable initial storage disables edits without preventing ordinary browsing.
+
+The device-local format supports at most 32 IDs, 128 characters per ID and 4096 serialized UTF-8 bytes.
+Portable reconstruction tests exercise the store contract; they do not prove actual native restart persistence.
+Device launch, native persistence, keyboard/large-text/layout/focus checks and iOS compilation remain pending.
+Remote search, accounts, synchronization, migration/repair, checkout and deployment are not implemented.
+Android dependency installation retains the previously documented cmdline-tools setup warning.
+
+## Next work
+
+Chapter 14: content-specific details, owned reading samples and controlled external-link journeys,
+including missing content and canceled/failed launches. Continue expanding earlier chapters against actual
+device observations. Chapters 15–16 will introduce request-form and simulated submission workflows.
+
+## Earlier Chapter 12 record
+
 # Chapter 12 draft milestone — November 14, 2026 (Central)
 
 ## Written and illustrated
