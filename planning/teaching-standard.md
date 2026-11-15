@@ -65,13 +65,14 @@ exercise a boundary, failure or behavior that could realistically be wrong.
 
 ## Revision work
 
-The current 142-page proof contains an initial instructional revision of Chapters
-1–5. Chapters 6–18 retain earlier drafts and need substantive review against this
-standard. Native observations/screenshots remain pending. Do not characterize the
-whole manuscript as fully revised or use its pace as a final page forecast.
+The earlier 158-page proof covered Chapters 1–18 after their initial
+instructional revision. Chapter 19 now exists as a new draft with real SQLite
+companion tests. The new 19-chapter layout must pass its own proof workflow.
+Native observations and screenshots remain pending. Do not characterize the
+manuscript as technically or publication ready from successful CI alone.
 
-Prioritize repeatable reader setup and source mapping first, then fill missing
-walkthroughs, worked exercises and troubleshooting in chapter order. Continue
+Continue verifying matching code and chapter revisions, build the new 19-chapter
+print proof, and keep adding working labs and high-value troubleshooting. Continue
 technical verification when code changes; documentation-only edits need editorial
 and link/command review rather than identical test reruns.
 
