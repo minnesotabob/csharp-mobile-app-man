@@ -115,3 +115,13 @@ It names the pinned toolkit's public native-view compatibility dependency rather
 than claiming an inaccessible player API. A guided device matrix, troubleshooting,
 124-word summary and worked/independent exercises separate portable policy evidence,
 merged-manifest/compile checks and still-pending Android/iPhone observations.
+
+## Chapter 29 application of the review
+
+The Minnesota Bob trip-north listening scenario distinguishes useful partial bytes
+from verified availability; the anniversary-song case motivates a separate private
+access boundary. Figure 29.1 explains range/receive/verify/promotion ordering. The
+chapter includes response decisions, exact source/API walkthrough, guided restart and
+TLS work, storage policy, troubleshooting, a 124-word summary and worked/independent
+exercises. Public data and simulated failure conditions are named honestly. Native
+screenshots, HTTPS/device storage behavior and iOS compilation remain pending.

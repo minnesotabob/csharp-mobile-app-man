@@ -65,3 +65,13 @@ acceptance sequence, boundary-specific troubleshooting, 124-word summary, one wo
 cancellation exercise and three independent extensions. The separate sample preserves
 Chapter 27's foreground behavior. Native listening, system controls, interruptions,
 routes, power behavior and iOS compilation remain pending; this is an initial draft.
+
+## Chapter 29 initial instructional revision
+
+Added five learning outcomes, concrete public/private journeys, a publication diagram,
+explained HTTP/file-result excerpts, 200/206/416 decision table, storage formulas,
+guided interruption/restart/verification, troubleshooting, 124-word summary and one
+worked plus three independent exercises. Source includes native foreground controls,
+portable real-file tests, actual API range integration and a loopback byte/hash smoke.
+The sample explicitly rejects private delivery descriptors; it does not claim an
+account-authorized customer delivery or completed native/TLS acceptance.
