@@ -84,3 +84,13 @@ worked replay and progress-policy exercises, troubleshooting matrix and native c
 worksheet distinguish portable evidence from pending screenshots and authentication.
 No service-provider, performance, native-runtime or production claim is inferred from
 the fixture. The chapter completes Part IV; the planned security Part follows.
+
+## Part V / Chapter 22 application of the review
+
+Added an authored Part V identity roadmap and a native sign-in ownership diagram.
+The chapter keeps anonymous Northern Lights browsing distinct from a future private
+anniversary draft. A guided setup lab names exact source files, callback registration,
+platform boundaries, cancellation and late-result ownership. Tables distinguish ID and
+access tokens, verification layers and troubleshooting. Worked exercises and a native
+record/screenshot worksheet close the chapter. Auth0 is an implementation candidate,
+not a completed real-provider validation. Native screenshots remain pending.

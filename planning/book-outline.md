@@ -355,7 +355,7 @@ Before full typesetting, produce representative 8 × 10 pages containing prose, 
 
 1. Application name and visual identity; title and subtitle have been approved.
 2. Exact stable toolchain and compatible packages, documented after a build spike.
-3. Managed identity provider and practical reader MFA/recovery setup.
+3. Auth0 is the Chapter 22 implementation candidate (MAUI SDK 1.4.0); hosted sign-in, native provider checks and practical MFA/recovery setup remain unverified until a development tenant/device matrix is completed.
 4. Unit-test framework and verified platform UI-test tooling.
 5. Authorized demonstration media and optional real podcast material.
 6. Production checkout approach after current storefront policy review.

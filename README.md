@@ -40,3 +40,6 @@ This repository holds the manuscript, planning records, and production specifica
 All material is copyright 2026 John F. Gnazzo. Public visibility does not grant republication rights. ISBNs, publication date, legal notices, and final third-party credits remain production decisions.
 
 - [Chapter 21 — Synchronization and conflict resolution](chapters/ch21-synchronization-conflicts.md)
+
+- [Part V — Identity, MFA, and Account Security](parts/part-05/introduction.md)
+- [Chapter 22 — Native-App Authentication and Managed Identity](chapters/ch22-native-authentication.md)

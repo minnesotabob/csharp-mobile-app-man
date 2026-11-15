@@ -1,3 +1,40 @@
+# Part V / Chapter 22 identity draft — November 15, 2026 (Central)
+
+Added Part V's introduction and identity roadmap, and Chapter 22's hosted-sign-in
+ownership diagram, exact provider setup, code walkthrough, cancellation/late-result
+reasoning, troubleshooting, exercises and native verification record. Auth0 is the
+implementation candidate; actual hosted login remains pending a tenant/device matrix.
+The supplied review's visual architecture and concrete Gnazzo's World narrative remain.
+
+Corrected companion source: `13b32a90075de1d1bd8701237c61f404253f707d`.
+
+- Portable Release build: 0 warnings/errors; **307 executable cases passed**, no
+  failures/errors/skips/not-run cases, including 23 Chapter 22 cases.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43744434467
+- Android Debug compilation: success; final compilation 0 warnings/errors. Dependency
+  setup retains the documented unresolved cmdline-tools;21.0 warning.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43744434539
+- Existing API regression workflow passed at the initial implementation; the follow-up
+  correction only disambiguates the provider browser interface in native source.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43743986823
+
+The proof contains **219 pages, 30 bookmarks and 17 distinct images** (three original
+Part illustrations plus fourteen authored figures). Part V begins on page 206 and
+Chapter 22 on page 208. Its opening, diagrams, setup, commands, evidence table,
+troubleshooting, summary, exercises and native worksheet were rendered for inspection.
+Trim/text-boundary checks cover every page; the three selected Source fonts are embedded.
+
+Limits: the app ships without tenant configuration. Portable engine tests check invalid
+state, missing code and canceled browser with static metadata/no network; simulated
+presentation replies do not authenticate anyone. Live provider login, Android browser
+return, native cancellation, iOS build/runtime, MFA/recovery and screenshots remain
+pending. The chapter is an integration/setup draft, not a completed real-provider
+verification milestone. No private API access, persistent session or account migration
+is enabled. Chapter 23 is next for sessions and independent API authorization; real
+provider setup must be exercised before claiming end-to-end identity.
+
+## Earlier milestone record
+
 # Chapter 21 — synchronization and conflict resolution — November 15, 2026 (Central)
 
 The new Chapter 21 completes Part IV with a guided two-replica lab, a conflict diagram,
