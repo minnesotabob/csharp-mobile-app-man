@@ -1,3 +1,38 @@
+# Chapter 17 draft milestone — November 15, 2026 (Central)
+
+First drafts cover Chapters 1–17. The 8 × 10 proof is 116 pages, with Part IV
+starting on page 107 and Chapter 17 on page 109. The new Part introduction previews
+Chapters 17–21 and includes an original authored vector planning diagram with a
+matching JPEG for typesetting. Chapter 17 adds approximately 3,000 words on the
+public-catalog HTTP boundary, client lifetime, a total deadline, bounded bodies,
+validation, selective retry, safe failure categories, connectivity hints and tests.
+
+The one-page contents now omits redundant spacer rows while keeping the same
+10.5-point type. Body/code remain 11/9.5 points. Contents, new Part diagram and
+new chapter pages were visually reviewed; all 116 pages pass mirrored text-margin
+checks. The PDF has 24 bookmarks. Part III's preview now describes its implemented
+Chapters 14–16 accurately rather than retaining its older Chapter 13 status.
+
+Companion source: 352b0bc901b6de7b54494922e181e6311edf34b1.
+- Windows portable Release compilation: zero warnings/errors.
+- Executable suite: 235 tests pass, including 37 new Chapter 17 cases.
+- Android Debug compilation: success; final compile zero warnings/errors.
+- Portable evidence: https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43706546704
+- Android evidence: https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43706546699
+
+The native lab uses an in-process HTTP handler with no live service contact.
+Main catalog browsing remains bundled. Native Android/iOS checks, iOS compilation,
+actual TLS/redirect/socket networking and local-PC reachability remain pending.
+Android setup retains the documented cmdline-tools warning.
+
+Manuscript and code remain in their existing draft PR #1; default branches are
+unchanged. No new milestone tag or production deployment is made.
+
+Next: Chapter 18, Building the Companion ASP.NET Core API, including its explicit
+response schema, validation, OpenAPI and local phone/emulator-to-PC integration.
+
+## Earlier milestone record
+
 # Chapter 16 draft milestone — November 15, 2026 (Central)
 
 First drafts now cover Chapters 1–16. The 8 × 10 proof is 106 pages; Chapter 16

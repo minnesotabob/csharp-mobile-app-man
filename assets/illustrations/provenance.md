@@ -22,3 +22,11 @@ Alt text: Phone and tablet catalog layouts taking shape from paper wireframes an
 Prompt concept: Original editorial illustration of building native phone/tablet interfaces; stacked catalog on a phone and list/detail on a tablet, paper wireframes, pencil, detached reusable UI cards. Refined graphite/pen-and-ink monochrome, generous white space, no readable text, logos, or code. Match the restrained Part I publishing style.
 
 This is conceptual editorial artwork, not an actual runtime screenshot or an exact technical diagram.
+
+## Part IV planning diagram
+
+part-04-data-connectivity.svg is an original authored vector planning diagram
+created for this manuscript on November 15, 2026. The matching JPEG is rendered
+from that SVG for the PDF specimen. It depicts the planned phone/local snapshot,
+request/response boundary, intermittent connectivity and later service storage.
+It is not a screenshot, a runtime observation, or a claim that the backend is deployed.
