@@ -5,6 +5,27 @@ A device label is an unreliable layout decision. A tablet can share its display 
 
 Our first adaptive rule is modest: at a measured width of 900 device-independent units, show list and details beside one another. At narrower widths, keep the list and use the explicit detail destination. This chapter explains that rule, its tests, and its limits.
 
+## What You'll Learn
+
+By the end of this chapter, you will be able to use available viewport width rather than device labels; explain the 900-unit teaching breakpoint; preserve selection while switching between compact and wide presentations; distinguish resize behavior from multiwindow state; and plan device checks for keyboards, safe areas and foldable postures.
+
+**Prerequisites:** Complete the preceding chapters and use the matching Part II source revision from `docs/milestones.md`. **Deliverable:** A testable improvement or diagnostic exercise in the Gnazzo's World application, without assuming native-device verification.
+
+### Guided lab: preserve a selection during resize
+
+1. Open the portable width-policy implementation and its tests. Locate the decision boundary at 900 device-independent units.
+2. Write expected outputs for widths immediately below, exactly at, and immediately above the breakpoint; run the boundary tests to confirm your prediction.
+3. Select a known catalog item in the wide list/detail presentation. Reduce the available width below the threshold in a resizable host where supported, then restore it. The selected ID should belong to view-model state, not to a disappearing detail control.
+4. Apply a filter that removes the selected item. Verify the presentation clears or changes detail state consistently before and after layout changes.
+5. Sketch a short-height and keyboard-open case. Decide which region should scroll rather than reducing font size or hiding accessible controls.
+6. Record a native test matrix for phone portrait, phone landscape, tablet split window and a foldable configuration if hardware exists. Do not label foldable posture or hinge behavior verified from width tests alone.
+
+**Expected result:** The portable width policy is deterministic and selected identity survives presentation changes where appropriate. Actual safe-area, hinge, keyboard and window-lifecycle behavior remains an independent device investigation.
+
+### Troubleshooting the walkthrough
+
+A breakpoint that works on a full-screen tablet may fail in a split window; inspect measured available width. If selection disappears during resizing, confirm that the data owner is outside the recreated visual subtree. If the keyboard obscures controls, review vertical constraints and scroll behavior, not just width. A foldable hinge is a physical obstruction and may require more than one width number.
+
 ## 11.1 Adapt to the viewport
 
 CatalogPage receives SizeChanged and evaluates its current Width. It does not ask whether the hardware is called a tablet.
@@ -134,6 +155,10 @@ Emulator/hardware launch, safe-area behavior, keyboard pressure, native accessib
 3. Design a compact short-height layout without reducing text size.
 4. Specify a hinge-aware capability contract and the platform evidence it needs.
 5. Explain the difference between a resizable window and complete multiwindow navigation.
+
+## Chapter Summary
+
+Adaptive layout decisions should respond to actual space, not to labels such as phone or tablet. The chapter's 900-unit teaching breakpoint separates a compact browsing flow from a wide list/detail view, while portable policy tests establish exact boundary behavior. The selected catalog record belongs to persistent view-model state rather than a particular visual tree, allowing changes in presentation without changing identity. Height, keyboard pressure, system insets, fold hinges and multiple windows introduce constraints that a width test cannot fully capture. The guided lab checks the breakpoint and selection continuity, then specifies native verification scenarios. This keeps the implementation honest: responsive width behavior exists, but complete device and foldable validation remains pending.
 
 ## References and index terms
 
