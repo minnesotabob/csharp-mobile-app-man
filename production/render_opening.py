@@ -22,6 +22,7 @@ styles = {
     'h1': ParagraphStyle('h1', fontName='Head', fontSize=26, leading=29, spaceBefore=12, spaceAfter=18, keepWithNext=True),
     'h2': ParagraphStyle('h2', fontName='Head', fontSize=17, leading=20, spaceBefore=9, spaceAfter=6, keepWithNext=True),
     'small': ParagraphStyle('small', fontName='Head', fontSize=9, leading=12, spaceAfter=7),
+    'reference': ParagraphStyle('reference', fontName='Head', fontSize=8.6, leading=10.5, spaceAfter=3),
     'cell': ParagraphStyle('cell', fontName='Body', fontSize=9.5, leading=12),
     'code': ParagraphStyle('code', fontName='Code', fontSize=9.5, leading=12.5, spaceBefore=6, spaceAfter=12, backColor=colors.HexColor('#f1f1f1'), borderPadding=8),
 }
@@ -36,7 +37,7 @@ def markdown(text, source=None):
     result=[]; lines=text.splitlines(); i=0; paragraph=[]; reference_mode=False
     def flush():
         if paragraph:
-            result.append(Paragraph(fmt(' '.join(paragraph)),styles['small'] if reference_mode else styles['body'])); paragraph.clear()
+            result.append(Paragraph(fmt(' '.join(paragraph)),styles['reference'] if reference_mode else styles['body'])); paragraph.clear()
     while i<len(lines):
         line=lines[i]
         if line.startswith(('## Editorial index terms', 'Editorial index terms:')):
@@ -79,7 +80,7 @@ def markdown(text, source=None):
         elif line.startswith('*Illustration brief:') or line.startswith('*Editorial status:'):
             flush();result.append(Paragraph(fmt(line.strip('*')),styles['small']))
         elif line.startswith('- ') or re.match(r'^\d+\.\s', line):
-            flush();result.append(Paragraph(fmt(line),styles['small'] if reference_mode else styles['list']))
+            flush();result.append(Paragraph(fmt(line),styles['reference'] if reference_mode else styles['list']))
         elif not line.strip():flush()
         else:paragraph.append(line.split(' Index:')[0])
         i+=1
