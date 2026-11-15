@@ -7,7 +7,7 @@ Our example begins on the home page and opens a three-step request builder. The 
 
 **Prerequisites:** The application through Chapter 14, the portable test project, and the dependency-injection registration in MauiProgram. **Outcome:** A navigable request builder with conditional fields, meaningful validation, explicit local draft saving, and a review that becomes invalid when input changes.
 
-**Verification status:** The source and regression cases in this chapter are drafted. This continuation environment has no .NET SDK, Android workload, emulator, or Apple build host. Compilation, test execution, and native-device behavior remain pending. The successful Chapter 13 Windows CI result is a baseline, not evidence that these new changes work on a device.
+**Verification status:** The Chapter 14–16 portable suite has run on Windows CI with 198 passing tests. The companion verification log records the exact tested revision and native build results. Actual Android/iOS device behavior remains unverified.
 
 ## Begin with the customer's decisions
 
@@ -112,7 +112,7 @@ The new SongRequestTests cover allowed and rejected lengths, final revalidation 
 
 A particularly useful test saves one draft, changes the story, then makes the next save fail. The expected result is threefold: the old saved draft remains unchanged, the new story stays in the open model, and the model remains dirty. A test that merely asserts that Save was called would miss the customer's actual requirement.
 
-The test double does not prove file replacement, native navigation, screen-reader output, or restart behavior on Android or iOS. Run the portable suite first, compile the Android app, then complete the device scenarios in docs/device-checks.md. Record toolchain, source revision, platform, and actual result. Compilation and execution for this milestone remain pending until those commands have run successfully.
+The test double does not prove file replacement, native navigation, screen-reader output, or restart behavior on Android or iOS. Run the portable suite first, compile the Android app, then complete the device scenarios in docs/device-checks.md. Record toolchain, source revision, platform, and actual result. See the current verification log for the recorded portable run and native compilation results; device behavior must still be observed independently.
 
 ## Summary and exercises
 

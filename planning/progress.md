@@ -17,7 +17,10 @@ form localization and focus refinement remain pending.
 Work is published on work/chapter16-pricing for review. The code draft PR is
 https://github.com/minnesotabob/csharp-mobile-app-code/pull/1 . Default branches
 remain unchanged. Earlier default-branch automatic review rejection is not retried.
-Current build evidence will be recorded in companion docs/verification.md.
+The corrected source revision 2d15aa9452ef2f70b66176c99aebb3acf8027362 passed
+Windows portable compilation with zero warnings/errors and all 198 tests.
+Evidence: https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43704723565
+Native compilation results are recorded separately in companion docs/verification.md.
 
 Next: Part IV introduction and Chapter 17, HTTP APIs and Resilient Networking.
 The full 40-chapter/eight-Part plan and final production work remain in place.
