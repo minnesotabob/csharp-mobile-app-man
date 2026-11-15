@@ -1,3 +1,23 @@
+# Editorial direction update — November 15, 2026 (Central)
+
+Retain the current sophistication and full planned scope. John's instruction is to
+provide enough documentation and working samples for a valuable resource and
+learning tool. No advanced topics are removed and no second volume is approved.
+
+The 800-page estimate is no longer a fixed quota. No replacement page target is
+approved. The 125-page Chapters 1–18 proof remains a first draft, pending a fuller
+instructional pass. New teaching-standard.md defines reader setup, complete source,
+numbered walkthroughs, explained decisions, expected results, troubleshooting,
+worked exercises and separate verification requirements.
+
+The companion learning guide and Chapter 18 guided lab are the first documentation
+improvements. Existing source and recorded 245 portable / 26 API results are
+unchanged. No new code/device verification is claimed for this documentation edit.
+Continue implementation with Chapter 19 while expanding and auditing earlier drafts;
+chapter count alone is not a teaching-completeness measure.
+
+## Earlier milestone record
+
 # Chapter 18 draft milestone — November 15, 2026 (Central)
 
 First drafts now cover Chapters 1–18. The 8 × 10 proof is 125 pages; Chapter 18

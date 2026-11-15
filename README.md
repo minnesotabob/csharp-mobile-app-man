@@ -8,6 +8,7 @@ This repository holds the manuscript, planning records, and production specifica
 - [Detailed 40-chapter outline](planning/book-outline.md)
 - [Progress and verification](planning/progress.md)
 - [Publication specification](planning/publication-spec.md)
+- [Teaching and working-sample standard](planning/teaching-standard.md)
 - [Preface](front-matter/preface.md)
 - [How to use this book](front-matter/how-to-use-this-book.md)
 - [Introduction](front-matter/introduction.md)

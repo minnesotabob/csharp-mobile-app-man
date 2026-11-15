@@ -1,11 +1,11 @@
 # Building Mobile Apps with C# 15
-## Detailed outline — draft 2
+## Detailed outline — draft 3
 
 **Subtitle:** .NET 11 and .NET MAUI 11: A Windows Developer’s Guide to Android, iPhone, and Tablets  
 **Author:** John F. Gnazzo  
 **Proposed imprint:** DGreatGnazzini Press LLC  
 **Planning date:** November 14, 2026  
-**Status:** Parts I and II, Chapters 1–11, have first drafts and two section illustrations. Portable tests and Android compilation have passing Windows CI evidence; device/iOS checks remain pending. See planning/progress.md.
+**Status:** Chapters 1–18 have first drafts in a 125-page proof. The instructional expansion pass is beginning under the approved teaching standard. Recorded portable/API tests and Android compilation pass; device/TLS integration and iOS checks remain pending. See [progress](progress.md).
 
 ## Editorial brief
 
@@ -19,12 +19,12 @@ Cover basic mobile concepts, intermediate implementation, and advanced productio
 
 - Paperback: 8 × 10 inches, black ink on white paper, color cover.
 - Working typography: 11-point Source Serif 4 body text with about 14-point leading; 9.5–10-point Source Code Pro listings; Source Sans 3 headings. Verify embedding rights and readability in production.
-- Target: approximately 800 total interior pages; editorial planning range 750–800. KDP’s currently verified maximum for this specification is 828 pages.
+- Length follows instructional completeness. The former approximately 800-page estimate is historical; no replacement fixed length or division into volumes has been approved. Preserve current technical scope and apply [the teaching standard](teaching-standard.md).
 - Each Part and each chapter starts on a new page, either recto or verso. Internal chapter headings flow naturally.
 - Each Part opens with a unique grayscale illustration, a substantive introduction, and descriptions of its chapters. Maintain a consistent illustration style and ebook alternative descriptions.
 - Ebook: reflowable EPUB with semantic headings, navigation, cross-links, accessible images, and linked index entries. Do not reproduce print pagination as fixed-layout pages.
 - Preserve readable code and useful explanations; if necessary, adjust scope or reconsider volumes instead of shrinking type.
-- Initial word estimate is provisional: approximately 150,000–180,000 words, including explanations and supporting material. Re-estimate after laying out representative prose, code, table, and screenshot pages.
+- Re-estimate words and pages after laying out representative expanded chapters containing walkthroughs, explained code, necessary screenshots, troubleshooting and worked exercises. The former word estimate does not set a minimum.
 
 ### Technology baseline and verification
 
@@ -66,10 +66,12 @@ Public browsing remains available without an account. Signed-in features include
 
 ## Chapter format
 
+Apply the mandatory [teaching and sample standard](teaching-standard.md). Existing topic drafts must be expanded and reviewed against it before being treated as finished learning chapters.
+
 Each chapter states prerequisites, learning goals, and the application capability delivered; develops the concepts before implementation; explains relevant code with complete files in the repository; covers failure and recovery paths; supplies meaningful tests or device checks; and ends with a summary and exercises. Add basic/intermediate/advanced labels where they guide the reader, without forcing every topic into all three levels. Track index terms and source references while writing.
 
 ## Part I — From Desktop and Web to Mobile
-**Chapters 1–5 · approximately 76 chapter pages**
+**Chapters 1–5**
 
 **Part introduction:** Establish how mobile differs from familiar platforms, define the finished application, prepare a Windows workstation, and make the first application run. Introduce tests immediately so later features grow on a verified foundation.
 
@@ -96,7 +98,7 @@ Separate portable application logic from device services using a small number of
 **Outcome and verification:** First meaningful catalog-validation and state tests running locally and in CI.
 
 ## Part II — Building a Native Interface
-**Chapters 6–11 · approximately 98 chapter pages**
+**Chapters 6–11**
 
 **Part introduction:** Turn the starter project into an accessible, navigable application. Explain XAML and binding from first principles, then develop maintainable view models, reusable views, and layouts that work beyond one screen size.
 
@@ -127,7 +129,7 @@ Adapt to available width, orientation, safe areas, keyboards, and multiwindow re
 **Outcome and verification:** One feature verified across a documented phone/tablet/window-size matrix.
 
 ## Part III — Useful Catalogs and Real Forms
-**Chapters 12–16 · approximately 82 chapter pages**
+**Chapters 12–16**
 
 **Part introduction:** Make browsing useful and introduce a demanding real form. Consolidate the website’s mixed content sources into models that support search, saved items, and a maintainable custom-song workflow.
 
@@ -154,7 +156,7 @@ Model the archived pricing and multi-song discounts as versioned example data. U
 **Outcome and verification:** Parameterized pricing/discount tests and a simulated submission contract; no live charging.
 
 ## Part IV — Data, Connectivity, and a Small Backend
-**Chapters 17–21 · approximately 86 chapter pages**
+**Chapters 17–21**
 
 **Part introduction:** Move from bundled examples to connected data while retaining predictable offline behavior. Build only the backend the mobile application needs and introduce synchronization against a local test service before adding real identity.
 
@@ -181,7 +183,7 @@ Define changes, versions, deletions, cursors, and conflict policies for favorite
 **Outcome and verification:** Tests for duplicate delivery, concurrent edits, tombstones, reconnects, and account boundaries.
 
 ## Part V — Identity, MFA, and Account Security
-**Chapters 22–26 · approximately 88 chapter pages**
+**Chapters 22–26**
 
 **Part introduction:** Add identity through a managed provider rather than writing a password system. Explain the complete account journey, from first sign-in through MFA and recovery to data deletion, while protecting server resources independently of the user interface.
 
@@ -208,7 +210,7 @@ Review deep-link handling, local data, network boundaries, dependency risks, bac
 **Outcome and verification:** Focused threat model and executable security regression cases for the features already built.
 
 ## Part VI — Media and Native Device Experiences
-**Chapters 27–31 · approximately 88 chapter pages**
+**Chapters 27–31**
 
 **Part introduction:** Make the application feel useful on actual devices. Add authorized media playback and controlled downloads, then integrate notifications, sharing, attachments, and links with lifecycle and permission handling.
 
@@ -235,7 +237,7 @@ Use file/photo selection for optional request attachments, native sharing, conne
 **Outcome and verification:** Safe attachment handling and capability fallbacks on both target platforms.
 
 ## Part VII — Customer Workflows and Order Delivery
-**Chapters 32–35 · approximately 76 chapter pages**
+**Chapters 32–35**
 
 **Part introduction:** Bring the custom-song form, identity, and backend together into an understandable transaction workflow. Keep the implementation small while demonstrating authoritative state, reliable events, and private delivery.
 
@@ -258,7 +260,7 @@ Deploy the API, database, and file storage with configuration and secret separat
 **Outcome and verification:** Staging deployment, restore exercise, and a documented operational checklist; production provisioning is a separate explicit action.
 
 ## Part VIII — Verification, Publication, and Maintenance
-**Chapters 36–40 · approximately 96 chapter pages**
+**Chapters 36–40**
 
 **Part introduction:** Consolidate the tests already built, assess actual device behavior, and prepare the application for public distribution. Finish with a repeatable release and maintenance process, rather than stopping at a successful development build.
 
@@ -298,20 +300,20 @@ Connect manuscript/code milestones, automated Windows tests, platform builds, se
 - Optional selected related titles and imprint information.
 - Final third-party acknowledgments/notices where required.
 
-## Page budget
+## Length and instructional completeness
 
-| Component | Target pages |
-|---|---:|
-| Chapters 1–40 | 690 |
-| Eight Part openers, illustrations, introductions, and chapter previews | 24 |
-| Front matter, including TOC and reader orientation | 24 |
-| Appendices | 30 |
-| Glossary and references | 10 |
-| Index | 16 |
-| Author, support, notices, and remaining back matter | 6 |
-| **Total** | **800** |
+The earlier 800-page allocation is superseded as a fixed target. Keep all 40 planned
+chapters and the existing advanced concepts. Neither a 300–400-page limit nor a
+second-volume split has been approved. Page count should emerge from useful depth.
 
-These are layout budgets, not chapter limits. KDP’s total includes unnumbered and blank interior pages. The 28-page allowance below 828 is a contingency, not planned chapter space. Reforecast after sample typesetting and each completed Part.
+Chapters 1–18 currently form a 125-page first-draft proof. They need an instructional
+pass before that length can support a forecast. Apply [the teaching standard](teaching-standard.md):
+complete runnable samples, numbered walkthroughs, explained decisions, expected
+results, troubleshooting, worked exercises and honest platform verification.
+
+Retain substantive front/back matter, accessible EPUB navigation, glossary and
+index. Reforecast after representative chapter expansion and each completed Part.
+Verify printer constraints at production rather than designing to an old maximum.
 
 ## Companion repositories and milestones
 

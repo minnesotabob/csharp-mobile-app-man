@@ -10,10 +10,12 @@
 - Public-release phone/tablet application based on johngnazzo.com, provisionally Gnazzo's World.
 - Windows-centered MAUI/XAML; Android/iOS coverage; limited supporting backend; real sign-in/MFA and recovery.
 - Separate manuscript/code repositories, both currently public.
+- Preserve the existing sophistication and full planned scope; expand documentation, walkthroughs and working samples under [the teaching standard](teaching-standard.md).
+- Page count follows instructional completeness. The earlier 800-page estimate is no longer a fixed quota; no replacement length or split into volumes has been approved.
 
 ## Paperback
 
-8 × 10 inches. Black ink, white paper, color cover. Target 750–800 total interior pages and remain within the verified 828-page KDP ceiling. Use a starting inner margin of 0.95 inch for the planned thick volume and outside margin 0.65 inch, then validate binding/readability in a physical proof. KDP's minimum inside margin at 701–828 pages is 0.875 inch.
+8 × 10 inches. Black ink, white paper, color cover. Reforecast total pages after representative chapters meet the teaching standard. Retain the specimen's 0.95-inch inner and 0.65-inch outer margins provisionally, then validate binding/readability and current printer requirements against the final length and a physical proof. Do not enlarge type or add repetitive content to meet a page quota.
 
 Body: 11-point Source Serif 4, approximately 14-point leading. Headings: Source Sans 3. Code: 9.5–10-point Source Code Pro, with short lines and complete listings in code repository. Do not reduce code type to conceal overflow.
 
