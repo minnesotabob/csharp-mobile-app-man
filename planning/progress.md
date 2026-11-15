@@ -1,3 +1,27 @@
+# Chapter 24 - MFA and recovery lab - November 15, 2026 (Central)
+
+Added the provider-owned enrollment/challenge/recovery chapter, one authored boundary
+figure, development configuration walkthrough, factor-replacement and revocation
+reasoning, future step-up contract, troubleshooting, worked exercises and a companion
+acceptance worksheet. The anniversary-request narrative carries stable account ownership
+through lost-device recovery. Official provider sources reviewed on this date.
+
+The proof contains **242 pages, 32 bookmarks and 20 distinct images** (three Part
+illustrations and seventeen authored technical figures). Chapter 24 opens on page 234.
+All-page trim and text-boundary checks passed; all nine new chapter pages were rendered
+and visually inspected. No app/API executable or dependency changes in this milestone;
+Chapter 23's 321 portable and 37 API results remain historical evidence, not MFA tests.
+
+Live tenant enrollment/challenge/recovery, consumed-code rejection, factor replacement,
+renewal policy interaction, native accessibility, iOS and screenshots remain pending.
+No provider tenant has been provisioned and no sensitive-write step-up endpoint is added.
+The reader must execute the documented development lab before claiming those outcomes.
+
+Next: Chapter 25 - Profiles, Privacy, and Account Lifecycle. Preserve the existing
+review's diagrams, concrete app narrative, security and honest verification boundaries.
+
+## Earlier milestone record
+
 # Chapter 23 — sessions, storage and API authorization — November 15, 2026 (Central)
 
 Added the session/API chapter, two authored diagrams, bounded credential-envelope and
