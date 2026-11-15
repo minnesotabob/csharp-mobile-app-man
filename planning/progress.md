@@ -20,7 +20,9 @@ remain unchanged. Earlier default-branch automatic review rejection is not retri
 The corrected source revision 2d15aa9452ef2f70b66176c99aebb3acf8027362 passed
 Windows portable compilation with zero warnings/errors and all 198 tests.
 Evidence: https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43704723565
-Native compilation results are recorded separately in companion docs/verification.md.
+Android Debug compilation also succeeded on the same source revision.
+Evidence: https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43704723559
+The setup cmdline-tools warning remains; final compile is clean. Device/iOS checks remain pending.
 
 Next: Part IV introduction and Chapter 17, HTTP APIs and Resilient Networking.
 The full 40-chapter/eight-Part plan and final production work remain in place.
