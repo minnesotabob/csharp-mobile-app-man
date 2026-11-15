@@ -176,9 +176,11 @@ A production service needs a unique constraint scoped to the authenticated custo
 
 The demo receipt is also not proof of payment. Payment state will depend on the later service's verified payment events, not a browser return, a button press, or this receipt. Keeping that boundary explicit allows the teaching application to grow without treating an early simulation as a finished checkout.
 
-## Summary and exercises
+## Chapter Summary
 
 The application now turns a reviewed draft into versioned example terms and one identifiable simulated acceptance. Pricing stays separate from display, service-owned quote state determines the accepted amount, and repeated delivery can return the same result. A missing response leaves a question to resolve rather than permission to create another request.
+
+## Exercises and Review Questions
 
 1. For a two-minute instrumental request, calculate one, two, and three songs by hand. Verify the expected amounts are USD 79.00, USD 150.10, and USD 213.30. Explain why a flat twenty-percent basket discount gives a different third result.
 2. Change quantity after obtaining a quote. Confirm that the reviewed snapshot and quote controls disappear, while the written story remains. Repeat with only the email field changed.
