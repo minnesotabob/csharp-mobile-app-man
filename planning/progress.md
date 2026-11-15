@@ -1,3 +1,45 @@
+# Chapter 20 and reviewed 182-page proof — November 15, 2026 (Central)
+
+Chapter 20, Offline Operation and Background Work, is drafted (about 3,600 words),
+with learning outcomes, ten instructional sections, complete companion components,
+numbered lab, failure/recovery reasoning, troubleshooting, summary, worked exercises
+and a native verification worksheet. The original 40-chapter scope remains.
+
+Companion runtime implementation: `74d2df5ade5b1d69b306bdb1a406722d08057ed1`.
+Final portable test/lab revision: `6553709cd7b2c770cfc6da8a8fcb2abcfa98ef7a`.
+Documentation evidence commit: `02fb4b385dd0ed14193d97e7df67c9a46a4d7f9c`.
+
+- Portable Release build: **0 warnings/errors; 266 tests passed**, none failed/skipped/not run.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43731444673
+- Android Debug compilation passed with identical runtime/core source:
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43731012298
+- Final manuscript proof at `45aae4596b3bfdf7f83b01cd7897e8752be92a4e`:
+  https://github.com/minnesotabob/csharp-mobile-app-man/actions/runs/43731673320
+
+The full proof has **182 pages, 27 bookmarks**, and Chapter 20 begins on **page 172**.
+Automated trim and text-boundary checks passed. Independent local PyMuPDF checks
+found no broad outer-boundary violations. Contents, Chapter 20 opening, code/table
+pages, summary/exercises and the final worksheet/references were rendered and visually
+inspected. The renderer now handles third-level headings and keeps short reference
+lists together; a worksheet supplies useful native acceptance instructions on the
+final page instead of an isolated reference tail.
+
+Schema 3 adds retrieval metadata and a coalescing, durable public-refresh ticket.
+One coordinator reads local/bundled data, performs bounded refresh attempts and
+commits snapshot plus matching acknowledgment atomically. Existing favorites and
+progress remain. Thirteen new executed cases cover freshness, reopen/recovery,
+failure, cancellation, newer intent during fetch, rollback and worker exclusion.
+
+Limits: native MAUI browser wiring, OS scheduler registration, physical crash/reboot,
+phone SQLite execution, TLS/device and iOS remain unverified. No automatic retry
+cooldown, customer transaction queue or multiworker lease is implemented. The
+native worksheet is an acceptance plan, not a report of performed device tests.
+
+Next: Chapter 21 — Synchronization and Conflict Resolution. Keep public catalog
+replacement separate from user changes, versions, tombstones and account boundaries.
+
+## Earlier milestone record
+
 # Chapter 19 verification and 171-page proof — November 15, 2026 (Central)
 
 **Status:** Chapter 19 has been drafted and committed, with working companion SQLite source, eight new real-file tests, and MAUI dependency registration. The companion code revision `3f7b162dc2f9c7553b3e170ef7b44dcc59c9f26b` passed **253 portable tests** with zero errors/failures/skips, and the Android Debug compilation passed. See `docs/verification.md` in the companion repository. No native SQLite runtime on Android/iOS or account-authentication/secret-storage claim is made.
@@ -374,3 +416,4 @@ Device/emulator launch, native navigation/keyboard/rotation, screen-reader/large
 Earlier local workload/test attempts were blocked by automatic review after attempted cloud metadata access; they were not retried. Separate GitHub-hosted Windows CI provides the evidence above.
 
 Next: Chapter 13 search, filters, sorting and favorites; later Chapters 14–16 detail journeys and the request/pricing workflow; expand earlier chapters against actual device observations when available. Preserve the Part I source milestone for Chapters 4–5 using companion docs/milestones.md.
+
