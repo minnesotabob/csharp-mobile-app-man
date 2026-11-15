@@ -84,16 +84,11 @@ def markdown(text, source=None):
         else:paragraph.append(line.split(' Index:')[0])
         i+=1
     flush()
-    # Revised chapters close as a coherent summary/exercise/reference unit.
-    for j, flow in enumerate(result):
+    # Keep a chapter-summary heading with its first paragraph, not with every
+    # following exercise/reference. Entire-section KeepTogether can exceed a page.
+    for j, flow in enumerate(result[:-1]):
         if isinstance(flow, Paragraph) and flow.getPlainText() == 'Chapter Summary':
-            result[j:] = [KeepTogether(result[j:])]
-            return result
-    # Earlier drafts still carry their final exercise with references.
-    for j, flow in enumerate(result):
-        if isinstance(flow, Paragraph) and flow.getPlainText() == 'References':
-            start = max(0, j - 1)
-            result[start:] = [KeepTogether(result[start:])]
+            result[j:j+2] = [KeepTogether(result[j:j+2])]
             break
     return result
 
@@ -134,7 +129,7 @@ story=[Spacer(1,84),Paragraph('Building Mobile Apps<br/>with C# 15',styles['h1']
 toc=TableOfContents()
 toc.levelStyles=[ParagraphStyle('toc',fontName='Head',fontSize=10.5,leading=12,spaceBefore=0)]
 story.extend([Paragraph('Contents',styles['h1']),toc,PageBreak()])
-story.extend(markdown('# About This Draft\n\nThis specimen uses the selected Source Serif 4, Source Sans 3, and Source Code Pro fonts. It demonstrates the 8 × 10 page, 11-point body text, 9.5-point code, a generous binding margin, and new-page starts for major divisions.\n\nIncluded: preface, reader orientation, introduction, Parts I and II with original illustrations, the Part III introduction, Part IV with an authored planning diagram, and Chapters 1–18. Chapters 1–5 have received an initial instructional revision with learning outcomes, guided work, troubleshooting and distinct summaries. Chapters 6–18 remain earlier drafts. Device checks remain separate from compilation. The full book retains its planned 40 chapters and complete front and back matter.\n\nThe Chapter 13 baseline passed portable tests and Android compilation on Windows CI. Chapter 14–18 source adds detail journeys, request forms, pricing, simulated submission, bounded public-catalog HTTP reads, and a local companion API. Current build and test results are recorded in the companion verification log; device checks remain separate. Emulator/physical-device launch and iOS compilation remain unverified.\n\nCopyright 2026 John F. Gnazzo. All rights reserved. Publication date, ISBNs, final legal notices, dedication, acknowledgments, and author biography will be completed during production.'))
+story.extend(markdown('# About This Draft\n\nThis specimen uses the selected Source Serif 4, Source Sans 3, and Source Code Pro fonts. It demonstrates the 8 × 10 page, 11-point body text, 9.5-point code, a generous binding margin, and new-page starts for major divisions.\n\nIncluded: preface, reader orientation, introduction, Parts I and II with original illustrations, the Part III introduction, Part IV with an authored planning diagram, and Chapters 1–18. Chapters 1–18 now have an initial instructional revision with learning outcomes, guided work and chapter summaries. These are still editorial drafts, and not all demonstrations have been exercised on devices. Device checks remain separate from compilation. The full book retains its planned 40 chapters and complete front and back matter.\n\nEarlier source revisions passed portable tests and Android compilation on Windows CI. The latest companion CI evidence is recorded in docs/verification.md and planning/progress.md; this print proof is independent of source compilation. Chapter 14–18 source adds detail journeys, request forms, pricing, simulated submission, bounded public-catalog HTTP reads, and a local companion API. Current build and test results are recorded in the companion verification log; device checks remain separate. Emulator/physical-device launch and iOS compilation remain unverified.\n\nCopyright 2026 John F. Gnazzo. All rights reserved. Publication date, ISBNs, final legal notices, dedication, acknowledgments, and author biography will be completed during production.'))
 for rel in ['front-matter/preface.md','front-matter/how-to-use-this-book.md','front-matter/introduction.md','parts/part-01/introduction.md','chapters/ch01-mobile-landscape.md','chapters/ch02-defining-gnazzos-world.md','chapters/ch03-windows-environment.md','chapters/ch04-first-application.md','chapters/ch05-testable-foundations.md','parts/part-02/introduction.md','chapters/ch06-xaml-layouts-resources.md','chapters/ch07-bindings-commands-mvvm.md','chapters/ch08-navigation-state.md','chapters/ch09-collections-images-reuse.md','chapters/ch10-accessibility-localization.md','chapters/ch11-adaptive-layouts.md','parts/part-03/introduction.md','chapters/ch12-catalog-models.md','chapters/ch13-search-filters-favorites.md','chapters/ch14-content-details-samples-links.md','chapters/ch15-custom-song-request.md','chapters/ch16-pricing-reliable-submission.md','parts/part-04/introduction.md','chapters/ch17-http-resilient-networking.md','chapters/ch18-companion-aspnet-core-api.md']:
     story.append(PageBreak());story.extend(markdown((ROOT/rel).read_text(),ROOT/rel))
 doc.multiBuild(story)
