@@ -46,7 +46,9 @@ public CatalogPage(CatalogBrowserViewModel viewModel)
 }
 ```
 
-A OneWay binding reflects source changes in the target. A TwoWay binding also sends target edits back to the source. Search text and picker selection use TwoWay because the user changes those values. A result summary is computed by the view model and does not need to be edited.
+A OneWay binding reflects source changes in the target. A TwoWay binding also sends target edits back to the source. **At the Part II milestone used in this chapter**, SearchBar text and picker selection use TwoWay because the user changes those values. A result summary is computed by the view model and does not need to be edited.
+
+**Source progression:** Chapter 13 deliberately changes the SearchBar to `Text="{Binding Query, Mode=OneWay}"` and handles `TextChanged` in `CatalogPage.xaml.cs`. A page-owned `DebouncedQuery` delays nonempty typing updates while preserving the latest text when navigation interrupts the pending delay. Its filter pickers still use TwoWay selection. When reproducing the direct TwoWay example here, use the pinned Part II commit in `docs/milestones.md`, not the later review branch. Otherwise the reader may reasonably mistake an intentional evolution for a binding error.
 
 The binding source and x:DataType have separate roles. BindingContext supplies the runtime instance. x:DataType describes the expected type for compiled binding validation. Declaring a type does not create an instance of that type.
 
