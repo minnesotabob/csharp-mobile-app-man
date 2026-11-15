@@ -5,7 +5,7 @@
 **Author:** John F. Gnazzo  
 **Proposed imprint:** DGreatGnazzini Press LLC  
 **Planning date:** November 14, 2026  
-**Status:** Outline approved as a working direction. Foundation code and opening manuscript drafts are in development; see planning/progress.md for verification evidence.
+**Status:** Part I Chapters 1–5 have first drafts and a section illustration. Portable tests and Android compilation have passing Windows CI evidence; device/iOS checks remain pending. See planning/progress.md.
 
 ## Editorial brief
 

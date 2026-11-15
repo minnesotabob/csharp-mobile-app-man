@@ -13,6 +13,10 @@ This repository holds the manuscript, planning records, and production specifica
 - [Introduction](front-matter/introduction.md)
 - [Part I introduction](parts/part-01/introduction.md)
 - [Chapter 1 draft](chapters/ch01-mobile-landscape.md)
+- [Chapter 2 — Defining the application](chapters/ch02-defining-gnazzos-world.md)
+- [Chapter 3 — Windows environment](chapters/ch03-windows-environment.md)
+- [Chapter 4 — First application](chapters/ch04-first-application.md)
+- [Chapter 5 — Testable foundations](chapters/ch05-testable-foundations.md)
 - [Companion code](https://github.com/minnesotabob/csharp-mobile-app-code)
 
 All material is copyright 2026 John F. Gnazzo. Public visibility does not grant republication rights. ISBNs, publication date, legal notices, and final third-party credits remain production decisions.

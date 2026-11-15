@@ -6,7 +6,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib import colors
 from reportlab.lib.styles import ParagraphStyle
-from reportlab.platypus import BaseDocTemplate, PageTemplate, Frame, Paragraph, Spacer, PageBreak, Preformatted, Table, TableStyle, KeepTogether
+from reportlab.platypus import BaseDocTemplate, PageTemplate, Frame, Paragraph, Spacer, PageBreak, Preformatted, Table, TableStyle, KeepTogether, Image
 
 ROOT = Path(__file__).resolve().parents[1]
 FONT_DIR = ROOT / 'production/fonts'
@@ -30,14 +30,26 @@ def fmt(text):
     text=re.sub(r'`([^`]+)`', r'<font name="Code">\1</font>', text)
     return text
 
-def markdown(text):
-    result=[]; lines=text.splitlines(); i=0; paragraph=[]
+def markdown(text, source=None):
+    result=[]; lines=text.splitlines(); i=0; paragraph=[]; reference_mode=False
     def flush():
         if paragraph:
-            result.append(Paragraph(fmt(' '.join(paragraph)),styles['body'])); paragraph.clear()
+            result.append(Paragraph(fmt(' '.join(paragraph)),styles['small'] if reference_mode else styles['body'])); paragraph.clear()
     while i<len(lines):
         line=lines[i]
-        if line.startswith('```'):
+        if line.startswith('## Editorial index terms'):
+            flush(); break
+        if line.startswith('Index:'):
+            flush(); i+=1; continue
+        if line.startswith('!['):
+            flush()
+            match = re.fullmatch(r'!\[(.*?)\]\((.*?)\)',line)
+            if not match or source is None: raise ValueError('Image needs a source document')
+            path=(source.parent/match.group(2)).resolve()
+            if not path.is_relative_to(ROOT): raise ValueError('Image outside manuscript')
+            result.append(Image(str(path),width=368.64,height=245.76,hAlign='CENTER'))
+            result.append(Paragraph(fmt(match.group(1)),styles['small']))
+        elif line.startswith('```'):
             flush(); i+=1; code=[]
             while i<len(lines) and not lines[i].startswith('```'):
                 code.append(lines[i]); i+=1
@@ -56,11 +68,11 @@ def markdown(text):
         if line.startswith('# '):
             flush();result.append(Paragraph(fmt(line[2:]),styles['h1']))
         elif line.startswith('## '):
-            flush();result.append(Paragraph(fmt(line[3:]),styles['h2']))
+            flush();reference_mode = 'reference' in line.lower() or 'source' in line.lower() or 'index terms' in line.lower();result.append(Paragraph(fmt(line[3:].replace(' and index terms','')),styles['h2']))
         elif line.startswith('*Illustration brief:') or line.startswith('*Editorial status:'):
             flush();result.append(Paragraph(fmt(line.strip('*')),styles['small']))
         elif not line.strip():flush()
-        else:paragraph.append(line)
+        else:paragraph.append(line.split(' Index:')[0])
         i+=1
     flush();return result
 
@@ -79,8 +91,8 @@ doc.addPageTemplates([
     PageTemplate(id='odd',frames=[Frame(68.4,51,460.8,615,id='odd-frame',leftPadding=0,rightPadding=0,topPadding=0,bottomPadding=0)],onPage=footer,autoNextPageTemplate='even'),
     PageTemplate(id='even',frames=[Frame(46.8,51,460.8,615,id='even-frame',leftPadding=0,rightPadding=0,topPadding=0,bottomPadding=0)],onPage=footer,autoNextPageTemplate='odd')])
 story=[Spacer(1,84),Paragraph('Building Mobile Apps<br/>with C# 15',styles['h1']),Spacer(1,16),Paragraph('.NET 11 and .NET MAUI 11',styles['h2']),Paragraph('A Windows Developer’s Guide to Android, iPhone, and Tablets',styles['body']),Spacer(1,36),Paragraph('John F. Gnazzo',styles['h2']),Paragraph('DGreatGnazzini Press LLC',styles['body']),Spacer(1,50),Paragraph('Opening manuscript and typography proof. First drafts; not a finished book. Final illustrations, screenshots, front matter, and index are still in development.',styles['small']),PageBreak()]
-story.extend(markdown('# About This Draft\n\nThis specimen uses the selected Source Serif 4, Source Sans 3, and Source Code Pro fonts. It demonstrates the 8 × 10 page, 11-point body text, 9.5-point code, a generous binding margin, and new-page starts for major divisions.\n\nIncluded: preface, reader orientation, introduction, Part I overview, and Chapter 1. The Part I illustration is a recorded brief, not final artwork. The full book retains its planned 40 chapters and complete front and back matter.\n\nPortable code and tests passed the GitHub-hosted Windows workflow. The MAUI application scaffold has not yet been compiled or verified on Android or iOS.\n\nCopyright 2026 John F. Gnazzo. All rights reserved. Publication date, ISBNs, final legal notices, dedication, acknowledgments, and author biography will be completed during production.'))
-for rel in ['front-matter/preface.md','front-matter/how-to-use-this-book.md','front-matter/introduction.md','parts/part-01/introduction.md','chapters/ch01-mobile-landscape.md']:
-    story.append(PageBreak());story.extend(markdown((ROOT/rel).read_text()))
+story.extend(markdown('# About This Draft\n\nThis specimen uses the selected Source Serif 4, Source Sans 3, and Source Code Pro fonts. It demonstrates the 8 × 10 page, 11-point body text, 9.5-point code, a generous binding margin, and new-page starts for major divisions.\n\nIncluded: preface, reader orientation, introduction, Part I overview with its original illustration, and Chapters 1–5. These chapters are first drafts; device checks remain separate from compilation. The full book retains its planned 40 chapters and complete front and back matter.\n\nPortable code and tests passed the GitHub-hosted Windows workflow. The Android starter compiles on Windows CI and all 37 portable tests pass. Emulator/physical-device launch and iOS compilation remain unverified.\n\nCopyright 2026 John F. Gnazzo. All rights reserved. Publication date, ISBNs, final legal notices, dedication, acknowledgments, and author biography will be completed during production.'))
+for rel in ['front-matter/preface.md','front-matter/how-to-use-this-book.md','front-matter/introduction.md','parts/part-01/introduction.md','chapters/ch01-mobile-landscape.md','chapters/ch02-defining-gnazzos-world.md','chapters/ch03-windows-environment.md','chapters/ch04-first-application.md','chapters/ch05-testable-foundations.md']:
+    story.append(PageBreak());story.extend(markdown((ROOT/rel).read_text(),ROOT/rel))
 doc.build(story)
 print(OUT)

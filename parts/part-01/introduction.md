@@ -1,7 +1,7 @@
 # Part I
 # From Desktop and Web to Mobile
 
-*Illustration brief: a Windows workstation linked visually to a phone and tablet, with a restrained book/music motif. Grayscale, generous negative space, and no generated code or tiny labels. Final illustration pending.*
+![A desktop catalog flowing toward a phone and tablet, with books and music connecting the experiences.](../../assets/illustrations/part-01-desktop-to-mobile.jpg)
 
 A mobile application often begins with familiar work: a project, a model, a screen, and a way to get data onto that screen. It is tempting to treat everything that follows as a variation in controls. This Part starts with the operating environment because that environment determines what the controls and their supporting code must do.
 
@@ -26,3 +26,4 @@ Testing completes the foundation. Catalog validation and pricing do not need a d
 ## What you will have at the end
 
 You will have a defined application scope, a documented development environment, a starter that runs on a verified target, and portable tests for the first behaviors. You will also have a list of device checks that remain to be executed. That distinction matters: a foundation is dependable when its evidence is explicit, including the work that is not yet verified.
+
