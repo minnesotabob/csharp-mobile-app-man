@@ -7,6 +7,27 @@ Our existing detail page establishes identity: a stable catalog ID resolves to a
 
 The result remains a catalog application. It does not implement an EPUB reader, stream songs, establish purchase rights, or confirm that a website is reachable. Keeping those responsibilities explicit lets us build a useful detail journey without hiding unfinished systems behind an impressive button.
 
+## What You'll Learn
+
+You will learn to resolve detail pages by stable catalog ID; project missing metadata truthfully; distinguish a licensed or original reading sample from an entire ebook; open approved external destinations through a testable adapter; and handle failed, canceled, or obsolete launches without corrupting the active screen.
+
+**Prerequisites:** Chapters 12–13 and the current detail-page navigation implementation. **Deliverable:** A content detail experience that remains useful when optional data or external services are unavailable.
+
+### Guided lab: keep ownership of a detail journey
+
+1. Select a known book ID from the bundled catalog and navigate to its details. Follow the ID through the model and presentation projection; do not rebuild identity from a title.
+2. Inspect a missing optional field. Predict the label the screen should show, and verify that it does not fabricate a date, edition or service entitlement.
+3. Open the bundled sample and identify its provenance. Check the code path that renders it as plain text; it must not evaluate arbitrary HTML.
+4. Replace a reviewed destination with an unapproved host in a test fixture. Verify that the launch is rejected at the application's own boundary, before native browser handoff.
+5. Arrange two detail selections in succession and let the first operation finish last. Confirm that the old completion does not change the second selection.
+6. Use a failing browser adapter to model a canceled or unsuccessful launch. Verify the message and that the user still owns their original browsing context.
+
+**Expected result:** Stable identity survives renamed titles, incomplete metadata remains honest, unsafe destinations are rejected, and obsolete completions cannot replace current detail state. A fake browser adapter verifies the application's logic, not the device browser itself.
+
+### Worked reasoning: a link is not a capability grant
+
+A catalog may show where a recording is listed without having permission to stream it. Likewise, linking to a bookstore does not create an ebook reader or prove a purchase was completed. This separation protects both reader expectations and the integrity of the application: describe the action that the application can actually perform, and handle the operating system's refusal to launch externally.
+
 ## 14.1 Begin with the reader's questions
 
 A detail view answers three questions: What is this record? What information is known about it? What can I do here?
@@ -217,6 +238,10 @@ For accessibility, follow focus from the title through metadata, sample heading,
 - Which detail behaviors require device observation even when all portable tests pass?
 
 Chapter 15 moves from discovering content to entering a custom-song request. The form will need a richer state model because a customer's unfinished input must survive validation and navigation rather than being replaced by another catalog selection.
+
+## Chapter Summary
+
+Content details turn catalog identity into a useful decision screen without claiming ownership of external content. Stable IDs are resolved before presentation, and missing metadata stays missing rather than becoming a fabricated fact. Bundled plain-text reading samples carry provenance and do not imply a complete ebook reader. Reviewed external destinations pass through a constrained, testable adapter; a canceled launch, failed handoff or stale asynchronous completion must not erase the reader's context. The guided lab exercises these boundaries with controlled failures. Portable test doubles verify business and presentation decisions, while real Android and iOS browser behavior, long-text accessibility and return navigation still require native checks.
 
 ## Official references
 
