@@ -74,7 +74,7 @@ SongRequestRules.Validate returns field/message pairs. It accepts the draft and 
 
 The portable rules reject unsupported lengths, blank required fields, oversized text, and an email value that cannot be parsed as one address. Email parsing checks shape, not mailbox ownership or deliverability. Do not show “email verified” after this check. Verification requires a separate service workflow.
 
-The example limits genre to 80 characters, occasion and contact name to 120, vocal notes to 500, story to 4,000, and email to 254. These are explicit teaching limits that must match the later API contract. The controls expose the same limits to discourage accidental excess, while portable validation protects callers that do not use the controls.
+The example limits genre to 80 characters, occasion and contact name to 120, vocal notes to 500, story to 4,000, and email to 254. These are explicit teaching limits that **a future customer-request API must enforce independently**. The Chapter 18 companion API exposes public catalog reads only; it does not yet have a song-request or order-writing endpoint. The controls expose the same limits to discourage accidental excess, while portable validation protects callers that do not use the controls.
 
 ```csharp
 var errors = SongRequestRules.Validate(Draft, Step);
