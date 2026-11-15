@@ -184,7 +184,7 @@ There is no automatic browser retry. Opening another application is a visible us
 
 Suppose the wide layout shows one book and starts a browser handoff. Before that task completes, the user selects another record. A late failure must not appear under the second book as though its link had failed.
 
-The detail model captures its revision and URL before awaiting. It handles the result or exception, then publishes only if that revision still owns the view:
+The detail model captures its revision and URL before awaiting. It handles the result or exception, then publishes only if that revision still owns the view. The following is **a shortened control-flow excerpt**, not a compilable method: `result` is assigned by the omitted browser handoff and catch blocks. See the full `DetailViewModel.OpenAsync` implementation in the companion source:
 
 ```csharp
 var own = revision;
