@@ -7,6 +7,27 @@ A network request has several separate questions to answer: did the connection w
 
 **Prerequisites:** the validated catalog model from Chapter 12, asynchronous state ownership from Chapters 13–14, and the distinction between retries and new operations from Chapter 16. **Learning goals:** define a small HTTP boundary; reuse a client; apply one cancellation/deadline policy to headers, bodies and waits; validate bounded JSON; and retry only selected failures. **Delivered capability:** a GET-only catalog adapter, deterministic transport tests, and a labeled native demo screen without a deployed dependency.
 
+## What You'll Learn
+
+You will learn to isolate HTTP access behind a narrow catalog interface; enforce response size and schema constraints; apply one total request deadline; choose bounded retry behavior for safe reads; classify failures without exposing private data; and verify behavior with an injected HTTP handler.
+
+**Prerequisites:** Chapter 12's catalog contract and the companion HTTP lab. **Deliverable:** A portable networking boundary whose failure handling can be tested without running a public service.
+
+### Guided lab: challenge a successful status code
+
+1. Execute the companion HTTP client tests against an in-process handler that returns a valid catalog document. Record the expected number of items.
+2. Return HTTP 200 with an HTML captive-portal page instead of JSON. Confirm that the client rejects its content type rather than treating the catalog as empty.
+3. Return an oversized response. Verify that the configured body limit stops ingestion before unbounded allocation.
+4. Arrange a transient read failure followed by a valid response. Observe which failures the bounded retry policy permits; do not generalize this policy to unsafe writes.
+5. Cancel the operation or exhaust its overall deadline. Check that later retries do not extend the logical request indefinitely.
+6. On failure, check that the existing bundled catalog remains available and logs do not contain response bodies or secrets.
+
+**Expected result:** HTTP status, media type, byte limits, schema, and operation ownership are evaluated separately. Handler tests do not establish TLS, routing or mobile-device connectivity.
+
+### Worked reasoning: 200 OK does not mean useful data
+
+HTTP success means the transport protocol received a response classified as successful. It does not prove that the response is the application's expected document. A hotel portal, proxy error or unexpectedly shaped JSON can all violate the contract. Verify the bytes and the domain model before replacing useful on-screen content.
+
 ## Begin with the contract
 
 ICatalogSource exposes one operation: load a complete read-only list of catalog items. The asynchronous boundary takes a CancellationToken. It does not expose HttpResponseMessage, native connectivity enums, a customer account, or payment state to the rest of the application.
