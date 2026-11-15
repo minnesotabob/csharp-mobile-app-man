@@ -1,3 +1,44 @@
+# Chapter 26 - threat modeling and security verification - November 15, 2026 (Central)
+
+Added the final initial Part V chapter, an authored trust-boundary diagram, focused
+T-ID threat register, guided verification lab, least-privilege/dependency/secret/file
+review, worked abuse cases and explicit native/deployment evidence limits.
+
+Verified companion executable source: `a3d2a880195714dc61a2971bc2ab3f7aab1d78a9`.
+
+- Portable Release build: 0 warnings/errors; **360 cases pass**, including 15 new
+  destination/private-ID cases; no errors/failures/skipped/not-run cases. Both
+  earlier console labs also execute successfully.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43761369874
+- API/probe builds: 0 warnings/errors; **46 API cases pass**, including nine new
+  protected-read security cases; public loopback smoke passes.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43761369921
+- Android Debug compile: success; 0 final compiler warnings/errors. SDK dependency
+  setup retains the documented unresolved cmdline-tools;21.0 warning.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43761369900
+
+The API enforces the shared bounded ID policy, sends no-store for private-prefix
+responses, applies an eight/minute shared process-local read budget after authorization,
+and emits only fixed event-2601 outcomes. Tests retain real JWT middleware/static
+fixture metadata. No new package, customer write, lifecycle or file endpoint is added.
+
+The proof has **267 pages, 34 bookmarks and 23 distinct images**: three Part illustrations
+and twenty authored technical figures. Chapter 26 starts on page 256. All 12 new pages
+were rendered for inspection; the trust-boundary and final summary/exercise pages were
+also reviewed at larger scale. All-page trim/text checks and image references pass.
+
+Limits: shared budget is not production fairness/distributed/auth-cost/DDoS protection.
+The custom audit test covers one projection, not proxy/provider/framework logs or a
+complete mutation audit trail. Native/provider/TLS/storage/backup/full lifecycle checks,
+current advisory/secret scans, deployment sizing and customer-file access remain pending.
+The register names owners and needed evidence instead of claiming complete security.
+
+Next: Part VI and Chapter 27 - Audio Playback and Podcast Progress. Use authorized media,
+explicit playback ownership and the same interruption/evidence standards. Preserve the
+supplied editorial review's visual architecture and concrete application narrative.
+
+## Earlier milestone record
+
 # Chapter 25 - profiles, privacy and lifecycle - November 15, 2026 (Central)
 
 Added the account-workspace chapter, two authored figures, real SQLite profile and
