@@ -41,3 +41,29 @@ Reviewed the manuscript's fenced code excerpts for Chapters 12–18 and compared
 - Chapter 15 no longer implies the existing API accepts song requests. It accurately states that the API currently provides public catalog reads only and a future request endpoint must independently validate character limits.
 
 **Limits:** This targeted inspection is not an exhaustive diff of all 18 chapter claims or every line of source. No `dotnet` compilation/test command or native-device run was executed during this audit. Do not convert reviewed excerpts into a claim of fully reproducible code until the paired revision is checked and executed.
+
+## Pass 3: historical source milestone review — November 15, 2026
+
+Checked the Chapter 1–11 manuscript code snippets and selected assertions against two **specific historical** code revisions rather than the default branch:
+
+- Part I (Chapters 1–5): `0b8973660cc21269ff79eb54733edaf428fb5dac`
+- Part II (Chapters 6–11): `9497b0d7e8acb74c07c50be8cb56f26453664fbb`
+
+Source files inspected include Part I `MauiProgram.cs`, `App.xaml.cs`, `MainPage.xaml`, `MainPage.xaml.cs`, the starter `CatalogSearch.cs`, `CatalogTests.cs`, `PricingTests.cs`, `SongPricing.cs`, `catalog.json`, `global.json` and project files; and Part II `CatalogBrowserViewModel.cs`, `CatalogPage.xaml`, `CatalogPage.xaml.cs`, `CatalogCard.xaml`, `App.xaml`, `AppShell` navigation adapter, `DetailsPage.xaml.cs`, `UiText.cs` and `AdaptiveLayout.cs`.
+
+### Verified by source comparison
+
+- Chapter 4's DI setup, NavigationPage startup, XAML row structure and code-behind search handler correspond to the original Part I files.
+- Chapter 5's xUnit v3 package version 4.0.0, historical catalog ID expectations, and the three-minute vocal three-song expected total USD 483.30 correspond to the checked-in tests and pricing rule.
+- Chapter 6's themed label style and six-row catalog layout correspond to Part II XAML.
+- Chapters 7–8's view-model commands, notifications, Shell route and validated ID navigation correspond to Part II source.
+- Chapter 9's image reference `catalog_placeholder.png` is declared in XAML while the source asset is `catalog_placeholder.svg` registered via the MAUI image pipeline. It is a generated-resource name rather than a missing checked-in PNG.
+- Chapter 10's RESX/ResourceManager lookup and singular/plural result text correspond to Part II.
+- Chapter 11's `WideBreakpoint = 900` and `IsWide` policy correspond to the portable implementation and native page code.
+
+### Manuscript corrections committed
+
+1. Chapter 7 now explicitly distinguishes the Part II two-way SearchBar binding from Chapter 13's later one-way view-model binding plus page-owned 250-ms debounce. Readers must select the appropriate source revision to reproduce either example.
+2. Chapter 8 no longer describes the default `main` branch as the evolving implementation; it names the two historical revision IDs and the current `work/chapter16-pricing` review branch.
+
+**Audit status:** These are read-only source comparisons and documentary fixes. They do not prove that the book's excerpts build alone, that fresh tests passed, or that Android/iOS behavior was exercised. Fresh CI, physical/emulator checks, and revised typesetting remain outstanding.
