@@ -30,7 +30,7 @@ Unexpected back behavior usually belongs to the Shell route stack, not to catalo
 
 The Part I application used NavigationPage around MainPage. Part II moves startup to AppShell and different pages. Both designs remain understandable only if a reader knows which source revision belongs to which explanation.
 
-docs/milestones.md identifies the Part I commit. Main represents the evolving implementation. Use history to reproduce an earlier example rather than retaining several divergent applications without version labels.
+`docs/milestones.md` identifies the Part I commit `0b8973660cc21269ff79eb54733edaf428fb5dac` and the verified Part II source `9497b0d7e8acb74c07c50be8cb56f26453664fbb`. **Use the pinned Part II revision to reproduce this chapter's implementation.** Later chapters continue on the `work/chapter16-pricing` review branch, which can differ from the repository's default `main` branch. Neither the current default branch nor an unspecified latest checkout is a reliable substitute for the chapter milestone. Use recorded source history rather than maintaining several unversioned divergent applications.
 
 The old MainPage files remain as an educational starter in the source tree, but Part II startup does not resolve them. The current composition root registers HomePage, CatalogPage, DetailsPage, and AppShell.
 
