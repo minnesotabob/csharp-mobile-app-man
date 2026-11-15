@@ -7,6 +7,32 @@ The first eleven chapters needed a small list that could drive a native interfac
 
 The files for this chapter are in src/GnazzosWorld.Core/Catalog, with fixtures under Data and regression cases in CatalogMetadataTests.cs. The changes are a first catalog model, not an import of every book, recording, artist, or podcast on the author's website.
 
+## What You'll Learn
+
+By the end of this chapter, you will be able to:
+
+- distinguish a catalog item from its creator, edition, and delivery service;
+- design stable identifiers that survive title and display-name changes;
+- represent optional dates and content advisories without inventing facts;
+- validate a whole bundled catalog, including relationships between files;
+- test both successful imports and deliberately malformed fixtures.
+
+**Prerequisites:** Complete Chapters 1–11 and have the companion portable test project available. **Deliverable:** A validated local catalog snapshot whose records and creator references remain stable as display metadata changes.
+
+### Guided lab: trace one catalog record
+
+1. Open the companion solution and locate the catalog model, bundled JSON files, loader, and metadata tests. Use the Chapter 12 source milestone documented in the companion repository rather than assuming a later checkout is identical.
+2. Choose the bundled song *Northern Lights*. Record its item ID, creator ID, content kind, and optional fields. Do not infer that missing metadata means a negative answer.
+3. Follow the creator ID into the bundled creator fixture. Confirm that the relationship is made by ID rather than the artist's display name.
+4. Run the portable test suite using the instructions in the companion README. Note the actual result before changing fixture data.
+5. Temporarily replace the song's creator ID with an unknown ID and run the relevant validation tests. Expect the snapshot to be rejected. Restore the original ID and run the tests again.
+
+**Expected result:** A correctly linked snapshot loads; an unknown creator reference causes validation failure. This is a reproducible contract exercise, not a claim that a native device has been tested.
+
+### Why the relationship matters
+
+Imagine changing the artist's display name on a promotional page. If the application used display text as a foreign key, every linked song would need to change at the same moment. By using an immutable creator ID, the content model can change presentation independently of identity. The same reasoning applies to book editions, revised titles, and external streaming-provider metadata.
+
 ## 12.1 Decide what one record represents
 
 Our ContentKind enum has three values: Book, Song, and Podcast. In this small catalog, a Podcast item represents an episode. A future show directory needs a separate show identity and an episode-to-show relationship. We do not overload one record with both meanings.
@@ -181,6 +207,10 @@ Do not “fix” the failing relationship exercise by changing the loader to ign
 - Why should future provider DTOs be translated before they reach the app?
 
 The next chapter builds on these identities to extend search and filtering, define sorting behavior, and introduce favorites. Stable IDs let those features survive renamed titles and reordered records.
+
+## Chapter Summary
+
+A useful mobile catalog starts with trustworthy identities and explicit meaning. This chapter separates content records from creators, keeps stable IDs independent of display names, and treats absent values as unknown rather than inventing dates or advisories. The bundled loader validates both individual records and relationships across files so broken references fail at the import boundary instead of surfacing later as confusing user-interface behavior. The guided lab demonstrates this contract by deliberately introducing an invalid creator reference, observing the expected failure, and restoring the fixture. These rules also prepare the application for provider imports, discovery, navigation and eventual synchronization. The result is intentionally a validated offline teaching snapshot, not a production content-ingestion service or a guarantee of native-device behavior.
 
 ## Official references
 
