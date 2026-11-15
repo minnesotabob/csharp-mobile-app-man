@@ -43,3 +43,5 @@ All material is copyright 2026 John F. Gnazzo. Public visibility does not grant 
 
 - [Part V — Identity, MFA, and Account Security](parts/part-05/introduction.md)
 - [Chapter 22 — Native-App Authentication and Managed Identity](chapters/ch22-native-authentication.md)
+
+- [Chapter 23 — Sessions, Secure Storage, and API Authorization](chapters/ch23-sessions-storage-authorization.md)

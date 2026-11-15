@@ -1,3 +1,40 @@
+# Chapter 23 — sessions, storage and API authorization — November 15, 2026 (Central)
+
+Added the session/API chapter, two authored diagrams, bounded credential-envelope and
+request-client walkthroughs, real bearer-middleware tests, diagnostics, worked exercises
+and native/provider verification records. The anniversary-request narrative connects
+credential lifetime and persistence to independently enforced record ownership.
+
+Companion source: `50a5abf391e37fef04866c0528af4da195954354`.
+
+- Portable Release build: 0 warnings/errors; **321 cases passed**, no errors/failures/
+  skipped/not-run cases, including 14 new session/client cases.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43746174414
+- API and probe builds: 0 warnings/errors; **37 API cases passed**, including 11 new
+  signed-token/ownership cases. Public loopback smoke also passed.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43746174402
+- Android Debug compilation: success; 0 final compiler warnings/errors. Dependency
+  installation retains the documented unresolved cmdline-tools;21.0 setup warning.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43746174337
+
+The reviewed proof has **232 pages, 31 bookmarks and 19 distinct images** (three Part
+illustrations plus sixteen authored figures). Chapter 23 begins on page 220. Opening,
+diagrams, code, guided lab, evidence/diagnostic tables, summary, worked exercises and
+final native record/reference pages were rendered for inspection. Text-boundary and
+8x10 trim checks cover every page. The supplied editorial review remains the guide.
+
+Limits: the session vault/provider tests are doubles; API tests use ephemeral RSA keys
+and static metadata through the real JWT middleware. The running API has no customer
+fixtures or signing private key. Live provider acquisition/rotation/revocation, phone
+SecureStorage/reinstall, device TLS, iOS/runtime and screenshots remain pending. The
+Session lab is separate from Chapter 22's process-only example and does not migrate
+existing favorites/drafts. Local clearing does not imply remote logout or deletion.
+
+Next: Chapter 24 — provider-supported MFA and recovery. A real tenant and device matrix
+is still required before claiming complete identity/session/MFA journeys.
+
+## Earlier milestone record
+
 # Part V / Chapter 22 identity draft — November 15, 2026 (Central)
 
 Added Part V's introduction and identity roadmap, and Chapter 22's hosted-sign-in

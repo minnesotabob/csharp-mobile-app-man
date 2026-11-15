@@ -94,3 +94,13 @@ platform boundaries, cancellation and late-result ownership. Tables distinguish 
 access tokens, verification layers and troubleshooting. Worked exercises and a native
 record/screenshot worksheet close the chapter. Auth0 is an implementation candidate,
 not a completed real-provider validation. Native screenshots remain pending.
+
+## Chapter 23 application of the review
+
+Added two authored diagrams: renewal/persistence ordering and independent server
+validation, permission and ownership gates. The anniversary-request narrative links
+secure storage, session lifetime and a private read to the same customer journey.
+The chapter includes a concrete code map, guided lab, signed-token middleware tests,
+troubleshooting, worked exercises and a native/provider evidence matrix. Default
+customer storage is empty; test records and signing keys remain test-only. Auth0,
+SecureStorage and TLS/device observations are still explicitly pending.
