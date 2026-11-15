@@ -1,11 +1,11 @@
-# Building Mobile Apps with C# and .NET MAUI
-## Detailed outline — draft 1
+# Building Mobile Apps with C# 15
+## Detailed outline — draft 2
 
-**Working subtitle:** A Windows Developer’s Guide to Android, iPhone, and Tablet Applications  
+**Subtitle:** .NET 11 and .NET MAUI 11: A Windows Developer’s Guide to Android, iPhone, and Tablets  
 **Author:** John F. Gnazzo  
 **Proposed imprint:** DGreatGnazzini Press LLC  
 **Planning date:** November 14, 2026  
-**Status:** Editorial and implementation plan; chapters and applications have not yet been written or tested.
+**Status:** Outline approved as a working direction. Foundation code and opening manuscript drafts are in development; see planning/progress.md for verification evidence.
 
 ## Editorial brief
 
@@ -350,7 +350,7 @@ Before full typesetting, produce representative 8 × 10 pages containing prose, 
 
 ## Decisions to settle during initial implementation
 
-1. Final book title, subtitle, application name, and visual identity; current names are working defaults.
+1. Application name and visual identity; title and subtitle have been approved.
 2. Exact stable toolchain and compatible packages, documented after a build spike.
 3. Managed identity provider and practical reader MFA/recovery setup.
 4. Unit-test framework and verified platform UI-test tooling.
