@@ -27,6 +27,8 @@ This repository holds the manuscript, planning records, and production specifica
 - [Part III introduction](parts/part-03/introduction.md)
 - [Chapter 12 — Catalog models](chapters/ch12-catalog-models.md)
 - [Chapter 13 — Search, filters, sorting, and favorites](chapters/ch13-search-filters-favorites.md)
+- [Chapter 14 — Content details, samples, and links](chapters/ch14-content-details-samples-links.md)
+- [Chapter 15 — Custom-song request form](chapters/ch15-custom-song-request.md)
 - [Companion code](https://github.com/minnesotabob/csharp-mobile-app-code)
 
 All material is copyright 2026 John F. Gnazzo. Public visibility does not grant republication rights. ISBNs, publication date, legal notices, and final third-party credits remain production decisions.

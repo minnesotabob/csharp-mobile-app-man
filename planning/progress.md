@@ -1,3 +1,75 @@
+# Chapter 16 draft milestone — November 15, 2026 (Central)
+
+First drafts now cover Chapters 1–16. The 8 × 10 proof is 106 pages; Chapter 16
+starts on page 99. It adds approximately 2,800 words on archived price versions,
+marginal discounts, decimal arithmetic, canonical quote snapshots, expiry,
+idempotency, duplicate taps and uncertain-response recovery. The contents and
+eight new chapter pages were visually reviewed; all 106 pages pass mirrored
+text-margin checks and the PDF has 22 bookmarks. Fonts remain 11 pt body/9.5 pt code.
+
+The companion source recovers Chapters 14–15 and adds quantity, 15-minute quotes,
+a process-local simulated service and 30 new portable cases. A lost-response
+fixture accepts first and then throws, verifying reuse of the original operation.
+No live order, payment, email or customer transmission exists. The demo's pending
+operations and accepted receipts disappear on restart. Device checks, iOS builds,
+form localization and focus refinement remain pending.
+
+Work is published on work/chapter16-pricing for review. The code draft PR is
+https://github.com/minnesotabob/csharp-mobile-app-code/pull/1 . Default branches
+remain unchanged. Earlier default-branch automatic review rejection is not retried.
+Current build evidence will be recorded in companion docs/verification.md.
+
+Next: Part IV introduction and Chapter 17, HTTP APIs and Resilient Networking.
+The full 40-chapter/eight-Part plan and final production work remain in place.
+
+## Earlier milestone record
+
+# Chapter 15 draft milestone — November 15, 2026 (Central)
+
+First drafts now cover Chapters 1–15. The 8 × 10 proof is 98 pages, with the new
+chapter starting on page 93. The one-page contents, six new chapter pages, tables,
+code and references were visually reviewed. All pages passed a text-margin check;
+the PDF has 21 bookmarks. Body and code sizes remain unchanged.
+
+Chapter 15 adds the three-step custom-song form, conditional vocal notes, a clean
+content default, contact/story validation, review invalidation, and explicit local
+save/discard. A process-shared view model preserves navigation edits; a versioned
+local JSON draft provides explicit saving across restarts. This is anonymous local
+storage, without app-level encryption or account isolation. New form strings are
+English; localization and field-level focus routing remain follow-up work.
+
+29 new portable cases are authored. They have NOT been executed: this continuation
+environment has no dotnet executable. Android/iOS compilation and all native checks
+also remain pending. XML/JSON/resource syntax and whitespace checks passed. Chapter
+14 source was recovered from its review bundle and is included with this milestone.
+No new CI result or GitHub publication is claimed. Earlier automatic review blocked
+default-branch publication; that rejected action was not retried here.
+
+Next: execute the Chapter 14–15 suite and native builds when a suitable environment
+is available; Chapter 16 introduces versioned example pricing and simulated reliable
+submission. No actual order, email, payment or customer data transmission is added.
+
+## Earlier milestone record
+
+# Chapter 14 draft milestone — November 15, 2026 (Central)
+
+First drafts now cover Chapters 1–14. The 8 × 10 proof is 92 pages. Chapter 14 adds
+approximately 2,700 words on detail metadata, plain-text reading samples, provenance,
+reviewed website destinations, browser handoff, stale-result ownership, exercises and tests.
+
+Companion source adds a credited original teaching sample (not a published-book excerpt),
+shared detail presentation, English/Spanish labels, a native Browser adapter and 27 new
+portable test cases. XML/resource/JSON syntax and whitespace checks passed. The new
+portable compilation, test execution and Android compilation remain PENDING: automatic
+review blocked pushes to the default branch, including after prior authorization was retrieved.
+No new CI pass is claimed. Chapter 13's 112-test/Android evidence remains historical only.
+
+Local companion commit: 8aaf2d1. GitHub publication is pending approval. A separate artist
+biography route, full ebook reader, playback, device observations and iOS builds remain pending.
+Next: resolve publication/build verification, then Chapter 15's custom-song request form.
+
+## Earlier milestone
+
 # Chapter 13 draft milestone — November 14, 2026 (Central)
 
 ## Written and typeset
