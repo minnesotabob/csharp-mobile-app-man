@@ -237,6 +237,12 @@ Also remove the selected favorite while Favorites only is active. Confirm that d
 
 Chapter 14 develops content details, reading samples, and external links. It will use these stable selections and identities while making the next boundary explicit: a catalog record is not the content itself.
 
+## Troubleshooting the guided lab
+
+- **Favorites-only unexpectedly shows every item:** Check whether the code confused an empty ID set with the null filter meaning all records.
+- **Older typing overwrites newer results:** Trace the debounce revision/ownership check in addition to cancellation; cancellation requests alone do not prove an old continuation cannot run.
+- **A favorite fails to save:** Check the adapter's reported failure before replacing visible in-memory state. Native persistence across process restarts still requires device verification.
+
 ## Chapter Summary
 
 Search is a coordinated policy, not a stack of unrelated UI filters. This chapter combines text, kind, creator identity, ordering, and optional favorites restrictions while preserving deterministic results. It treats human-readable text differently from stable IDs and gives empty favorites a precise meaning. Input debouncing improves the typing experience, but a revision check is still necessary to reject stale completion. Device-local preferences are a small teaching store, not synchronized account state, and failed writes must not alter the visible favorites set. The guided lab makes each distinction observable with portable tests and deliberate failures. Full native restart, accessibility, and keyboard behavior still require device verification.
