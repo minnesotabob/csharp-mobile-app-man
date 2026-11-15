@@ -9,6 +9,27 @@ Our example begins on the home page and opens a three-step request builder. The 
 
 **Verification status:** The Chapter 14–16 portable suite has run on Windows CI with 198 passing tests. The companion verification log records the exact tested revision and native build results. Actual Android/iOS device behavior remains unverified.
 
+## What You'll Learn
+
+You will learn to break a complex customer request into manageable steps; keep draft state independent of controls; use conditional inputs without losing information; validate at the moment a decision requires it; invalidate an outdated review; and distinguish an explicit saved draft from unsaved in-process edits.
+
+**Prerequisites:** The Chapter 14 navigation patterns, portable test project, and a development build of the sample app. **Deliverable:** A three-step request builder whose progress can be tested independently of the native keyboard.
+
+### Guided lab: save, edit and recover
+
+1. Start a new request with an instrumental choice. Observe which vocal fields are hidden and whether their stored values are intentionally retained or cleared.
+2. Enter the story and contact details, advance to review, then edit the story. Verify that the earlier review is invalidated rather than displayed as current.
+3. Save a draft explicitly. Change the story again without saving and navigate away and back during the same process. Observe the in-memory state.
+4. Restart the app and reload the draft. The expected persisted result is the last *saved* version, not an uncommitted edit.
+5. Inject a draft-store failure. Confirm that the interface does not report success and does not discard the editable request.
+6. Repeat the journey with a large font and screen reader on a real device; record it as pending if no device run is available.
+
+**Expected result:** Review reflects the most recently validated input, explicit save controls persistence, and a failed save cannot masquerade as success. No part of this exercise submits a real customer order.
+
+### Worked reasoning: saved and editable are separate states
+
+Users reasonably expect an unfinished composition to survive moving between form steps. That does not automatically mean every keystroke should be written to permanent storage, particularly when the story contains personal details. Separate the live editing model from the saved snapshot, make the save action explicit, and explain which data survives process termination.
+
 ## Begin with the customer's decisions
 
 A long form is easier to build than a good short journey. Before adding controls, group fields according to the decision the customer is making. The music step contains supported lengths, vocal versus instrumental treatment, genre, occasion, and permission for explicit content. Optional vocal notes appear only when vocals are selected. The story step gives the customer room for names, memories, tone, and details they want included. The contact step collects a name and a single email address, then offers review.
