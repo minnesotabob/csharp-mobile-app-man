@@ -5,6 +5,27 @@ A native interface is measured and arranged in an environment the application do
 
 This chapter explains the XAML structure behind the new home and catalog pages. Its result is a readable interface with shared appearance rules, a bounded collection area, and a clear place for later adaptive behavior.
 
+## What You'll Learn
+
+By the end of this chapter, you will be able to read a XAML page as an object graph; predict Grid measurement behavior; distinguish static resources from theme-aware bindings; diagnose a missing control versus a missing binding value; and verify that larger text remains readable.
+
+**Prerequisites:** Complete the preceding chapters and use the matching Part II source revision from `docs/milestones.md`. **Deliverable:** A testable improvement or diagnostic exercise in the Gnazzo's World application, without assuming native-device verification.
+
+### Guided lab: make a page respond to constraints
+
+1. Check out the Part II source milestone described in `docs/milestones.md`, then open the home page XAML and the shared resources in `App.xaml`.
+2. Trace the page's root layout, its immediate children, and the location of its bounded collection. Write a one-sentence explanation of why the list needs a finite viewport.
+3. In a disposable working copy, change a `Grid` row allocated with `*` sizing into an `Auto` row. Predict how a growing list or keyboard appearance could affect the measured content. Restore the original setting after inspecting it.
+4. Find one color or spacing value supplied through a shared resource. Follow that resource to its declaration; compare it with a theme-aware resource and explain which should change in dark mode.
+5. Temporarily break an XAML namespace and build to see a markup/type-resolution error. Restore it, then deliberately misspell a binding path. Distinguish build diagnostics from a view that exists but displays no data.
+6. Record narrow-screen, large-text, and dark-theme results on an emulator or device when available. A code review alone cannot verify those interactions.
+
+**Expected result:** The reader can identify the layout and binding ownership of each visible region, and can explain why compilation and runtime presentation failures require different investigations.
+
+### Troubleshooting the walkthrough
+
+A page that will not compile suggests a type, resource key, or XAML syntax issue. A page that compiles but has blank text suggests a binding context, property name, or missing notification. Content that disappears when the keyboard opens suggests a viewport and measurement problem. Tackle these separately rather than scattering fixed heights through the layout.
+
 ## 6.1 Read XAML as an object graph
 
 XAML declares objects and their properties. A ContentPage contains a layout; the layout contains views. Namespaces identify framework and application types. The x:Class connects the document to a partial C# class, while x:Name identifies a generated field for a specific named object.
@@ -113,6 +134,10 @@ The application now has a home introduction, search/filter browser, shared theme
 2. Increase text size and record which automatic rows consume the available height.
 3. Move a repeated color into a resource and verify light/dark behavior.
 4. Deliberately break a namespace and a binding separately; compare their diagnostics.
+
+## Chapter Summary
+
+This chapter turns a declarative XAML file into an understandable object graph and measurement system. Rows, columns, scroll containers, resource lookup, and styles each solve different responsibilities. Star-sized regions and bounded collections matter because mobile screens do not provide unlimited height. Theme resources and typography choices must remain responsive to system appearance and text scaling. The guided lab traces actual source files, changes a measurement rule temporarily, and compares XAML compilation faults with data-binding symptoms. It closes by separating what source inspection proves from what only a device can show: keyboard occlusion, large-text behavior, native appearance, and assistive-technology reading order.
 
 ## References and index terms
 
