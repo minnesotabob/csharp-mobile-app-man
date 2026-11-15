@@ -208,6 +208,12 @@ Do not “fix” the failing relationship exercise by changing the loader to ign
 
 The next chapter builds on these identities to extend search and filtering, define sorting behavior, and introduce favorites. Stable IDs let those features survive renamed titles and reordered records.
 
+## Troubleshooting the guided lab
+
+- **A snapshot fails to load:** Check required JSON fields and types first, then inspect duplicate IDs and creator references. An unknown creator is an import error; do not silently discard the relationship.
+- **An optional date fails parsing:** Distinguish an absent date from an invalid supplied date such as February 30. Keep unverifiable dates absent instead of fabricating a placeholder.
+- **A creator name change breaks navigation:** Verify the route and relationship use the stable ID rather than the display name. Restore fixture integrity and rerun the metadata tests.
+
 ## Chapter Summary
 
 A useful mobile catalog starts with trustworthy identities and explicit meaning. This chapter separates content records from creators, keeps stable IDs independent of display names, and treats absent values as unknown rather than inventing dates or advisories. The bundled loader validates both individual records and relationships across files so broken references fail at the import boundary instead of surfacing later as confusing user-interface behavior. The guided lab demonstrates this contract by deliberately introducing an invalid creator reference, observing the expected failure, and restoring the fixture. These rules also prepare the application for provider imports, discovery, navigation and eventual synchronization. The result is intentionally a validated offline teaching snapshot, not a production content-ingestion service or a guarantee of native-device behavior.
