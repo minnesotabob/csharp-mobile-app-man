@@ -1,3 +1,15 @@
+# Fresh CI verification requested — November 15, 2026 (Central)
+
+A nonfunctional XML comment was committed to the companion repository's `Directory.Build.props` at revision `e0368e4d810215b78b303abc2eab7bfdd17e049a` to initiate the existing GitHub Windows validation workflows for the revised documentation baseline.
+
+- Portable tests: https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43718726273
+- ASP.NET Core API checks: https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43718726243
+- Android compilation: https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43718726297
+
+All three runs were still **in progress** at the last status check. This record does not claim they passed. No local .NET execution or device tests occurred. The current environment cannot clone the public repository directly because GitHub host resolution fails; consequently a full refreshed 8 × 10 PDF proof was **not** generated in this pass. A complete source checkout, the existing `production/render_opening.py` renderer, and visual inspection remain necessary.
+
+## Earlier milestone record
+
 # Technical/editorial audit — first pass, November 15, 2026 (Central)
 
 The first structural/source-inventory audit of Chapters 1–18 is recorded in [technical-audit-01.md](technical-audit-01.md). All chapters have learning objectives and standalone summaries; Chapters 15–18 now separate exercises from summaries. Chapters 12–17 gained targeted troubleshooting. Markdown fence parity and explicit companion source-filename checks passed. The companion learning guide was corrected to describe this initial instructional work accurately.
