@@ -1,3 +1,39 @@
+# Chapter 18 draft milestone — November 15, 2026 (Central)
+
+First drafts now cover Chapters 1–18. The 8 × 10 proof is 125 pages; Chapter 18
+starts on page 117 and adds approximately 3,100 words on the companion API, public
+wire documents, revision-aware paging, validation/problems, OpenAPI, local host
+configuration, HTTPS probing, device addressing and layered integration checks.
+
+The contents remains one linked page and the PDF has 25 bookmarks. The nine new
+chapter pages, tables, code and references were visually reviewed; all 125 pages
+pass mirrored text-margin checks. Body/code sizes remain 11/9.5 points.
+
+Verified companion source: 5c24e63dffd494463716730fdf553af74453a2ae.
+- Portable Release build: zero warnings/errors; 245 tests pass (10 new document cases).
+- API/test/probe Release compilation: zero warnings/errors; 26 integration cases pass.
+- Actual temporary-loopback Kestrel HTTP startup/contract smoke passes and stops host.
+- Android Debug compilation succeeds; final compile zero warnings/errors.
+- Portable: https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43709057778
+- API/probe/smoke: https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43709057781
+- Android: https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43709057777
+
+TestServer exercises the actual API pipeline but does not use real sockets. The
+Kestrel check uses loopback HTTP, not TLS. The HTTPS probe compiles but actual
+certificate/device integration is unverified. Native device work and iOS builds
+remain pending, as does the existing Android setup warning. No backend deployment,
+tunnel, account, customer write, database or payment is activated. Main catalog
+and native lab keep their previous bundled/in-process modes.
+
+A transient publication review rejection was resolved by read-only verification
+of repository ownership, public status, permissions and the existing draft PR.
+Work remains on the same review branch and draft PRs; default branches unchanged.
+
+Next: Chapter 19, Local Storage and Database Migrations, with temporary-database
+tests, explicit persistence boundaries, schema upgrades and failed-write recovery.
+
+## Earlier milestone record
+
 # Chapter 17 draft milestone — November 15, 2026 (Central)
 
 First drafts cover Chapters 1–17. The 8 × 10 proof is 116 pages, with Part IV
