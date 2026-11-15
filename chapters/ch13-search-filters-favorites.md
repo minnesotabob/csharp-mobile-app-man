@@ -7,6 +7,27 @@ This chapter extends the existing local browser. We combine text, content kind, 
 
 There is still no remote search service. The cancellation examples control pending input, not an HTTP request. Network timeouts, server paging, and asynchronous remote-result publication belong to the later networking chapters.
 
+## What You'll Learn
+
+At the end of this chapter, you will be able to combine text, content kind, creator ID, sort order and favorites as one search policy; explain why stable ordering and identity matter; distinguish delayed typing from canceled network work; and verify persistence failures without silently losing a person's favorites.
+
+**Prerequisites:** The validated Chapter 12 catalog and companion portable test runner. **Deliverable:** A predictable local discovery experience with a bounded, device-local favorites store.
+
+### Guided lab: prove that filters compose
+
+1. Open the companion catalog search implementation and its discovery tests. Start with the unfiltered five-item sample rather than data from a live provider.
+2. Apply a content-kind filter, then add a creator ID. Before running the test, predict whether the second constraint should *replace* or *intersect* the first.
+3. Enable favorites-only using an empty set. Verify that the result is empty, not the complete catalog. Then supply one known item's ID and confirm that only eligible favorites remain.
+4. Sort two fixture records with the same visible title. Check that their stable IDs break the tie in a repeatable order.
+5. In the debounce tests, arrange for an older text update to complete after a newer one. Confirm that the earlier completion cannot overwrite the latest results.
+6. Simulate a failed preferences save. Check both the error state and the visible favorites list: the failed operation must not be shown as successfully saved.
+
+**Expected result:** Criteria intersect, ties are deterministic, stale input cannot win, and failed saves preserve visible state. These portable tests do not establish native persistence across an actual app restart.
+
+### Worked reasoning: three different notions of equality
+
+Human text search may ignore case and accents, but creator IDs use ordinal equality. Sort-order ties also depend on IDs, while the favorites store persists IDs rather than labels. If these rules are collapsed into one comparer, a convenient search behavior can accidentally become an identity bug. Write down which comparison a particular operation requires before choosing the API.
+
 ## 13.1 Separate search policy from controls
 
 CatalogSearch remains a portable function. It receives the data and criteria and returns a new ordered result array. It does not read a SearchBar, navigate, save preferences, or change selection.
@@ -215,6 +236,10 @@ Also remove the selected favorite while Favorites only is active. Confirm that d
 - What does the portable restart test fail to prove about native persistence?
 
 Chapter 14 develops content details, reading samples, and external links. It will use these stable selections and identities while making the next boundary explicit: a catalog record is not the content itself.
+
+## Chapter Summary
+
+Search is a coordinated policy, not a stack of unrelated UI filters. This chapter combines text, kind, creator identity, ordering, and optional favorites restrictions while preserving deterministic results. It treats human-readable text differently from stable IDs and gives empty favorites a precise meaning. Input debouncing improves the typing experience, but a revision check is still necessary to reject stale completion. Device-local preferences are a small teaching store, not synchronized account state, and failed writes must not alter the visible favorites set. The guided lab makes each distinction observable with portable tests and deliberate failures. Full native restart, accessibility, and keyboard behavior still require device verification.
 
 ## Official references
 
