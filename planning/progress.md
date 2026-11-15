@@ -1,3 +1,13 @@
+# Instructional revision checkpoint — November 15, 2026 (Central)
+
+Chapters 1–18 now have an initial instructional treatment in the review branch. Chapters 6–11 received learning objectives, source-oriented guided labs, troubleshooting, and independent Chapter Summary sections. Chapters 12–18 received explicit objectives and worked guided labs; Chapters 12–14 received separate chapter summaries while Chapters 15–18 retain existing summary/exercise sections. The technical scope and planned 40 chapters remain unchanged.
+
+This is a manuscript-text review-branch checkpoint, **not** a newly generated typeset proof. The previously recorded 142-page PDF is historical and does not incorporate these newer chapter edits. There is no new word-count/page-count estimate for the revised edition yet. The narrative examples reference existing companion code, but no fresh compilation, automated test run, device check, iOS build, screenshot inspection, or source-to-text line-by-line audit was performed as part of this checkpoint. Earlier CI results must be treated as historical source-revision evidence.
+
+Next: compare each Chapter 1–18 claim and code excerpt with the matching companion-code revision, fix discrepancies, run code CI, and regenerate and inspect the complete 8 × 10 proof. Then begin Chapter 19. The full manuscript remains an editorial draft, not publication-ready.
+
+## Earlier milestone record
+
 # Part I instructional revision — November 15, 2026 (Central)
 
 The manuscript remains at Chapters 1–18 and is now 142 pages. Chapters 1–5
