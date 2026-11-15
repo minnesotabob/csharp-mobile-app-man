@@ -1,3 +1,55 @@
+# Chapter 29 — downloads and media storage — November 15, 2026 (Central)
+
+Added a separate foreground public download lab, trusted descriptor and safe storage
+identity, explicit cancellation/restart, validated Range/If-Range resume, bounded body
+reads, complete length/hash verification, same-directory promotion, quota/free-space
+reserve and serialized verification/deletion. The companion API embeds the original
+10-second WAV at a fixed GET/HEAD range-capable route. Private delivery descriptors
+are rejected; no customer media or account-authorized delivery is implemented.
+
+Executed companion source: `373dad1f2ebe14843989c3f4bb578e5a97b02b19`.
+
+- Portable Release build: **0 warnings/errors; 448 cases pass**, including 35 new
+  real-file cases with simulated HTTP/free-space conditions; no errors/failures/
+  skipped/not-run cases. Both earlier console labs execute successfully.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43769261598
+- API/probe Release builds: **0 warnings/errors; 53 cases pass**, including 7 new
+  media cases and actual downloader cancel/resume through real ASP.NET range handling.
+  Real Kestrel loopback HTTP smoke checks the full fixture hash and exact ranged slice
+  in addition to health/catalog/paging. This is not HTTPS/native evidence.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43769261609
+- Android Debug compilation: **success; 0 final compiler warnings/errors**; existing
+  merged service permission/type checks pass. Dependency installation retains the
+  historical unresolved cmdline-tools;21.0 warning, separate from final compilation.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43769261603
+- Manuscript source `7384dff5c02c119201c623a04ab014243c44b830`: independent PDF CI
+  passes page size, chapter/figure markers and text boundaries.
+  https://github.com/minnesotabob/csharp-mobile-app-man/actions/runs/43769864461
+
+The chapter includes the Minnesota Bob trip-north narrative, private anniversary-song
+boundary, receive/verify/promote diagram, response decision table, explained source,
+guided restart/TLS lab, troubleshooting, 124-word summary and worked/independent
+exercises. Updated Part VI roadmap wording describes scope without conflating pending
+native work with implementation. The planned 40 chapters and advanced scope remain.
+
+Proof: **298 pages**, 8 x 10 inches, 11-point body/9.5-point code, 38 bookmarks,
+27 distinct images (three Part illustrations plus 24 authored figures). Chapter 29
+starts at page 290. Every page passed local trim/text-bound checks; new contact sheet
+and enlarged figure inspection confirm readable layout. The updated working PDF was
+saved successfully with Chapter 29.
+
+**Pending:** iOS compilation and native HTTPS trust/reachability, cancellation timing,
+process restart, cache eviction, competing disk usage and actual write/rename behavior.
+A free-space check is not a reservation and rename is not power-loss durability.
+Public cache storage is replaceable/anonymous; private delivery service/access,
+account-scoped publication, encryption/backup, background transfer registration and
+downloaded-path player composition remain unimplemented. The native acceptance matrix
+records these limits rather than converting compiler/test success into device claims.
+
+Next planned chapter: 30, Notifications, Deep Links, and Sharing. Historical records follow.
+
+---
+
 # Chapter 28 — background playback and system controls — November 15, 2026 (Central)
 
 Added a separate opt-in native audio lab, portable BackgroundPlaybackOwner, original
