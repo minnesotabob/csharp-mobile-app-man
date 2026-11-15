@@ -1,3 +1,42 @@
+# Editorial visual revision — November 15, 2026 (Central)
+
+Applied the supplied Chapters 1-20 editorial review without changing the 40-chapter
+scope or lowering technical depth. See `planning/editorial-visual-pass.md` for the
+concern-to-change map and outstanding native screenshot capture plan.
+
+Added **nine authored figures**: initial search architecture, MVVM ownership, HTTP
+acceptance gates, offline refresh, release roadmap, planned security boundary and
+three visual recaps after Chapters 5, 11 and 16. All new diagrams distinguish their
+milestone or planned state from actual device observations. Chapter 1 now directly
+compares MAUI, Flutter, React Native, platform-native and browser approaches, with
+when-not-to-use guidance and a concrete decision spike. Chapter 18 previews protected
+customer-data architecture; Chapter 17 gains a systematic diagnostic contract. More
+Northern Lights, Kai the Ninja and fictitious anniversary-song journeys connect the
+engineering to Gnazzo's World. Chapters 35/37 in the outline now explicitly require
+substantial diagnostics and full performance measurement labs.
+
+**Verified proof revision:** `ba8d67d6dfcdd476293bba3eec4d18d2af86cf2d`.
+https://github.com/minnesotabob/csharp-mobile-app-man/actions/runs/43734196520
+
+The revised PDF contains **191 pages, 27 bookmarks and 12 distinct images** (three
+existing Part illustrations plus nine new figures). Figure pages: 11, 17, 59, 71,
+98, 141, 147, 157 and 184. All expected figure captions, chapter markers, 8x10 trim
+and outer text boundaries passed the workflow checks. Independent PyMuPDF checks
+confirmed no broad boundary violations and no orphan visual-recap headings. Every
+new figure was reviewed as artwork and on its rendered manuscript page; comparison,
+diagnostics and security-preview text was also rendered for review. The image renderer
+now keeps a preceding subheading, figure and caption together after visual review
+found one orphaned recap heading in the initial proof.
+
+**Outstanding:** actual app screenshots, native browser wiring for Chapter 20, device/
+provider/iOS verification, full later performance/diagnostics labs, and remaining book
+production. Screenshot intervals are a capture/pagination goal, not satisfied by
+these diagrams. No screenshot or benchmark is fabricated. This revision changes
+manuscript, figures, outline and proof workflow only; it does not claim new app tests.
+Earlier 266-test/Android evidence remains associated with its recorded code revisions.
+
+## Earlier milestone record
+
 # Chapter 20 and reviewed 182-page proof — November 15, 2026 (Central)
 
 Chapter 20, Offline Operation and Background Work, is drafted (about 3,600 words),
