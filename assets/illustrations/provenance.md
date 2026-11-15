@@ -30,3 +30,24 @@ created for this manuscript on November 15, 2026. The matching JPEG is rendered
 from that SVG for the PDF specimen. It depicts the planned phone/local snapshot,
 request/response boundary, intermittent connectivity and later service storage.
 It is not a screenshot, a runtime observation, or a claim that the backend is deployed.
+
+
+## Editorial technical figures — November 15, 2026 (Central)
+
+Nine original authored grayscale diagrams are located in `../figures/`, with
+reproducible drawing source in `production/draw_editorial_figures.py`. Pillow renders
+1800x1200 PNG assets from explicit text, boxes and arrows, with 300-DPI metadata.
+These are exact authored diagrams, not image-generated architecture, app screenshots,
+benchmark results or runtime observations. Captions carry textual descriptions.
+
+| Asset | Placement | Status represented |
+|---|---|---|
+| fig-01-first-search.png | Chapter 1 | Part I search path |
+| fig-07-mvvm.png | Chapter 7 | Bundled Part II architecture |
+| fig-17-http-gates.png | Chapter 17 | Current public-items transport gates |
+| fig-20-offline.png | Chapter 20 | Portable service; native wiring pending |
+| fig-intro-release.png | Introduction | Planned release roadmap |
+| fig-18-security-preview.png | Chapter 18 | Planned Part V protected-data boundary |
+| recap-05-evidence.png | Chapter 5 | Evidence/verification recap |
+| recap-11-ownership.png | Chapter 11 | State/adapter ownership recap |
+| recap-16-request.png | Chapter 16 | Draft/quote/simulated-acceptance recap |

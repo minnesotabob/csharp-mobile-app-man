@@ -182,6 +182,12 @@ The demo receipt is also not proof of payment. Payment state will depend on the 
 - **A timeout appears to create a second order:** Reuse the original operation ID when reconciling an uncertain outcome. The process-local simulator is not proof of durable deduplication across restarts.
 - **An old quote remains after changes:** Compare the request snapshot and quote expiry using the service's controlled clock; invalidate stale terms before accepting.
 
+## Visual pause: what to carry forward
+
+![Part III visual recap. Editable draft, validated review, versioned quote and simulated acceptance are distinct states; none establishes payment.](../assets/figures/recap-16-request.png)
+
+An anniversary-song customer can revise a story without losing the draft, but that edit invalidates the old review and terms. A missing submission response leaves uncertainty about one operation, so recovery retains its identity. The teaching receipt remains simulated. Keep draft persistence, accepted requests and verified payment as separate promises when the next Part introduces networking.
+
 ## Chapter Summary
 
 The application now turns a reviewed draft into versioned example terms and one identifiable simulated acceptance. Pricing stays separate from display, service-owned quote state determines the accepted amount, and repeated delivery can return the same result. A missing response leaves a question to resolve rather than permission to create another request.
@@ -205,3 +211,4 @@ The application now turns a reviewed draft into versioned example terms and one 
 ## Editorial index terms
 
 Decimal arithmetic; marginal discount; quantity; price version; quote; canonical request; quote expiry; TimeProvider; idempotency key; duplicate submission; lost response; uncertain outcome; cancellation; atomic acceptance; demo receipt; server authority; payment boundary.
+

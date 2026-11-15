@@ -34,6 +34,10 @@ Our model exposes Query, FilterIndex, Items, SelectedItem, ResultSummary, Detail
 
 Keeping that last point explicit prevents invented states. We can discuss how a future connected feature will model loading and retry, without presenting a spinner as evidence that a real asynchronous data pipeline exists.
 
+![Figure 7.1. The view sends input and commands to its view model; notifications return to the view. Portable catalog rules and native navigation remain separate dependencies.](../assets/figures/fig-07-mvvm.png)
+
+A reader selects Kai the Ninja, then switches to a songs-only filter. The view model must clear the incompatible selection and notify the displayed detail state. Figure 7.1 names the owner of that decision. It does not insert an HTTP service into the bundled Part II milestone.
+
 ## 7.2 Understand binding context and binding mode
 
 BindingContext identifies the source object used by ordinary bindings. A page receives its view model through constructor injection and assigns that object after InitializeComponent.
@@ -153,3 +157,4 @@ Compiled bindings: https://learn.microsoft.com/en-us/dotnet/maui/fundamentals/da
 MVVM Toolkit: https://learn.microsoft.com/en-us/dotnet/communitytoolkit/mvvm/
 
 Index: MVVM; BindingContext; x:DataType; TwoWay; INotifyPropertyChanged; derived state; collection replacement; ICommand; async command; test double.
+

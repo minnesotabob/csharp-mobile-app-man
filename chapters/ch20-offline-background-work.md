@@ -125,6 +125,10 @@ A useful presentation might display these messages:
 
 These are suggested presentation strings, not observed native screenshots. A screen should combine them with a formatted date when one is known, maintain accessibility announcements, and avoid claiming the device is offline from a single failed request. A server problem and an internet problem can look similar to the customer.
 
+![Figure 20.1. Local reading returns a saved or bundled catalog without HTTP. A separate pending worker fetches, then saves the snapshot and matching acknowledgment in one transaction; failure retains intent.](../assets/figures/fig-20-offline.png)
+
+The listener looking for Northern Lights on an airplane follows the local path. The worker path becomes relevant when that listener requests an update. This is the portable Chapter 20 design, with native browser integration still pending; the arrows are not a claim that the current MAUI screen already uses it.
+
 ## 20.5 Persist intent before starting work
 
 A `Task` is not durable. If the operating system ends the process, its stack, cancellation token and in-memory queue disappear. Saving a small intent before starting the GET makes recovery independent of that process.

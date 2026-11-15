@@ -8,6 +8,7 @@ on:
       - 'front-matter/**'
       - 'parts/**'
       - 'assets/illustrations/**'
+      - 'assets/figures/**'
       - 'production/render_opening.py'
       - '.github/workflows/manuscript-proof.yml'
   workflow_dispatch:
@@ -54,6 +55,10 @@ jobs:
           text="\n".join(page.get_text() for page in pdf)
           for name in ("Chapter 1", "Chapter 6", "Chapter 12", "Chapter 18", "Chapter 19", "Chapter 20"):
               assert name in text, f"Missing {name}"
+          for caption in ("Figure 1.1.", "Figure 7.1.", "Figure 17.1.", "Figure 18.1.", "Figure 20.1.", "Figure I.1."):
+              assert caption in text, f"Missing authored figure caption: {caption}"
+          images = {img[0] for page in pdf for img in page.get_images(full=True)}
+          assert len(images) >= 12, f"Expected Part art plus nine figures, got {len(images)}"
           for i,page in enumerate(pdf):
               assert abs(page.rect.width-576)<0.1 and abs(page.rect.height-720)<0.1, f"Page {i+1}: wrong trim"
               for ln in page.get_text("dict")["blocks"]:

@@ -255,9 +255,9 @@ Explain hosted checkout, server-created sessions, verified webhook processing, e
 Build status history, revision requests, delivery notifications, and authenticated file access using expiring authorization where appropriate. Handle retries, access expiration, and outstanding work when the user signs out.
 **Outcome and verification:** Customer journey from request to delivered sample audio, including unauthorized file-access tests.
 
-### 35. Hosting and Operating the Small Backend
-Deploy the API, database, and file storage with configuration and secret separation. Cover HTTPS, migrations, backups/restores, health checks, minimal observability, cost awareness, and reliable webhook handling. Describe newsletter integration as a bounded service adapter.
-**Outcome and verification:** Staging deployment, restore exercise, and a documented operational checklist; production provisioning is a separate explicit action.
+### 35. Hosting, Diagnostics, and Operating the Small Backend
+Deploy the API, database, and file storage with configuration and secret separation. Cover HTTPS, migrations, backups/restores, health checks, cost awareness, and reliable webhook handling. Provide a substantial diagnostics section: ILogger categories and structured event templates, stable event IDs, request correlation, metrics/traces, mobile and server crash reporting, privacy-safe telemetry, retention, consent and sampling. Choose maintained crash/telemetry integrations from current official documentation when the chapter is implemented; explain provider-neutral selection criteria rather than depending on a retired service. Describe newsletter integration as a bounded service adapter.
+**Outcome and verification:** Staging deployment, restore exercise, redaction tests and an end-to-end safe diagnostic trace from a controlled failure, plus a documented operational checklist; production provisioning is a separate explicit action.
 
 ## Part VIII — Verification, Publication, and Maintenance
 **Chapters 36–40**
@@ -271,8 +271,8 @@ Organize unit, integration, contract, and UI suites; use deterministic data, iso
 **Outcome and verification:** Traceable acceptance coverage with separate automated and manual results.
 
 ### 37. Performance, Reliability, and Accessibility Review
-Measure startup, allocations, list scrolling, images, API latency, battery, and download costs in release-like builds. Review screen readers, focus, contrast, large text, and localization on real devices. Introduce profiling, trimming/AOT considerations, crash diagnostics, and platform extension leaks where relevant.
-**Outcome and verification:** Before/after measurements and a release-quality accessibility/device report.
+Measure startup, allocations, list scrolling, images, API latency, battery, and download costs in release-like builds. Review screen readers, focus, contrast, large text, and localization on real devices. Provide a full performance investigation: cold/warm startup, memory pressure and allocations, image decoding/sizing/cache behavior, collection virtualization under representative data, UI-thread blocking, event subscription/handler disposal, battery and network cost. Introduce profiling and trimming/AOT considerations with version-specific tooling. Measure comparable release-like builds on named Android/iOS devices; keep crash diagnostics connected to Chapter 35.
+**Outcome and verification:** Reproducible baseline and before/after measurement tables, representative large-data/image fixtures, a diagnosed retention or scrolling problem, and a release-quality accessibility/device report. No fabricated benchmark numbers.
 
 ### 38. Android Signing and Google Play Release
 Prepare identifiers, signing and upload keys, release builds, target requirements, store assets, content ratings, data declarations, testing tracks, and rollout plans. Verify current requirements while writing and again at release.
@@ -363,4 +363,5 @@ Before full typesetting, produce representative 8 × 10 pages containing prose, 
 8. Final page budget after sample layout.
 
 No production deployment, payment activation, account creation, app-store submission, or live customer-data migration is authorized merely by this outline.
+
 

@@ -33,6 +33,28 @@ These approaches overlap, and the labels alone do not tell you whether a particu
 
 For this book, C# and MAUI provide the main development path. That fits the reader's existing knowledge and lets us make the boundary between shared code and native behavior explicit. It does not mean that the website's HTML becomes XAML automatically, nor that every platform-specific feature can be configured once.
 
+### Choose MAUI deliberately
+
+For this book, MAUI is a practical choice because the intended reader already works in C# and .NET. The catalog, pricing and validation rules can remain in that environment while XAML and native adapters introduce mobile UI work. Reuse reduces the amount of new language and infrastructure to learn at once. It does not establish that MAUI is the best choice for every team or product.
+
+| Candidate | Reason to consider it | Decision to investigate |
+|---|---|---|
+| .NET MAUI | Existing C#/.NET skills, shared application rules and cross-platform UI | Can required controls, libraries and platform adapters meet the actual journeys? |
+| Flutter | A Dart-based widget and rendering model for a shared interface | Is the team prepared for Dart and the required platform integrations? |
+| React Native | React-based application development with native component integration | Do the team's React skills and required native modules fit the supported architecture? |
+| Native Android and iOS | Direct platform UI and SDK integration | Can the team maintain separate UI implementations and platform expertise? |
+| Responsive web or PWA | Existing browser journeys already satisfy the need | Do target browsers support the required offline, media and device behavior? |
+
+Flutter is a credible alternative when a team wants its widget/rendering approach and can support the Dart toolchain. React Native is a credible alternative when React experience and native component/module availability fit the product. Those are architectural differences to investigate, not evidence that either framework always renders faster or costs less. Compare the exact dependencies and devices the product needs.
+
+MAUI also has costs. XAML expertise does not replace learning mobile lifecycle, signing and native behavior. A specialized platform feature may require an adapter or handler customization. A required third-party SDK may lack an appropriate maintained binding. Shared UI can need platform adjustments, and a workload upgrade can affect more than one target. Rich lists, large images and startup behavior need measurement in a release-like build; C# reuse is not a performance benchmark.
+
+**When not to choose MAUI:** Do not make it the default when an essential target or capability lacks a supported, maintainable path; when a product depends on a platform-specific interaction the team cannot implement well; or when the existing browser experience already meets the need. A team deeply invested in another stack should include retraining and maintenance in the comparison. These are reasons to run a small spike or choose another approach, not challenges to overcome by adding abstractions.
+
+For Gnazzo's World, the decision spike should exercise three journeys: find Northern Lights in a representative catalog, complete an anniversary-song form with the keyboard visible, and pause/resume an authorized sample during interruption. Add the required native integration, large-text behavior and a measured release-like startup. Record what the spike proves and what remains unresolved. The manuscript's current portable tests and Android compilation do not substitute for that missing device evidence.
+
+Use the official architecture references below as a starting point and recheck supported targets, package maintenance and toolchain compatibility when making a real product decision.
+
 ## 1.2 What MAUI shares, and what it does not erase
 
 A useful way to understand the application is to follow a request from a screen to the work it asks for. A search field produces text. A view model or small controller coordinates the interaction. Portable code searches catalog records. The view presents the result. Nothing in the search algorithm needs to know whether the device is an Android phone or an iPad.
@@ -40,6 +62,10 @@ A useful way to understand the application is to follow a request from a screen 
 Playing a file follows a different path. The application can define operations such as play, pause, seek, and stop. The platform still controls audio focus, interruptions, background capabilities, and system media controls. Sharing an interface does not make these details disappear; it makes the application logic less dependent on their implementation.
 
 We will keep the project structure proportionate to that distinction. The initial core library holds catalog models and rules. The mobile project holds the first views and platform setup. A supporting API arrives when a feature needs a server. Additional abstractions must have a purpose that can be explained through a feature or a test.
+
+![Figure 1.1. The Part I search path: the MAUI page sends query text to portable search over bundled records, then assigns returned results.](../assets/figures/fig-01-first-search.png)
+
+Trace Northern Lights through Figure 1.1: a visitor supplies a title fragment, portable code identifies matching records, and the page renders the returned list. The diagram describes the first teaching milestone; later view models change the coordination without changing the catalog identity rule.
 
 The companion scaffold begins with this simplified record shape. Required JSON attributes and later optional metadata are omitted from this introductory listing; use the actual milestone file when compiling:
 
@@ -184,6 +210,11 @@ Your interruption scenario and evidence matrix are the chapter's concrete output
 - Microsoft, accessibility: https://learn.microsoft.com/en-us/dotnet/maui/fundamentals/accessibility
 - Microsoft, Pair to Mac: https://learn.microsoft.com/en-us/dotnet/maui/ios/pair-to-mac
 
+- Microsoft, MAUI handlers and native controls: https://learn.microsoft.com/dotnet/maui/user-interface/handlers/
+- Flutter, architectural overview: https://docs.flutter.dev/resources/architectural-overview
+- React Native, native platform integration: https://reactnative.dev/docs/native-platform
+
 ## Editorial index terms
 
 Application lifecycle; cross-platform development; native applications; XAML; stable identifiers; interruption; offline operation; retries; idempotency; cancellation; accessibility; permissions; authentication; authorization; MFA; signing; verification matrix.
+

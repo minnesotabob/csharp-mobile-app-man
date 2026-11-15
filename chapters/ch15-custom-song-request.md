@@ -30,6 +30,10 @@ You will learn to break a complex customer request into manageable steps; keep d
 
 Users reasonably expect an unfinished composition to survive moving between form steps. That does not automatically mean every keystroke should be written to permanent storage, particularly when the story contains personal details. Separate the live editing model from the saved snapshot, make the save action explicit, and explain which data survives process termination.
 
+### Running journey: an anniversary at Long Lake
+
+Use an invented customer throughout this lab: someone requesting a clean folk song for an anniversary at Long Lake. They choose vocals, add a family memory, then decide an instrumental may suit the occasion better. Preserve their written story while the relevant fields change. Use fictitious contact details and avoid putting a real family story into a shared fixture or screenshot.
+
 ## Begin with the customer's decisions
 
 A long form is easier to build than a good short journey. Before adding controls, group fields according to the decision the customer is making. The music step contains supported lengths, vocal versus instrumental treatment, genre, occasion, and permission for explicit content. Optional vocal notes appear only when vocals are selected. The story step gives the customer room for names, memories, tone, and details they want included. The contact step collects a name and a single email address, then offers review.
@@ -162,3 +166,4 @@ The request builder separates editing, validation, persistence, and review. Cust
 ## Editorial index terms
 
 Custom-song requests; forms; conditional inputs; validation; draft preservation; process termination; email keyboard; Editor; semantic hints; file replacement; JSON envelopes; personal information; review snapshots.
+

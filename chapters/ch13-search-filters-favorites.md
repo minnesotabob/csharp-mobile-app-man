@@ -7,6 +7,8 @@ This chapter extends the existing local browser. We combine text, content kind, 
 
 There is still no remote search service. The cancellation examples control pending input, not an HTTP request. Network timeouts, server paging, and asynchronous remote-result publication belong to the later networking chapters.
 
+A listener favorites Northern Lights, then looks for a book by John F. Gnazzo. The favorite should retain the song's stable identity while the visible list changes. Returning to songs should not depend on remembering its display position or spelling. This is the everyday journey behind the search and favorites rules in this chapter.
+
 ## What You'll Learn
 
 At the end of this chapter, you will be able to combine text, content kind, creator ID, sort order and favorites as one search policy; explain why stable ordering and identity matter; distinguish delayed typing from canceled network work; and verify persistence failures without silently losing a person's favorites.
@@ -254,3 +256,4 @@ Search is a coordinated policy, not a stack of unrelated UI filters. This chapte
 - Microsoft Learn, Task.Delay: https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task.delay
 
 Editorial index terms: search; filters; Unicode; combining character; sorting; release date; stable ordering; creator identity; favorites; preferences; JSON; debouncing; cancellation; revision; stale completion; stream-independent tests; persistence boundary; storage failure.
+

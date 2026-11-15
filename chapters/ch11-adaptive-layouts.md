@@ -156,6 +156,12 @@ Emulator/hardware launch, safe-area behavior, keyboard pressure, native accessib
 4. Specify a hinge-aware capability contract and the platform evidence it needs.
 5. Explain the difference between a resizable window and complete multiwindow navigation.
 
+## Visual pause: what to carry forward
+
+![Part II visual recap. The view owns rendering and input, the view model owns presentation state, and platform adapters perform native actions.](../assets/figures/recap-11-ownership.png)
+
+Before continuing, trace Kai the Ninja from a selected ID to a phone detail page and a tablet inline detail. The layout changes; the selected identity and ownership rules do not. Bindings must notify derived values, commands must recover after failure, and the device must still support large text, focus and navigation. Those are the anchors to remember when the catalog becomes richer.
+
 ## Chapter Summary
 
 Adaptive layout decisions should respond to actual space, not to labels such as phone or tablet. The chapter's 900-unit teaching breakpoint separates a compact browsing flow from a wide list/detail view, while portable policy tests establish exact boundary behavior. The selected catalog record belongs to persistent view-model state rather than a particular visual tree, allowing changes in presentation without changing identity. Height, keyboard pressure, system insets, fold hinges and multiple windows introduce constraints that a width test cannot fully capture. The guided lab checks the breakpoint and selection continuity, then specifies native verification scenarios. This keeps the implementation honest: responsive width behavior exists, but complete device and foldable validation remains pending.
@@ -167,3 +173,4 @@ Adaptive layouts: https://learn.microsoft.com/en-us/dotnet/maui/user-interface/l
 Device information: https://learn.microsoft.com/en-us/dotnet/maui/platform-integration/device/information
 
 Index: adaptive layout; viewport; breakpoint; device-independent units; list/detail; selection continuity; keyboard; safe area; fold posture; window scope; verification matrix.
+

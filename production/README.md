@@ -13,3 +13,12 @@ These Adobe font repositories provide the respective SIL Open Font License notic
 
 The rendered PDF has been visually inspected. It is not tagged for accessibility; the planned EPUB and final production checks remain separate. Part I uses assets/illustrations/part-01-desktop-to-mobile.jpg and Part II uses assets/illustrations/part-02-native-interface.jpg at 300 DPI. The original artwork is an editorial illustration, not a runtime screenshot or an exact architecture diagram. See assets/illustrations/provenance.md.
 
+
+## Authored technical figures
+
+Nine grayscale technical diagrams/recaps are under `assets/figures`. Their complete
+reproducible source is `production/draw_editorial_figures.py` (Python/Pillow plus
+DejaVu Sans fonts at the documented Linux paths). The assets are 1800x1200 pixels
+with 300-DPI metadata, placed at 6.4x4.267 inches in the print proof. They are authored
+architecture/planning figures, not native screenshots. Existing Part art keeps its
+original 5.12-inch width. Figure and caption stay together.

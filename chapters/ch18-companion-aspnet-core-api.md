@@ -28,6 +28,20 @@ You will learn to expose a versioned public catalog through ASP.NET Core Minimal
 
 A handler test can exercise application logic without sockets. An in-memory API host runs routing, middleware and serialization but does not prove machine networking. A Kestrel loopback request adds real TCP behavior while still omitting a physical device, local-network routing and certificate trust. Report each result at its own level instead of treating one green test as complete mobile verification.
 
+![Figure 18.1. Planned Part V boundary: a native public client signs in through a provider, presents an access token to an API, and reaches customer data only after API policy and ownership checks.](../assets/figures/fig-18-security-preview.png)
+
+### Preview: from public catalog to protected customer data
+
+A reader browsing Kai the Ninja needs no account merely to see a public description. A customer returning to an anniversary-song request needs access to that customer's own records. These journeys follow different paths. Figure 18.1 previews the second path; the endpoints built in this chapter remain public-fixture reads.
+
+The native app is a public client. Its compiled package cannot keep a private client secret from everyone who installs it. Part V will use a supported browser-based native sign-in flow and maintained client library. The identity provider authenticates the person and applies its account/MFA policy. The client uses an access token for the intended API; an identity token is not a general API credential.
+
+At the API boundary, token validation checks the issuer, audience, signature and applicable lifetime through supported middleware. Authorization then evaluates policies and the ownership of the requested record. A valid sign-in is not permission to retrieve any order ID. The service uses its own controlled data-access configuration; the phone does not connect directly to the customer database or receive backend secrets.
+
+A later customer switching accounts must not see another account's cached stories or files. Sign-out, local cleanup, token expiration and recovery need explicit journeys and rejection tests. Local biometric unlocking and provider-enforced MFA serve different boundaries. Chapters 22-26 implement and verify these pieces; the local test context in Chapter 21 will not be presented as real authentication.
+
+The useful question to carry forward is: **which component is authorized to make this decision?** The view can hide an action, but the API must still reject an unauthorized request. The preview helps you locate that future responsibility without treating it as an implemented security system.
+
 ## Introduce the service project
 
 The new src/GnazzosWorld.Api project uses Microsoft.NET.Sdk.Web and targets net11.0. It references GnazzosWorld.Core and pins Microsoft.AspNetCore.OpenApi to 11.0.0. The portable core remains free of ASP.NET Core types. An API test project references the service and pins Microsoft.AspNetCore.Mvc.Testing to the matching 11.0.0 family.
@@ -224,3 +238,4 @@ The application now has a small executable service contract and a consumer that 
 ## Editorial index terms
 
 ASP.NET Core; Minimal API; dependency injection; DTO; wire contract; schema version; catalog revision; pagination; offset; continuation; Problem Details; OpenAPI; WebApplicationFactory; TestServer; Kestrel; HTTPS probe; development certificate; Android host alias; iOS simulator; local networking; host filtering; development tunnel.
+

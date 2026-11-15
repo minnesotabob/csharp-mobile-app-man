@@ -46,6 +46,10 @@ This is an interim public-items contract. CatalogLoader checks item metadata and
 
 Keep provider-specific payloads behind another adapter. Apple, Spotify and a companion API do not necessarily use the same identities, fields, response limits or authorization. A successful metadata request also gives the app no new media rights. A provider's web page or music-service link is not an audio stream or a substitute for its documented API.
 
+![Figure 17.1. A catalog response must pass status and media-type checks, bounded body reading, and catalog validation before the caller receives an accepted list.](../assets/figures/fig-17-http-gates.png)
+
+For the visitor returning to Minnesota Bob, a hotel login page cannot become a replacement catalog. Each gate in Figure 17.1 protects the useful earlier experience. The caller still owns the decision to display a result; transport validity alone does not settle screen ownership.
+
 ## Reuse the client and own its configuration
 
 HttpCatalogSource receives an HttpClient rather than creating one for every refresh. The application owns and eventually disposes that client. In the native demo, DemoCatalogSource is registered as a singleton, owns its reusable client, and delegates catalog reads to the HTTP adapter. Its fixture handler opens the bundled JSON resource for each response. Response disposal closes that resource stream.
@@ -135,6 +139,24 @@ The final cancellation handlers check caller cancellation first. If both cancell
 
 An HTTP 401 is also not a reason to repeatedly send the same public request or to open an unsolicited login screen. Authentication will be introduced through the later identity chapters. A provider that requires credentials belongs behind its explicitly configured adapter and authorization flow.
 
+### A diagnostic contract to carry into operations
+
+Imagine a listener reporting that Northern Lights disappeared after Refresh. A useful diagnostic should tell us whether the request timed out, exceeded its byte budget, failed validation or returned after the page had left. A copy of the customer's screen text or a complete response body is unnecessary for that first investigation.
+
+| Diagnostic field | Purpose | Boundary |
+|---|---|---|
+| Stable event name or ID | Group the same failure across runs | Avoid free-form customer text |
+| Operation/correlation ID | Connect one attempt to its outcome | Keep it separate from credentials and customer identity |
+| Classified outcome | Distinguish deadline, HTTP, payload and cancellation | Use a bounded set of values |
+| Elapsed time and attempt number | Find slow or repeated operations | Define units and the logical operation scope |
+| App/API version and platform | Relate an incident to a release | Collect only the detail needed for diagnosis |
+
+This table is a design contract for later instrumentation, not a claim that the current adapter emits these events. The implementation already provides classified fetch failures and controlled tests. Chapter 35 will add systematic structured logging with `ILogger`, correlation, telemetry and crash-reporting choices; Chapter 37 will use diagnostic evidence to investigate performance.
+
+Use message templates with named properties rather than concatenating arbitrary values into log text. Do not log tokens, authentication headers, a request story, email addresses or full payloads. A custom-song request can contain sensitive personal details even when an engineer considers its description harmless. Define retention and access to diagnostics as deliberately as access to the underlying records.
+
+Cancellation is a normal outcome when a reader leaves a page. It should not inflate a crash count. A crash report, an HTTP-failure event and a performance trace answer different questions; the later operational exercise must show how to connect them without treating one as proof of another.
+
 ## Use connectivity as a hint
 
 The native NetworkingLabPage shows Connectivity.Current.NetworkAccess when the page appears. It labels this value as a hint and says that it does not verify service reachability. A device can have a network interface and still encounter a captive portal, a blocked host, expired credentials or an unavailable API.
@@ -196,3 +218,4 @@ HTTP success, valid data and current UI ownership are separate conditions. The c
 ## Editorial index terms
 
 HttpClient; HttpMessageHandler; catalog source; GET; ResponseHeadersRead; cancellation; deadline; TimeProvider; content type; body limit; JSON validation; Retry-After; backoff; jitter; transport failure; connectivity hint; captive portal; native networking lab; safe diagnostics; handler tests; local API.
+

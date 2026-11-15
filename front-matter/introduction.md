@@ -59,8 +59,13 @@ A complete development example needs more than a successful debug build. We will
 
 After release, devices, dependencies, and services continue to change. We will close with versioned data, update strategies, diagnostics, and a release process that distinguishes test results from decisions requiring a person. The goal is to leave you able to explain, change, and maintain what you have built.
 
+![Figure I.1. Planned release roadmap: development and a local API lead to staging/device checks, signed store packages and separate production operations.](../assets/figures/fig-intro-release.png)
+
+The client and backend have separate release paths. A store package contains the app; it does not deploy the ASP.NET Core API. Chapters 35-37 establish staging, operational checks and release-quality evidence. Chapters 38-40 cover platform distribution and maintenance. Treat the figure as the destination of the book, not the present deployment state.
+
 Part I starts by examining the mobile development landscape, defining the application, and preparing the tools. You will then run the first screen and establish the portable tests that support the rest of the book.
 
 ## Source and verification notes
 
 Microsoft's .NET 11 announcement and SDK download documentation establish the proposed language/SDK baseline. MAUI's own support policy and release documentation must be consulted separately from the general .NET lifecycle. See the official links in planning/book-outline.md. Device-specific statements will be verified against the exact supported Android/iOS versions used for the finished examples.
+

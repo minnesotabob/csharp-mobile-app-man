@@ -215,6 +215,12 @@ The worked method is to name the boundary first: parse, semantic validation, own
 
 Record unexpected output without immediately changing assertions. A failure can reveal a stale executable, wrong revision, incorrect requirement or real implementation defect. A useful learning tool helps you distinguish those cases instead of treating every red result as something to silence.
 
+## Visual pause: what to carry forward
+
+![Part I visual recap. Portable rules, integration boundaries and native experiences require distinct evidence.](../assets/figures/recap-05-evidence.png)
+
+Carry three questions into Part II: which state is valuable, who owns its transition, and which check can establish the promised result? Search results use stable IDs; a saved draft requires a successful storage operation; a usable screen requires native observation. Keep the evidence matrix beside the implementation rather than replacing it with one broad works label.
+
 ## Chapter Summary
 
 Portable tests give catalog search, validation, stream ownership and pricing rules a repeatable execution boundary. Their expected outcomes come from application promises: a stable result ID, a deliberately valid empty array, a rejected duplicate or an independently calculated discount. A passing assertion is useful only when the source, build configuration and actual executed binary are known.
@@ -235,3 +241,4 @@ xUnit runner: https://xunit.net/docs/getting-started/v3/getting-started
 Required JSON properties: https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/required-properties
 
 Index: portable core; unit tests; xUnit; theory; fact; serialization; required properties; nullability; stream ownership; decimal; regression; test double; CI.
+
