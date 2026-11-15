@@ -1,3 +1,38 @@
+# Chapter 25 - profiles, privacy and lifecycle - November 15, 2026 (Central)
+
+Added the account-workspace chapter, two authored figures, real SQLite profile and
+intent/receipt lab, scoped local export, preference revision/choice reasoning, guided
+walkthrough, troubleshooting, worked exercises and explicit native/service follow-through.
+The anniversary-request narrative continues through account switching and removal.
+
+Verified companion executable source: `3309637a8abc06ecf1e65fafd1bec32afbbe315b`.
+
+- Portable Release compilation: 0 warnings/errors; **345 cases pass**, including 24
+  new workspace cases; no errors/failures/skipped/not-run cases. Both console labs run.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43760294885
+- API/probe builds: 0 warnings/errors; **37 API cases pass**; public loopback smoke passes.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43760294883
+- Android Debug compilation: success; 0 final warnings/errors. Setup retains the earlier
+  unresolved cmdline-tools;21.0 dependency warning.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43760294896
+
+The proof has **255 pages, 33 bookmarks and 22 distinct images**, comprising three
+Part illustrations and nineteen authored technical figures. Chapter 25 opens on page
+243. Its 13 pages were rendered for inspection; all-page trim/text-boundary checks pass.
+Final figure, evidence, summary and exercise pages were also inspected at larger scale.
+
+Limits: the new database is a separate local lab, not native account/session composition.
+Service receipts and reauthentication statuses are simulated; provider identity and remote
+data are untouched. The retained deletion marker has no expiry, SQLite is not encrypted,
+and physical erasure/backups are unverified. No complete service export, lifecycle API,
+notification registration or account migration is enabled. Native/device, iOS and screenshots
+remain pending. These limits appear in both chapter and companion acceptance worksheet.
+
+Next: Chapter 26 - Threat Modeling and Security Verification, using the existing ownership,
+callback, transport, storage and lifecycle boundaries. Continue the supplied editorial review.
+
+## Earlier milestone record
+
 # Chapter 24 - MFA and recovery lab - November 15, 2026 (Central)
 
 Added the provider-owned enrollment/challenge/recovery chapter, one authored boundary
