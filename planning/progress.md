@@ -1,3 +1,18 @@
+# Chapter 19 verification and 171-page proof — November 15, 2026 (Central)
+
+**Status:** Chapter 19 has been drafted and committed, with working companion SQLite source, eight new real-file tests, and MAUI dependency registration. The companion code revision `3f7b162dc2f9c7553b3e170ef7b44dcc59c9f26b` passed **253 portable tests** with zero errors/failures/skips, and the Android Debug compilation passed. See `docs/verification.md` in the companion repository. No native SQLite runtime on Android/iOS or account-authentication/secret-storage claim is made.
+
+**Proof:** The Chapter 19 addition initially revealed a right-margin code-line overflow in the 8 × 10 specimen. Shortening the PowerShell command fixed that defect; the renderer was also updated to print italic Markdown correctly. The latest full 19-chapter PDF proof was generated successfully by GitHub Actions at manuscript revision `79c02e7d7db52aa66ba188a0d8a2e670a49b011e`. It contains **171 pages, 26 bookmarks, and Chapter 19 starting on page 159**. A further independent local PyMuPDF inspection found zero text lines outside the broad page body margins and no unexpected nearly-empty pages, and the Chapter 19 opening was rendered for visual inspection.
+
+- Manuscript proof workflow: https://github.com/minnesotabob/csharp-mobile-app-man/actions/runs/43721108408
+- Downloadable artifact: https://github.com/minnesotabob/csharp-mobile-app-man/actions/runs/43721108408/artifacts/14164876195
+- Portable code CI: https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43720268893
+- Android CI: https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43720264777
+
+**Editorial status:** This is a tested *first draft*, not an approved final chapter or finished KDP interior. Finish detailed editorial review, authoritative source cross-references, native verification and the remaining planned chapters. Chapter 20 is next: offline freshness, cache fallback and restart-safe pending work.
+
+## Earlier milestone record
+
 # Chapter 19 draft and SQLite companion implementation — November 15, 2026 (Central)
 
 **Manuscript:** Chapter 19, `chapters/ch19-local-storage-migrations.md`, has been added. It teaches SQLite 11.0.0 storage for validated public catalog snapshots, local favorites and reading progress, version 0/1 to 2 migrations, transactions, scope boundaries, error handling and worked exercises. Existing chapters remain unchanged except for production metadata. The renderer now includes Chapter 19 and its preflight requires that marker.
