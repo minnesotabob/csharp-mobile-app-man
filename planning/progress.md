@@ -1,3 +1,51 @@
+# Chapter 28 — background playback and system controls — November 15, 2026 (Central)
+
+Added a separate opt-in native audio lab, portable BackgroundPlaybackOwner, original
+60-second PCM timing fixture, public metadata/system-command observations, Media3
+focus/noisy configuration, iOS audio background mode and pause-only observers. One
+mounted host survives the internal browse panel; Shell departure destroys its owner.
+The chapter includes a Minnesota Bob listening journey, lifecycle diagram, explained
+source, guided device worksheet, troubleshooting, 124-word summary and exercises.
+
+Corrected executable source: `a9e893d75689a48ecfbbe9f4e107fc5761780481`.
+The first checks exposed a remote-pause checkpoint defect and an inaccessible pinned
+toolkit Player API. The correction saves the event's position and configures the public
+native PlayerView/IExoPlayer, with visible failure if absent. The final follow-up handles
+nullable builder bindings explicitly rather than suppressing compiler warnings.
+
+- Portable Release build: 0 warnings/errors; **413 cases pass**, including 18 new
+  simulated playback-owner cases plus one new fixture header/hash case. No errors,
+  failures/skips/not-run cases; Chapter 21 and 25 console labs execute successfully.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43767142547
+- API/probe Release builds at unchanged API parent bedeec9000f65a3492989fe80778bd7f1a3e76b6:
+  0 warnings/errors; **46 API cases pass**; public loopback smoke passes.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43766620130
+- Android Debug compilation: **success; 0 final compiler warnings/errors**.
+  Merged manifest assertions pass for both foreground-service permissions and the
+  toolkit mediaPlayback service type. Dependency installation retains its historical
+  unresolved cmdline-tools;21.0 setup warning; this is separate from final compilation.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43767142544
+- Revised manuscript proof source: `1d50a58b08c2536f9aca06bc1cab1a17c5fe8c04`.
+  Independent PDF CI passed page size, chapter/figure markers and text boundaries.
+  https://github.com/minnesotabob/csharp-mobile-app-man/actions/runs/43767216352
+
+Proof: **289 pages**, 8 x 10 inches, 11-point body/9.5-point code, 37 bookmarks,
+26 distinct embedded images (three Part illustrations plus 23 authored figures).
+Chapter 28 starts at page 281. Local checks covered every page's trim/text bounds;
+contact-sheet and enlarged new-page inspection found readable text, code and figure.
+Existing working PDF updated successfully with the corrected native source excerpt.
+
+Native listening, decoding, system controls, focus gain/loss, calls, wired/Bluetooth
+routes, task removal, process death, power constraints and iOS compilation remain
+pending. Timers are best effort; no app-wide/process-resilient playback architecture,
+private delivery access or real Minnesota Bob media is claimed. The public native view
+hierarchy is a pinned toolkit compatibility dependency, rechecked on upgrades.
+
+Next planned chapter: 29, Downloads and Media Storage. The 40-chapter plan and
+intermediate/advanced teaching scope remain unchanged. Historical entries follow.
+
+---
+
 # Part VI / Chapter 27 - foreground audio and podcast progress - November 15, 2026 (Central)
 
 Added Part VI's media roadmap, Chapter 27's source-ownership diagram, foreground
