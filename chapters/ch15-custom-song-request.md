@@ -135,6 +135,12 @@ A particularly useful test saves one draft, changes the story, then makes the ne
 
 The test double does not prove file replacement, native navigation, screen-reader output, or restart behavior on Android or iOS. Run the portable suite first, compile the Android app, then complete the device scenarios in docs/device-checks.md. Record toolchain, source revision, platform, and actual result. See the current verification log for the recorded portable run and native compilation results; device behavior must still be observed independently.
 
+## Troubleshooting the guided lab
+
+- **A customer loses edits while changing steps:** Check whether the form controls write to shared editable state and whether any page recreates the view model unexpectedly.
+- **An old review stays visible after editing:** Verify that changing validated input invalidates the review snapshot rather than presenting it as approved.
+- **A saved draft differs from the latest typing:** Distinguish explicitly saved disk state from unsaved in-process edits. A failed save must not display a success message.
+
 ## Chapter Summary
 
 The request builder separates editing, validation, persistence, and review. Customers can change musical direction, navigate between steps, and save an incomplete draft. Failures preserve their work. A review is a validated snapshot that becomes invalid when input changes; it is not an order confirmation.
