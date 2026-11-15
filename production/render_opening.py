@@ -20,6 +20,7 @@ styles = {
     'list': ParagraphStyle('list', fontName='Body', fontSize=11, leading=14, leftIndent=16, firstLineIndent=-16, spaceAfter=4),
     'body': ParagraphStyle('body', fontName='Body', fontSize=11, leading=14, spaceAfter=6),
     'h1': ParagraphStyle('h1', fontName='Head', fontSize=26, leading=29, spaceBefore=12, spaceAfter=18, keepWithNext=True),
+    'h3': ParagraphStyle('h3', fontName='Head', fontSize=12, leading=15, spaceBefore=6, spaceAfter=4, keepWithNext=True),
     'h2': ParagraphStyle('h2', fontName='Head', fontSize=17, leading=20, spaceBefore=9, spaceAfter=6, keepWithNext=True),
     'small': ParagraphStyle('small', fontName='Head', fontSize=9, leading=12, spaceAfter=7),
     'reference': ParagraphStyle('reference', fontName='Head', fontSize=8.6, leading=10.5, spaceAfter=3),
@@ -76,6 +77,8 @@ def markdown(text, source=None):
             result.extend([KeepTogether(group),Spacer(1,12)]);continue
         if line.startswith('# '):
             flush();result.append(Paragraph(fmt(line[2:]),styles['h1']))
+        elif line.startswith('### '):
+            flush();result.append(Paragraph(fmt(line[4:]),styles['h3']))
         elif line.startswith('## '):
             flush();reference_mode = line[3:].lower().startswith(('references', 'sources', 'companion references', 'official references'));result.append(Paragraph(fmt(line[3:].replace(' and index terms','')),styles['h2']))
         elif line.startswith('*Illustration brief:') or line.startswith('*Editorial status:'):
@@ -86,6 +89,12 @@ def markdown(text, source=None):
         else:paragraph.append(line.split(' Index:')[0])
         i+=1
     flush()
+    for k, flow in enumerate(result):
+        if isinstance(flow, Paragraph) and flow.getPlainText().lower().startswith(('official references', 'companion references', 'references', 'sources')):
+            tail = result[k:]
+            if len(tail) <= 14:
+                result[k:] = [KeepTogether(tail)]
+            break
     # Keep a chapter-summary heading with its first paragraph, not with every
     # following exercise/reference. Entire-section KeepTogether can exceed a page.
     for j, flow in enumerate(result[:-1]):
