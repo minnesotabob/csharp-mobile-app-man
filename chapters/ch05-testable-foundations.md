@@ -1,6 +1,18 @@
 # Chapter 5
 # Establishing Testable Application Foundations
 
+## What You'll Learn
+
+By the end of this chapter, you will be able to:
+
+- Select observable rules that can be exercised without a mobile runtime.
+- Read and run the repository's executable xUnit test project.
+- Derive expected search and pricing results from requirements.
+- Distinguish malformed input, invalid metadata and a legitimate empty catalog.
+- Use a deliberate local defect to understand a failing assertion and restore a baseline.
+
+**Prerequisites:** the Part I source and passing portable build from Chapter 3, plus the startup/data trace from Chapter 4. No emulator is required for the guided test exercise. **What you will produce:** a repeatable test run and a written explanation of a meaningful regression. The supplied test suite is complete for this milestone's stated cases; native and service evidence remain separately recorded.
+
 A useful test identifies a broken promise. A second copy of a method's algorithm may simply reproduce its mistake. An expected result grounded in the application's requirements is a stronger check.
 
 Our first promises are concrete: catalog IDs are unique, an unaccented query can match an accented title, and discounts apply to separate songs. These behaviors need no emulator. This chapter explains their portable boundary, tests, and automated execution, while keeping native verification distinct.
@@ -144,9 +156,72 @@ Editorial draft, compilation, tests, device checks, and artwork are different di
 
 A reader should be able to retrieve the source, run portable checks, explain startup, and attempt the documented launch. Identify remaining platform work precisely. Use docs/verification.md and docs/device-checks.md to show what happened and what remains.
 
-## Summary and exercises
+## Guided Walkthrough: read one test as an executable requirement
 
-Portable logic makes application rules quick to exercise. Tests protect search, validation, and pricing contracts. Other boundaries require integration, provider, or device evidence, and CI results need a source revision and clear scope.
+Use tests/GnazzosWorld.Core.Tests/CatalogTests.cs at the Part I checkpoint. Its Search_handles_case_whitespace_and_accents theory is short enough to read completely. Identify four parts before changing anything: the fixture source, supplied query, expected identity and assertion about result count.
+
+1. The fixture loader supplies known catalog records. Its validation is part of the sample contract, not a network or native UI operation.
+2. Each InlineData row supplies a query and independently stated expected ID. The test does not call a second search algorithm to compute its answer.
+3. CatalogSearch.Find performs the action under test. The supplied string exercises the normalization policy the application promises.
+4. Assert.Single checks cardinality. If a buggy implementation returns the correct song plus another item, a check of only the first title could miss that defect.
+5. Assert.Equal checks identity. This avoids coupling the expected result to incidental display punctuation.
+6. The build and runner exit status determine whether the suite can be used as evidence. Reading an assertion is not the same as executing it.
+
+Now read Blank_search_returns_all_and_unknown_search_returns_none. It establishes two different valid outcomes. A blank query restores the supplied dataset; a nonmatching query produces no matches. A malformed JSON document belongs to a separate loader test, where failure is expected rather than translated into an empty list.
+
+When you add a test, write its promise first. “Searching an unaccented title should find one stable ID” suggests both the input and the assertion. “Cover this line of code” does not tell you whether the right application behavior was protected.
+
+## Guided Regression Exercise: remove one discount deliberately
+
+The Part I fixture prices a three-minute vocal song at USD 179.00. The second song receives ten percent off its own price, so the two-song total is USD 340.10. Work out that answer before opening the implementation: 179.00 plus 161.10 equals 340.10.
+
+1. Run the unchanged Release build and the executable suite from section 5.2. Record the source, actual total and passing result. The Part I baseline is 37 cases.
+2. In Orders/SongPricing.cs, find the quantity-two cumulative factor of 1.9m. On your local exercise branch, change only that factor to 2m. Leave the base unit price and quantity-three rule unchanged.
+3. Predict the incorrect result: USD 358.00. Predict which requirement detects it: Second_song_gets_ten_percent_discount in PricingTests.cs.
+4. Build Release again. A successful compile is expected because the modified decimal expression is still valid C#. Then run the suite without rebuilding only after that build succeeds.
+5. Read the failed assertion. Its expected 340.10 and actual 358.00 identify the lost discount. Other passing cases do not repair this broken requirement.
+6. Restore the original factor, rebuild and rerun. Confirm your baseline again and inspect git diff to preserve unrelated edits.
+
+The test's worked answer is the customer rule, not the number currently produced by the method. Changing the expected value to 358.00 would hide the defect. A new approved commercial rule would be a different change with its own version and requirement; this exercise deliberately changes only an implementation of the historical fixture.
+
+This is a reproducible reader experiment, not a claim that the editorial environment observed its local failing run. The historical suite's CI evidence and current source record remain the evidence actually available. Your own before/failure/restored results belong in your learning notes.
+
+## Worked Boundary Exercise: choose the exception
+
+Use the loader tests to predict three results before execution:
+
+| Input | Expected result | Reason |
+|---|---|---|
+| A valid empty JSON array | Empty catalog | The shape and meaning are valid even with no records |
+| Malformed JSON such as an unfinished array | JsonException | The input cannot be parsed as the required document |
+| Two valid-looking records with the same ID | InvalidDataException | Parsing succeeds but the catalog identity rule fails |
+
+The missing-kind case is more subtle. Required JSON metadata lets the serializer reject an omitted property instead of accepting a default enum value as if it had been supplied. Nullability annotations help compile-time C# analysis but do not turn missing external JSON into valid domain data.
+
+Stream ownership adds another observable promise. The loader accepts a stream supplied by a caller; its test can confirm that the stream remains readable afterward. The outer adapter still owns the HTTP response or file that produced that stream. A test that merely checks a returned list cannot establish correct resource lifetime.
+
+The worked method is to name the boundary first: parse, semantic validation, ownership or presentation. Then choose an input and assertion capable of detecting a violation there. Do not make one broad test so vague that any thrown exception counts as success.
+
+## Troubleshooting a test run
+
+| Symptom | Diagnostic question | Correct response |
+|---|---|---|
+| Compilation fails before the runner | Was an executable produced for this source? | Fix the first build error; do not interpret old test output as current evidence |
+| Runner reports 245 instead of 37 cases | Which source checkpoint is selected? | Match the total to the recorded milestone |
+| A deliberate defect seems to pass | Was Release rebuilt after the edit? | Build the matching configuration before --no-build |
+| A test passes after copying implementation arithmetic into its expectation | Is the answer independent of the algorithm? | Derive the expected amount from the requirement |
+| Portable search passes but the page stays stale | Was the native handoff exercised? | Use Chapter 4's page/event/assignment trace |
+| A fake service passes but real integration is unknown | Which dependency was simulated? | Add evidence at the actual storage, service or device boundary |
+
+Record unexpected output without immediately changing assertions. A failure can reveal a stale executable, wrong revision, incorrect requirement or real implementation defect. A useful learning tool helps you distinguish those cases instead of treating every red result as something to silence.
+
+## Chapter Summary
+
+Portable tests give catalog search, validation, stream ownership and pricing rules a repeatable execution boundary. Their expected outcomes come from application promises: a stable result ID, a deliberately valid empty array, a rejected duplicate or an independently calculated discount. A passing assertion is useful only when the source, build configuration and actual executed binary are known.
+
+The guided regression exercise demonstrates why valid C# and a successful build can still implement the wrong rule. Other boundaries need different evidence: a simulated store cannot prove native persistence, and a pure search test cannot prove a screen update. Part II extends the interface while preserving that separation between rules, coordination and platform behavior.
+
+## Exercises
 
 1. Test duplicate IDs with different titles.
 2. Compare malformed JSON with a valid object missing kind.

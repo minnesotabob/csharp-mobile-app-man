@@ -5,7 +5,7 @@
 **Author:** John F. Gnazzo  
 **Proposed imprint:** DGreatGnazzini Press LLC  
 **Planning date:** November 14, 2026  
-**Status:** Chapters 1–18 have first drafts in a 125-page proof. The instructional expansion pass is beginning under the approved teaching standard. Recorded portable/API tests and Android compilation pass; device/TLS integration and iOS checks remain pending. See [progress](progress.md).
+**Status:** The 142-page proof includes an initial instructional revision of Chapters 1–5; Chapters 6–18 retain earlier drafts. The instructional pass follows the approved teaching standard. Recorded portable/API tests and Android compilation pass; device/TLS integration and iOS checks remain pending. See [progress](progress.md).
 
 ## Editorial brief
 
@@ -306,8 +306,9 @@ The earlier 800-page allocation is superseded as a fixed target. Keep all 40 pla
 chapters and the existing advanced concepts. Neither a 300–400-page limit nor a
 second-volume split has been approved. Page count should emerge from useful depth.
 
-Chapters 1–18 currently form a 125-page first-draft proof. They need an instructional
-pass before that length can support a forecast. Apply [the teaching standard](teaching-standard.md):
+The earlier 125-page proof has grown to 142 pages during the first instructional
+revision of Chapters 1–5. Chapters 6–18 still need that pass before the length can
+support a useful forecast. Apply [the teaching standard](teaching-standard.md):
 complete runnable samples, numbered walkthroughs, explained decisions, expected
 results, troubleshooting, worked exercises and honest platform verification.
 

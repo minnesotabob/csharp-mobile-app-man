@@ -1,6 +1,18 @@
 # Chapter 3
 # Preparing a Windows Development Environment
 
+## What You'll Learn
+
+By the end of this chapter, you will be able to:
+
+- Retrieve the source revision that matches the Part I starter.
+- Identify the SDK, packages, workloads and native tools selected by the project.
+- Build and run portable tests before introducing mobile dependencies.
+- Compile Android and distinguish deployment failures from compilation failures.
+- Record verification honestly and plan the separate Mac/iOS build boundary.
+
+**Prerequisites:** Windows, Git, an appropriate .NET SDK, and permission to install development tools on your workstation. Android work additionally requires the supported workload and SDK/JDK. **What you will produce:** a recorded portable baseline and, where the native toolchain is available, an Android compilation result. Successful device launch remains a separate check.
+
 A machine can have several .NET SDKs, Java installations, and Android toolchains. Selecting “latest” everywhere does not establish compatibility. We need to know which components a project selects and how to verify the result.
 
 This chapter separates portable C# checks, Android compilation, device launch, and later iOS work. Begin with the fewest dependencies, then add platform tools.
@@ -44,10 +56,16 @@ Save the relevant output as an environment record without credentials or custome
 Clone the companion repository or download a source archive for an initial read. Git makes revisions easier to identify.
 
 ```powershell
-git clone https://github.com/minnesotabob/csharp-mobile-app-code.git
-Set-Location csharp-mobile-app-code
+git clone https://github.com/minnesotabob/csharp-mobile-app-code.git `
+    csharp-mobile-app-code-part1
+Set-Location csharp-mobile-app-code-part1
+git switch -c reader/part-01 `
+    0b8973660cc21269ff79eb54733edaf428fb5dac
 git rev-parse HEAD
+git status --short
 ```
+
+The commands above create an isolated reader branch at the Part I source checkpoint. In a fresh clone, git status --short should produce no entries. If reader/part-01 already exists, inspect that branch rather than forcing a replacement.
 
 The manuscript is a separate repository. A code path in the book refers to the companion code unless stated otherwise. Chapter tags will be created only after verification; a planned tag is not a completed milestone.
 
@@ -165,9 +183,61 @@ A binary log can help explain dependency resolution but may contain local paths 
 
 The environment record separates SDK inspection, portable tests, Android compilation, iOS compilation, and device checks. Mark pending steps explicitly.
 
-## Summary and exercises
+## Guided Lab: establish the Part I baseline
 
-The repeatable sequence is SDK selection, portable tests, workload alignment, native dependencies, compilation, and finally launch on a known device. iOS retains its own Mac-dependent build/signing boundary.
+Run this lab from the dedicated Part I clone created in section 3.3. If you already have a working copy with valuable changes, leave it in place and use a second directory. The starter's recorded source checkpoint is 0b8973660cc21269ff79eb54733edaf428fb5dac. It uses MainPage and NavigationPage; the later review branch has Shell, forms and an API. Mixing those instructions can produce a perfectly valid application with the wrong screen for this lesson.
+
+1. Run git rev-parse HEAD and compare the full result with the checkpoint. Run git status --short; a fresh exercise copy should have no local changes. Record any deliberate exercise edits separately.
+2. Read global.json and Directory.Build.props before building. The SDK choice, language version and project target are different settings. Read the test and core project files to confirm that this step targets portable net11.0 rather than a mobile framework.
+3. Run dotnet --info from this repository root. If the selected SDK does not meet global.json, stop at that problem. A mobile-workload installation cannot fix selection of a missing portable SDK.
+4. Run the portable Release build from section 3.4. Check that it exits successfully before using --no-build. If it fails, use the first meaningful restore or compilation message as the starting diagnosis.
+5. Run the executable test suite. The recorded Part I milestone has 37 passing cases. A total of 245 identifies the later Chapter 18 portable suite, not a newly discovered defect in the starter. Compare the source revision before changing test code.
+6. Save an environment/result note using the template below. Leave device and iOS rows pending unless you actually perform those checks.
+7. If Android tooling is available, perform sections 3.5–3.6 and record compilation separately. Proceed to launch only after that build succeeds. Chapter 4 provides the runtime trace.
+
+This sequence is intentionally useful even with no emulator installed. It isolates compiler selection, package resolution and portable behavior before adding native tools. It also gives you a concrete success criterion: the matching source compiles and its own recorded suite runs, with failures interpreted against the correct milestone.
+
+| Record field | Example or expected entry |
+|---|---|
+| Source checkpoint | Full Part I commit ID, plus any local exercise changes |
+| Selected SDK | Actual dotnet --info result; compare with global.json |
+| Portable build | Release; success/failure and first meaningful diagnostic |
+| Portable tests | Actual count and outcome; historical baseline is 37 |
+| Android build | Actual framework/tool paths/result, or pending |
+| Android launch | Device model, OS and observed behavior, or pending |
+| iOS build/launch | Mac/Xcode/target and result, or pending |
+
+Do not replace the word pending with passed merely because the next row succeeded. The note is a record of observations, not a checklist to make visually complete.
+
+## Worked Diagnosis: the wrong test total
+
+Suppose the tests pass but report 245 cases, and your launch opens a Home tab with a request button. You have likely selected the later implementation. Repeating the tests will not produce the Part I screen. Compare the commit and the source-milestone record, then open the dedicated starter checkout for Chapters 4–5.
+
+A different case is a matching Part I revision with an SDK-selection error. Inspect the installed SDK list and the nearest global.json affecting the command. The SDK resolver uses directory context; running a command from another directory can change which configuration is found. Move to the intended repository root and repeat the inspection before editing global.json.
+
+The worked principle is to repair the boundary that failed. Do not change a test expectation to 245 to hide a revision mismatch, remove an SDK pin to hide an unsupported toolchain, or adjust an emulator to fix a compiler error. Each change should have an explanation tied to the observed result.
+
+## Troubleshooting the first build and launch
+
+| Symptom | First diagnostic check | Corrective direction |
+|---|---|---|
+| Requested SDK is unavailable | Inspect global.json and installed SDKs | Install a supported matching SDK; keep the pin deliberate |
+| NuGet restore fails | Read the package/source error before compilation messages | Resolve connectivity, package availability or compatibility |
+| Java.Interop version conflict | Compare workload manifests with the pinned stable toolchain | Align SDK/workload/native package versions |
+| Android build cannot find Java or SDK tools | Inspect resolved absolute paths | Use the actual supported installations, not example paths |
+| adb lists unauthorized | Check the device's debugging approval prompt | Authorize the intended computer on that device |
+| Build passes, deployment has no target | Inspect adb devices and emulator boot state | Select one available authorized target |
+| A first-page screenshot does not match the chapter | Compare source commit and startup classes | Use the Part I checkpoint for this walkthrough |
+
+For a support request, include the source ID, command, selected tool versions and first relevant diagnostic. Describe whether the failure happened during restore, compilation, deployment or interaction. Review logs for local details before sharing them. A short reproducible report is more useful than an unsorted screenshot of every subsequent message.
+
+## Chapter Summary
+
+A reproducible environment starts with a known source revision and the tools that revision selects. SDK choice, language version, NuGet references, workload manifests and Android SDK/JDK paths are related settings with different responsibilities. Build the portable projects and run their matching suite before introducing deployment or runtime questions.
+
+The Part I checkpoint's recorded baseline is 37 cases and successful Android compilation. Your environment note must state what you actually ran, including any pending device or iOS work. A different test total can reveal a source mismatch rather than a broken rule. With that baseline established, Chapter 4 traces construction, data, controls and search through the starter application.
+
+## Exercises
 
 1. Record installed and selected SDK, workload, package, JDK, Android SDK, and device versions.
 2. Explain why --skip-manifest-update can preserve an incompatible environment.

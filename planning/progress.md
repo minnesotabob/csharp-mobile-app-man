@@ -1,3 +1,37 @@
+# Part I instructional revision — November 15, 2026 (Central)
+
+The manuscript remains at Chapters 1–18 and is now 142 pages. Chapters 1–5
+received their first substantive instructional pass, adding approximately 5,600
+words overall while preserving scope, 11-point body and 9.5-point code.
+
+Each revised chapter now has What You'll Learn, prerequisites/deliverable, guided
+work, worked reasoning, troubleshooting, a distinct 100–150-word Chapter Summary
+and independent exercises. Chapter 3 identifies the matching historical starter
+checkout; Chapters 4–5 trace its actual source and 37-case portable baseline.
+The new companion Part I lab consolidates those instructions.
+
+All 18 chapters received a structural inventory, recorded in instructional-audit.md.
+Only Chapters 1–5 received substantive instructional review in this pass. Chapters
+6–18 still need it, starting with the native-interface material in Chapters 6–11.
+The first five still require actual native observations, verified screenshots and
+reader feedback before being treated as final.
+
+The revised Part I pages and contents were visually reviewed. Table headings are
+kept with their tables, and each revised chapter's closing summary/exercises/
+references form a coherent ending. All 142 pages pass text-margin and internal
+link checks; the PDF has 25 bookmarks and 50 links.
+
+No application or test implementation changed. Command paths, starter resources,
+expected fixture IDs, named tests and matching revision were checked against the
+repository. Historical build/test results remain historical; no fresh Windows
+red/green or device run is claimed for these documentation changes.
+
+Next: the substantive instructional revision of Chapters 6–11. Chapter 19 remains
+the next new technical chapter after the existing foundations receive the planned
+learning-focused pass.
+
+## Earlier milestone record
+
 # Editorial direction update — November 15, 2026 (Central)
 
 Retain the current sophistication and full planned scope. John's instruction is to

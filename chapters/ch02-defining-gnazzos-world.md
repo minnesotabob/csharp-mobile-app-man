@@ -1,6 +1,18 @@
 # Chapter 2
 # Defining Gnazzo's World
 
+## What You'll Learn
+
+By the end of this chapter, you will be able to:
+
+- Translate a website feature into a mobile journey with observable outcomes.
+- Separate public catalog content from personal state and customer operations.
+- Give records stable identities and assign clear owners to state.
+- Write acceptance scenarios for successful, empty, canceled and failed actions.
+- Sequence implementation without mistaking a teaching fixture for a live service.
+
+**Prerequisites:** Chapter 1's mobile boundaries and evidence matrix. **What you will produce:** a journey specification and acceptance checklist for the first catalog milestone, plus a clearly labeled roadmap for later customer features. No account, payment service or native SDK is required for this planning work.
+
 An application becomes easier to build when requirements describe actions and outcomes rather than a collection of attractive screens. “Show the music” is an idea. “Let a visitor find a song by title or artist, inspect its details, and choose an available destination without signing in” is a journey we can design and verify.
 
 The source website presents books, five music identities, a developing podcast area, and a custom-song service. Some content is public. Some state belongs to an individual. Some actions involve external providers. Orders and delivered files need ownership checks and trustworthy status. This chapter turns those differences into a content model, navigation map, feature progression, and acceptance scenarios.
@@ -108,9 +120,65 @@ Comprehensiveness does not mean adding an unrelated social network, subscription
 
 File/photo selection fits optional request attachments. Location-based song discovery can be an extension that teaches location without making it necessary for browsing. Watches remain a bounded companion discussion.
 
-## Summary and exercises
+## Guided Lab: specify the first useful catalog slice
 
-We have a source inventory, user contexts, navigation map, identity strategy, and acceptance scenarios. The immediate milestone is small, while the finished application's service and device boundaries are explicit.
+Use the same small catalog that the starter will load. The outcome is a written specification you can compare with code and tests in Chapters 4–5. Work with the supplied metadata; there is no need to invent customer records or obtain media files.
+
+1. Open src/GnazzosWorld.Core/Data/catalog.json in the companion source. Identify the five records and classify them as book, song or demonstration podcast. Record each stable ID beside its display title.
+2. Choose one journey: open the catalog, type BERET, inspect the matching card, enter an unknown term, then clear the search. Keep external playback and checkout outside this first slice.
+3. Write the successful result using record identity. The expected match is song-minnesota-bob-beret-violet. A title alone is not enough because a later editorial correction could change its spelling.
+4. Describe the empty result without describing a service outage. In this milestone, the catalog is bundled and the search method performs no network request. An unknown term is a valid empty result.
+5. Describe clearing the search: all five records return in the rule's defined order. Do not require the original JSON file order if the search method intentionally sorts the results.
+6. Assign an owner to every value involved. The embedded fixture owns the supplied metadata, the page owns the current search interaction, and the portable search method computes a result without changing the fixture.
+7. Add a later requirement to a separate list. For example, selecting an external music destination requires reviewed link handling and native handoff checks. It does not become implemented merely because a URL exists in JSON.
+
+The first slice is complete when you can state its inputs, expected identities, valid empty behavior and recovery to the full list. A drawing can support that description, but an attractive screen is not a substitute for it.
+
+## Worked Specification: search and recover
+
+**Given:** the bundled catalog is valid and loaded. **When:** a visitor types a query containing surrounding spaces and mixed case, such as “ beret VIOLET ”. **Then:** the matching result contains exactly one record with ID song-minnesota-bob-beret-violet. **When:** the visitor clears the query. **Then:** the five-record catalog is visible again in the search rule's order.
+
+This statement leads to more than one check. A portable theory can establish normalization and the result ID. A separate empty-query case establishes restoration of the result set. Native observation establishes whether text entry, clearing, keyboard position and the resulting card remain usable on the device.
+
+A weak scenario might say, “The search page looks right.” It does not tell you whether a second unexpected match is acceptable, whether clearing should restore content, or whether an accented title can be found without typing its accent. Strong scenarios expose those decisions before a screen hides them.
+
+| Requirement | First implementation | Observable check |
+|---|---|---|
+| Find a title or creator | CatalogSearch.Find | Expected result IDs for supplied text |
+| Keep identity after a display correction | CatalogItem.Id | Edit the title while preserving the same ID |
+| Distinguish no match from bad input data | Search plus loader validation | Empty query result versus load exception |
+| Use the catalog with a keyboard visible | Native page layout | Reach the results and clear action on a real target |
+| Browse without signing in | Public starter journey | No account prompt in this catalog flow |
+
+Keep implemented behavior and intended behavior on separate lines in your own checklist. The Part I starter supports the first catalog interaction. Saved favorites, customer forms, media playback, account ownership and service operations arrive at later milestones and have their own evidence.
+
+## Guided Design Exercise: change a title without changing a favorite
+
+Assume that a visitor saved the ID book-kai-01. An editor corrects punctuation in the displayed title. Should the saved identifier change? No: it still refers to the same catalog work. The display record can be refreshed while the stored reference remains meaningful.
+
+Now suppose a different edition becomes a distinct purchasable record with its own identity policy. That is a modeling decision, not a spelling correction. Write down whether the app will represent a work, an edition or a release before deciding how a favorite should follow it. The later catalog chapter expands these relationships; the first projection should not pretend to resolve them accidentally through title strings.
+
+The worked answer is a rule: identity follows the entity you chose to model, while display text follows editorial presentation. It is not a rule that every changed field always keeps the same ID. Explain the entity boundary and then test its consequences.
+
+## Troubleshooting the requirement
+
+| Unclear requirement | Hidden ambiguity | Better wording |
+|---|---|---|
+| “Play Spotify songs” | Link handoff, embedded player and licensed media are different capabilities | Name the authorized playback source or specify external handoff |
+| “Never lose a request” | No dependable save point is defined | State what confirms saving and what survives restart |
+| “Show only my orders” | Client filtering could hide an unprotected service | Require server ownership checks and wrong-account rejection |
+| “Refresh the catalog” | Empty data, unavailable service and canceled work are conflated | Define the visible old/new data and failure outcomes |
+| “Apply the bundle discount” | Per-song and whole-basket discounts differ | State the quantity rules and one worked total |
+
+Before coding, ask someone else to read your scenario and give the expected result for a concrete input. If two careful readers reach different answers, repair the requirement before treating either implementation as correct.
+
+## Chapter Summary
+
+Gnazzo's World begins with a narrow public catalog journey and grows toward personal state, media and customer workflows. Stable IDs express record identity; titles and display names express presentation. Acceptance scenarios specify observable outcomes, including no match, canceled work and failed operations, before the implementation chooses its classes.
+
+Your first catalog specification now identifies inputs, expected result IDs, ordering and who owns the changing state. Later account and commercial requirements remain explicit without being presented as completed features. Chapter 3 uses a matching source checkpoint and toolchain to make that first implementation reproducible, so the reader can connect a written promise with an executable result.
+
+## Exercises
 
 1. Write a scenario for preserving a draft when the user cancels sign-in.
 2. Give two title changes that should not change a record's ID.

@@ -23,7 +23,7 @@ expanded chapters after they meet the teaching standard. Preserve the 8x10 forma
 A topic draft and a passing build do not establish a finished teaching chapter.
 Before calling a chapter ready for reader review, provide:
 
-1. A concrete reader outcome, prerequisites, starting source revision and tool setup.
+1. A What You'll Learn opening with 3–5 specific outcomes, prerequisites, what the reader will build, starting source revision and tool setup. Keep the opening concise.
 2. A plain explanation of the problem and the decisions/tradeoffs behind the design.
 3. A numbered implementation walkthrough: actual file paths, project references,
    registrations/configuration, necessary permissions and complete runnable source.
@@ -37,7 +37,9 @@ Before calling a chapter ready for reader review, provide:
    and corrective action. Link official references where platform behavior matters.
 8. Necessary diagrams and verified screenshots, captions and accessible descriptions.
    Authored diagrams and conceptual images must not be labeled runtime observations.
-9. At least one guided exercise with a worked answer/check, plus an independent
+9. A distinct Chapter Summary of roughly 100–150 words, followed by exercises.
+   Recap key lessons and connect the next step without repeating the opening.
+   Include at least one guided exercise with a worked answer/check, plus an independent
    extension exercise. Explain reasoning rather than only giving the final code.
 10. Explicit verification status: compilation, portable tests, server integration,
     real socket/TLS, Android/iOS/device observations and release checks stay separate.
@@ -63,9 +65,10 @@ exercise a boundary, failure or behavior that could realistically be wrong.
 
 ## Revision work
 
-Existing Chapters 1–18 are first drafts. Audit and expand them against this standard
-alongside further implementation; do not characterize the current 125-page proof
-as fully revised or use its pace as a final page forecast.
+The current 142-page proof contains an initial instructional revision of Chapters
+1–5. Chapters 6–18 retain earlier drafts and need substantive review against this
+standard. Native observations/screenshots remain pending. Do not characterize the
+whole manuscript as fully revised or use its pace as a final page forecast.
 
 Prioritize repeatable reader setup and source mapping first, then fill missing
 walkthroughs, worked exercises and troubleshooting in chapter order. Continue

@@ -1,13 +1,21 @@
 # Chapter 1
 # Understanding the Mobile Development Landscape
 
-*Editorial status: first substantive draft. Cross-references and device-specific examples will be refined alongside Chapters 2–5.*
+## What You'll Learn
+
+By the end of this chapter, you will be able to:
+
+- Choose a mobile delivery approach from a concrete user journey.
+- Separate portable C# rules from platform and service responsibilities.
+- Decide which state must survive interruption and process restart.
+- Turn assumptions about networking, permissions and accessibility into checks.
+- Build an evidence matrix that distinguishes source, compilation and real behavior.
+
+**Prerequisites:** basic C# and experience using desktop or web applications. No mobile tools are needed for the planning exercises. **What you will produce:** a small capability/evidence matrix for Gnazzo's World. The runnable starter begins in Chapters 3–5; this chapter establishes the decisions it must respect.
 
 A customer has spent several minutes describing an anniversary song. They switch to their photos to check a date, answer a message, and return to your application. If the description has disappeared, it makes little difference that the first screen looked polished or that the application shares most of its C# with another platform. A basic expectation has failed.
 
 This is a useful place to begin mobile development. The difficult questions often arise from ordinary interruptions rather than complicated algorithms. A phone is a personal, portable device whose operating system manages limited resources on behalf of many applications. Your code shares the user's attention, screen, network, storage, and battery with everything else the device does.
-
-By the end of this chapter you should be able to explain the main implementation approaches, identify assumptions that need revision when moving from desktop or web development, and build a verification matrix for the application's first features.
 
 ## 1.1 Choosing an approach by the work it must support
 
@@ -33,7 +41,7 @@ Playing a file follows a different path. The application can define operations s
 
 We will keep the project structure proportionate to that distinction. The initial core library holds catalog models and rules. The mobile project holds the first views and platform setup. A supporting API arrives when a feature needs a server. Additional abstractions must have a purpose that can be explained through a feature or a test.
 
-The companion scaffold illustrates this with a simple record:
+The companion scaffold begins with this simplified record shape. Required JSON attributes and later optional metadata are omitted from this introductory listing; use the actual milestone file when compiling:
 
 ```csharp
 public sealed record CatalogItem(
@@ -47,7 +55,7 @@ The identifier is separate from the title because titles can change or be shared
 
 A desktop application can often remain visible and active while a user works elsewhere on a large display. A web application also has lifecycle concerns, but its server-side state may survive independently of a browser tab. A mobile application must plan for moving out of the foreground, being suspended, and potentially being terminated.
 
-Do not build a feature on the assumption that one final callback will always run before the process disappears. Save valuable work at suitable points while the application is operating. For a request draft, those points might include completing a step and periodically persisting meaningful edits. The exact design must avoid excessive writes and must be tested under interruption.
+Do not build a feature on the assumption that one final callback will always run before the process disappears. Save valuable work at suitable points while the application is operating. For a request draft, a future design might save at step boundaries or after meaningful edits. Those are proposed strategies, not promises about the starter. The later Chapter 15 example saves only when the customer chooses Save draft. Any automatic-save strategy must define when a write has succeeded and be tested under interruption.
 
 Consider the difference between three pieces of state. The current search term may be convenient to restore. A customer story that took ten minutes to compose is valuable to preserve. A transient loading spinner is usually something to recompute when work restarts. Treating all three as one page's in-memory fields produces unclear recovery behavior.
 
@@ -114,11 +122,53 @@ Before adding features, define the evidence you will accept. The following is a 
 | Audio playback | Queue/progress state transitions | Focus, interruptions, background controls |
 | Order submission | Validation and duplicate-operation handling | Sandbox payment reconciliation |
 
-An honest matrix has pending entries. The first foundation currently includes source code and tests, while mobile build/device verification has not yet been established. Environment restrictions or a pending hardware check should appear in the verification record rather than disappear behind a broad statement that the application works.
+An honest matrix has pending entries. The recorded Part I foundation passed 37 portable cases and Android compilation. Actual device execution and iOS compilation remain pending. Later source revisions have different test totals and must be assessed against their own verification record. Environment restrictions or a pending hardware check should appear in the verification record rather than disappear behind a broad statement that the application works.
 
-## Summary
+## Guided Lab: turn an interruption into a requirement
 
-Mobile development combines familiar programming skills with an operating environment that requires deliberate handling of interruption, limited space, permissions, connectivity, and distribution. MAUI allows substantial code sharing while leaving important native behavior to implement and verify. We will use the website's content to define useful journeys, give shared logic a portable home, and collect evidence at the boundary where each behavior matters.
+No SDK is needed for this lab. Use a document or notebook and keep the same scenario for the next chapter: a customer is writing an anniversary-song request, leaves the app, and later returns. The purpose is to make a promise precise enough that implementation and verification can follow it.
+
+1. Identify the valuable input: the occasion, story, contact details and selected song options. Keep a search term and a loading indicator on a separate list. They have different recovery value.
+2. Describe two returns: the original process is still alive, and the operating system has ended it. A field retained by a page object can help only in the first case.
+3. Choose an explicit save promise. For this exercise, the customer selects Save draft and receives confirmation only after the local write succeeds. This is a requirement to implement later, not a feature of the first catalog page.
+4. Write a failed-save outcome. Keep the customer's current edits visible, report that saving failed and allow another attempt. Do not show the same confirmation as a successful save.
+5. Decide what reopening should do. Load the last confirmed saved draft, identify it as saved state and allow editing. An unsaved later change must not be described as safely persisted.
+6. Assign evidence to each claim: portable storage behavior, actual local-file behavior and native process interruption. Record any claim for which you have no observation as pending.
+
+A useful completion criterion is: another developer can read your description and tell whether an implementation lost data, reported a false save or restored an older confirmed draft. “Make the app reliable” cannot answer those questions by itself.
+
+## Worked Example: choose the right evidence
+
+Suppose the customer types “Anniversary at Long Lake,” saves it, changes the text to “Anniversary at the cabin” without saving, then the process ends. Under the exercise's explicit-save contract, reopening should recover the Long Lake text. Recovering the cabin text might be a welcome result of a future automatic-save feature, but it is not evidence that the explicit-save promise was broken. The interface must explain what it actually saved.
+
+| Claim | First useful check | Evidence still needed |
+|---|---|---|
+| Save stores the supplied draft | Portable store contract with a controlled value | Actual platform file write and restart |
+| A failed write does not erase current input | Simulated write failure while editing | Device UI message and retry reachability |
+| Reopening restores the confirmed value | New editing model using the saved store | New native process reading the same storage |
+| The customer can complete recovery with a screen reader | Accessible journey definition | Real platform focus, labels and announcements |
+
+Notice how a successful fake-store test leaves other cells unresolved. That is useful information. The fake isolates the logic of what should be saved; it cannot establish that the device's storage adapter or screen reader behaved correctly.
+
+Now apply the same reasoning to a public catalog refresh. Keeping a known valid catalog after a refresh failure protects a different kind of value. An empty successful response, a malformed response and a canceled refresh need distinct outcomes. In Chapter 17, those distinctions become an executable transport boundary. Here you are defining the promises that make its tests meaningful.
+
+## Troubleshooting your design assumptions
+
+| Symptom in the plan | Question to ask | Revision to make |
+|---|---|---|
+| “State survives because the page is a singleton” | Does the process still exist? | Specify a storage boundary for required restart recovery |
+| “The connection is available, so submission succeeded” | Was an authoritative result received? | Represent uncertainty and reconcile one operation |
+| “The unit tests passed, so the form is accessible” | Were native focus and announcements observed? | Add a device journey with an explicit pending status |
+| “Denied permission blocks the entire app” | Which feature actually requires it? | Preserve unrelated public journeys and explain the limited action |
+| “Shared code means one platform check” | Which OS behavior is being claimed? | Record each platform-dependent observation separately |
+
+These questions preserve the sophistication of the design while giving a reader a way to reason about it. The objective is a small set of clear promises, with enough explanation that the reader can apply the method to another application.
+
+## Chapter Summary
+
+Mobile development asks familiar C# code to operate amid interruption, changing connectivity, limited space and platform-controlled resources. MAUI shares substantial implementation while leaving native behavior to verify deliberately. A useful design names the value to preserve, the owner of each state transition and the evidence needed to support its promises.
+
+Your interruption scenario and evidence matrix are the chapter's concrete outputs. They distinguish a saved draft from an in-memory field, a response from a connectivity hint, and a portable rule from a device interaction. Chapter 2 turns those boundaries into the application's first journeys, stable record identities and acceptance scenarios.
 
 ## Exercises
 

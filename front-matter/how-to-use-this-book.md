@@ -22,6 +22,14 @@ Listings in the manuscript focus on the code being discussed. Refer to the repos
 
 Prices in teaching examples are snapshots with a version identifier. A production server remains responsible for validating a request and producing an authoritative quote. Do not copy sample settings into a live business without configuring and verifying the actual service.
 
+## Choose the matching source checkpoint
+
+Chapters 1–5 follow the Part I starter checkpoint recorded in the companion's docs/milestones.md. It displays a simple MainPage and has a recorded 37-case portable suite. Later source adds Shell navigation, forms, HTTP and an API; the Chapter 18 portable suite has 245 cases. Both can be valid milestones while showing different screens and totals.
+
+Use Chapter 3's dedicated exercise checkout instead of changing an existing working copy blindly. Read the source ID before following a listing. The companion docs/labs/part01-foundation.md provides a consolidated guided lab, while docs/learning-guide.md maps later source and tests. A chapter tag is still a promise only after it is actually created and verified.
+
+The revised Part I chapters begin with What You'll Learn and close with a separate Chapter Summary. Guided exercises explain expected outcomes and worked reasoning; independent exercises ask you to extend that understanding. Later drafts will receive the same instructional pass. An expected device result is labeled as an expectation until it has been observed, and an exercise's proposed failure/restoration sequence is not presented as a test run performed by the author.
+
 ## Equipment and verification
 
 The early portable examples need the documented .NET SDK and can be tested without a mobile workload. Android development additionally needs a compatible workload, SDK/JDK, and emulator or device. iOS builds and signing require compatible Apple tooling on a Mac, whether accessed through a supported remote workflow or used directly.
