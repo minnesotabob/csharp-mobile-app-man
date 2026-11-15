@@ -5,7 +5,7 @@
 **Author:** John F. Gnazzo  
 **Proposed imprint:** DGreatGnazzini Press LLC  
 **Planning date:** November 14, 2026  
-**Status:** Part I Chapters 1–5 have first drafts and a section illustration. Portable tests and Android compilation have passing Windows CI evidence; device/iOS checks remain pending. See planning/progress.md.
+**Status:** Parts I and II, Chapters 1–11, have first drafts and two section illustrations. Portable tests and Android compilation have passing Windows CI evidence; device/iOS checks remain pending. See planning/progress.md.
 
 ## Editorial brief
 
@@ -28,7 +28,7 @@ Cover basic mobile concepts, intermediate implementation, and advanced productio
 
 ### Technology baseline and verification
 
-As of the planning date, Microsoft’s official announcement and support policy identify .NET 11, C# 15, and .NET MAUI 11 as released. Use this family as the provisional current stable baseline. Confirm compatible Visual Studio, .NET SDK, MAUI workload, Android SDK/JDK, Xcode, deployment targets, and third-party libraries before code is authored. Record exact tested versions; no examples are currently claimed to compile or run.
+As of the planning date, Microsoft’s official announcement and support policy identify .NET 11, C# 15, and .NET MAUI 11 as released. Use this family as the provisional current stable baseline. Confirm compatible Visual Studio, .NET SDK, MAUI workload, Android SDK/JDK, Xcode, deployment targets, and third-party libraries before code is authored. Record exact tested versions. Portable tests and Android compilation now have passing Windows CI evidence; device execution and iOS builds remain pending.
 
 Use MAUI with XAML as the main implementation. Prefer maintained community libraries only where they serve a clear purpose. Select a Windows-compatible unit-test framework and a managed identity provider during the architecture spike. Choose the provider based on native-app OIDC support, MFA enrollment and recovery, account lifecycle, documented configuration, and practical reader access. Do not commit the book to an unverified provider flow.
 

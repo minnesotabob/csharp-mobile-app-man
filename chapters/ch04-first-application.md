@@ -1,6 +1,8 @@
 # Chapter 4
 # Building and Debugging the First Application
 
+This chapter follows the Part I source milestone, commit 0b8973660cc21269ff79eb54733edaf428fb5dac in the companion code repository. Current main evolves the app into Shell and MVVM in Part II. See docs/milestones.md to select the source that matches this chapter.
+
 The first screen is a tracing exercise. Follow its heading back to XAML, its records to the bundled catalog, search to portable C#, and startup to the application builder. Understanding that path is more useful than beginning with a large template full of unexplained features.
 
 The starter displays books, songs, and demonstration podcast metadata. It has no live identity provider, backend, checkout, or player. This chapter explains its implementation and the checks required before calling it a verified mobile application.

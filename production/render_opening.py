@@ -4,6 +4,7 @@ import re
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.platypus.tableofcontents import TableOfContents
 from reportlab.lib import colors
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import BaseDocTemplate, PageTemplate, Frame, Paragraph, Spacer, PageBreak, Preformatted, Table, TableStyle, KeepTogether, Image
@@ -16,9 +17,10 @@ for name, filename in [('Body', 'SourceSerif4-Regular.ttf'), ('Head', 'SourceSan
     pdfmetrics.registerFontFamily(name, normal=name, bold=name, italic=name, boldItalic=name)
 
 styles = {
-    'body': ParagraphStyle('body', fontName='Body', fontSize=11, leading=14, spaceAfter=8),
+    'list': ParagraphStyle('list', fontName='Body', fontSize=11, leading=14, leftIndent=16, firstLineIndent=-16, spaceAfter=4),
+    'body': ParagraphStyle('body', fontName='Body', fontSize=11, leading=14, spaceAfter=6),
     'h1': ParagraphStyle('h1', fontName='Head', fontSize=26, leading=29, spaceBefore=12, spaceAfter=18, keepWithNext=True),
-    'h2': ParagraphStyle('h2', fontName='Head', fontSize=17, leading=20, spaceBefore=13, spaceAfter=8, keepWithNext=True),
+    'h2': ParagraphStyle('h2', fontName='Head', fontSize=17, leading=20, spaceBefore=9, spaceAfter=6, keepWithNext=True),
     'small': ParagraphStyle('small', fontName='Head', fontSize=9, leading=12, spaceAfter=7),
     'cell': ParagraphStyle('cell', fontName='Body', fontSize=9.5, leading=12),
     'code': ParagraphStyle('code', fontName='Code', fontSize=9.5, leading=12.5, spaceBefore=6, spaceAfter=12, backColor=colors.HexColor('#f1f1f1'), borderPadding=8),
@@ -49,6 +51,7 @@ def markdown(text, source=None):
             if not path.is_relative_to(ROOT): raise ValueError('Image outside manuscript')
             result.append(Image(str(path),width=368.64,height=245.76,hAlign='CENTER'))
             result.append(Paragraph(fmt(match.group(1)),styles['small']))
+            i+=1;continue
         elif line.startswith('```'):
             flush(); i+=1; code=[]
             while i<len(lines) and not lines[i].startswith('```'):
@@ -68,13 +71,22 @@ def markdown(text, source=None):
         if line.startswith('# '):
             flush();result.append(Paragraph(fmt(line[2:]),styles['h1']))
         elif line.startswith('## '):
-            flush();reference_mode = 'reference' in line.lower() or 'source' in line.lower() or 'index terms' in line.lower();result.append(Paragraph(fmt(line[3:].replace(' and index terms','')),styles['h2']))
+            flush();reference_mode = line[3:].lower().startswith(('references', 'sources', 'companion references'));result.append(Paragraph(fmt(line[3:].replace(' and index terms','')),styles['h2']))
         elif line.startswith('*Illustration brief:') or line.startswith('*Editorial status:'):
             flush();result.append(Paragraph(fmt(line.strip('*')),styles['small']))
+        elif re.match(r'^\d+\.\s', line):
+            flush();result.append(Paragraph(fmt(line),styles['list']))
         elif not line.strip():flush()
         else:paragraph.append(line.split(' Index:')[0])
         i+=1
-    flush();return result
+    flush()
+    # Carry the final exercise with references rather than orphaning citations.
+    for j, flow in enumerate(result):
+        if isinstance(flow, Paragraph) and flow.getPlainText() == 'References':
+            start = max(0, j - 1)
+            result[start:] = [KeepTogether(result[start:])]
+            break
+    return result
 
 def footer(c,doc):
     c.saveState();c.setFont('Head',8);c.setFillColor(colors.HexColor('#555555'))
@@ -86,13 +98,31 @@ def footer(c,doc):
     c.drawString(left,30,'8 × 10 in  |  11 pt body  |  9.5 pt code  |  November 14, 2026')
     c.drawRightString(right,30,str(doc.page));c.restoreState()
 
-doc=BaseDocTemplate(str(OUT),pagesize=(576,720),leftMargin=68.4,rightMargin=46.8,topMargin=54,bottomMargin=51,title='Building Mobile Apps with C# 15 - Opening Draft',author='John F. Gnazzo')
+class BookDoc(BaseDocTemplate):
+    section_prefix=''
+    def afterFlowable(self, flowable):
+        if not isinstance(flowable,Paragraph) or flowable.style.name!='h1': return
+        text=flowable.getPlainText()
+        if text in ['Contents','About This Draft'] or self.page==1: return
+        if re.fullmatch(r'(Chapter \d+|Part [IVX]+)',text):
+            self.section_prefix=text;return
+        if self.section_prefix:
+            text=self.section_prefix+' - '+text;self.section_prefix=''
+        key='heading-'+re.sub(r'[^a-z0-9]+','-',text.lower())
+        self.canv.bookmarkPage(key)
+        self.canv.addOutlineEntry(text,key,level=0)
+        self.notify('TOCEntry',(0,text,self.page,key))
+
+doc=BookDoc(str(OUT),pagesize=(576,720),leftMargin=68.4,rightMargin=46.8,topMargin=54,bottomMargin=51,title='Building Mobile Apps with C# 15 - Opening Draft',author='John F. Gnazzo')
 doc.addPageTemplates([
     PageTemplate(id='odd',frames=[Frame(68.4,51,460.8,615,id='odd-frame',leftPadding=0,rightPadding=0,topPadding=0,bottomPadding=0)],onPage=footer,autoNextPageTemplate='even'),
     PageTemplate(id='even',frames=[Frame(46.8,51,460.8,615,id='even-frame',leftPadding=0,rightPadding=0,topPadding=0,bottomPadding=0)],onPage=footer,autoNextPageTemplate='odd')])
 story=[Spacer(1,84),Paragraph('Building Mobile Apps<br/>with C# 15',styles['h1']),Spacer(1,16),Paragraph('.NET 11 and .NET MAUI 11',styles['h2']),Paragraph('A Windows Developer’s Guide to Android, iPhone, and Tablets',styles['body']),Spacer(1,36),Paragraph('John F. Gnazzo',styles['h2']),Paragraph('DGreatGnazzini Press LLC',styles['body']),Spacer(1,50),Paragraph('Opening manuscript and typography proof. First drafts; not a finished book. Final illustrations, screenshots, front matter, and index are still in development.',styles['small']),PageBreak()]
-story.extend(markdown('# About This Draft\n\nThis specimen uses the selected Source Serif 4, Source Sans 3, and Source Code Pro fonts. It demonstrates the 8 × 10 page, 11-point body text, 9.5-point code, a generous binding margin, and new-page starts for major divisions.\n\nIncluded: preface, reader orientation, introduction, Part I overview with its original illustration, and Chapters 1–5. These chapters are first drafts; device checks remain separate from compilation. The full book retains its planned 40 chapters and complete front and back matter.\n\nPortable code and tests passed the GitHub-hosted Windows workflow. The Android starter compiles on Windows CI and all 37 portable tests pass. Emulator/physical-device launch and iOS compilation remain unverified.\n\nCopyright 2026 John F. Gnazzo. All rights reserved. Publication date, ISBNs, final legal notices, dedication, acknowledgments, and author biography will be completed during production.'))
-for rel in ['front-matter/preface.md','front-matter/how-to-use-this-book.md','front-matter/introduction.md','parts/part-01/introduction.md','chapters/ch01-mobile-landscape.md','chapters/ch02-defining-gnazzos-world.md','chapters/ch03-windows-environment.md','chapters/ch04-first-application.md','chapters/ch05-testable-foundations.md']:
+toc=TableOfContents()
+toc.levelStyles=[ParagraphStyle('toc',fontName='Head',fontSize=11,leading=14,spaceBefore=6)]
+story.extend([Paragraph('Contents',styles['h1']),toc,PageBreak()])
+story.extend(markdown('# About This Draft\n\nThis specimen uses the selected Source Serif 4, Source Sans 3, and Source Code Pro fonts. It demonstrates the 8 × 10 page, 11-point body text, 9.5-point code, a generous binding margin, and new-page starts for major divisions.\n\nIncluded: preface, reader orientation, introduction, Parts I and II with original illustrations, and Chapters 1–11. These chapters are first drafts; device checks remain separate from compilation. The full book retains its planned 40 chapters and complete front and back matter.\n\nPortable code and tests passed the GitHub-hosted Windows workflow. The Android starter compiles on Windows CI and the expanded portable test suite passes. Emulator/physical-device launch and iOS compilation remain unverified.\n\nCopyright 2026 John F. Gnazzo. All rights reserved. Publication date, ISBNs, final legal notices, dedication, acknowledgments, and author biography will be completed during production.'))
+for rel in ['front-matter/preface.md','front-matter/how-to-use-this-book.md','front-matter/introduction.md','parts/part-01/introduction.md','chapters/ch01-mobile-landscape.md','chapters/ch02-defining-gnazzos-world.md','chapters/ch03-windows-environment.md','chapters/ch04-first-application.md','chapters/ch05-testable-foundations.md','parts/part-02/introduction.md','chapters/ch06-xaml-layouts-resources.md','chapters/ch07-bindings-commands-mvvm.md','chapters/ch08-navigation-state.md','chapters/ch09-collections-images-reuse.md','chapters/ch10-accessibility-localization.md','chapters/ch11-adaptive-layouts.md']:
     story.append(PageBreak());story.extend(markdown((ROOT/rel).read_text(),ROOT/rel))
-doc.build(story)
+doc.multiBuild(story)
 print(OUT)

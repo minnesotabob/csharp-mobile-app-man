@@ -1,40 +1,30 @@
-# Part I draft milestone — November 14, 2026
+# Parts I and II draft milestone — November 14, 2026 (Central)
 
 ## Written and illustrated
 
-- Approved title and 40-chapter/eight-Part plan remain in place.
-- Preface, reader guide, introduction, Part I overview, and Chapter 1 were drafted in the foundation milestone.
-- First drafts of Chapters 2–5 now cover requirements/acceptance scenarios, Windows tooling, the first screen/startup/debugging, and portable tests.
-- Part I now has its own original grayscale illustration with a meaningful alternative description. A 300-DPI placement is used in the PDF.
-- The opening PDF now contains 39 pages with Chapters 1–5, the Part I illustration, and opening material. It is an editorial draft, not final book pagination or a production-ready paperback.
-- Final author/legal pages, detailed TOC, index, other Part illustrations, and verified app screenshots remain future production work.
-- Chapter lengths are first-draft coverage; hands-on material and verified screenshots will expand during technical/editorial passes. The approximately 800-page full-book budget is still provisional.
+First drafts now cover Chapters 1–11, preface, reader guide, introduction, and two Part introductions with chapter previews. Part II adds XAML/resources, binding and MVVM, Shell navigation/state, collections/images/reuse, accessibility/localization, and adaptive layouts. Both Parts have distinct original grayscale illustrations with alternative descriptions.
+
+The 68-page opening PDF includes linked contents/bookmarks and the selected 8 × 10 typography. It remains an editorial proof; chapter coverage, hands-on walkthroughs and real screenshots will expand after technical/device review. The 40-chapter/eight-Part plan and approximately 800-page budget remain provisional. These short first drafts are not final chapter lengths.
+
+Final front/back matter, acknowledgments, author biography, ISBN/legal details, remaining Part art, complete index, accessible EPUB, and release production remain pending. Editorial index terms are retained in Markdown for later indexing.
 
 ## Verified code
 
-Portable Windows CI: 37 tests, zero errors/failures/skips.  
-Run: https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43672656910  
-Code revision: bf6f2f55b57223d28ea1cf0181b289a362ba8d40
+Source revision: 9497b0d7e8acb74c07c50be8cb56f26453664fbb in csharp-mobile-app-code.
 
-Android Debug build on Windows CI: successful; final compile zero warnings/errors.  
-Run: https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43672619935  
-Code revision: 45e17eb16bfc7b5cfd17e2ea3cebc48d3e8398d4
+- Portable Release build and executable xUnit suite on Windows CI: 61 tests, 0 errors, failures, skipped or not run.
+- Evidence: https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43674393990
+- Android Debug compilation on Windows CI: success, final compile 0 warnings/errors.
+- Evidence: https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43674393959
 
-The later portable revision only adjusts one test case; application/core code matches the Android build revision. The successful Android environment used SDK/workload set 11.0.100, MAUI manifest 11.0.0, MAUI Controls 11.0.10, Android pack 37.2.29, and Microsoft OpenJDK 21.0.11+10.
+The companion app now has Home/Discover Shell navigation, typed bindings, a portable catalog browser model, search/kind filtering, stable-ID details, reusable cards/detail view, English/Spanish resources, light/dark resources, and a width-based inline-detail policy. Tests exercise state and command boundaries; they do not prove native accessibility or rendering.
 
-Required JSON fields now prevent an omitted kind from defaulting to Book. Boundary tests cover missing properties, malformed JSON, empty arrays, caller stream ownership, and null streams.
+Toolchain: SDK/workload set 11.0.100, MAUI manifest 11.0.0, Controls 11.0.10, Android pack 37.2.29, Microsoft OpenJDK 21.0.11+10. Dependency installation reports an unresolved cmdline-tools;21.0 warning; final Android compilation is clean. See companion docs/verification.md.
 
-The dependency-install target reported an unresolved cmdline-tools;21.0 warning; final Android compilation itself was clean. This is recorded in the code verification log.
+## Limits and next work
 
-## Limits
+Device/emulator launch, native navigation/keyboard/rotation, screen-reader/large-text/theme/language checks, and iOS compilation/signing remain pending. Multiwindow navigation, remote artwork, backend, identity/MFA, playback, checkout and deployment are not implemented. Follow docs/device-checks.md rather than marking these passed from unit tests.
 
-Android compilation is not emulator or hardware launch evidence. Device/accessibility checks, iOS builds/signing, and remote iOS configuration remain pending. No live MFA, backend, player, checkout, or public deployment is implemented yet.
+Earlier local workload/test attempts were blocked by automatic review after attempted cloud metadata access; they were not retried. Separate GitHub-hosted Windows CI provides the evidence above.
 
-Prior local workload/testing attempts were blocked by automatic review after attempted cloud metadata access. They were not retried. Separate GitHub-hosted Windows workflows now provide the relevant build/test evidence.
-
-## Next
-
-1. Run the first Android application on an emulator/device; capture genuine screenshots and lifecycle/large-text/keyboard observations.
-2. Verify iOS compilation in a compatible Mac/Xcode environment.
-3. Develop Part II XAML, binding/MVVM, routing, reusable views, accessibility, and adaptive layouts.
-4. Revise Part I procedures against observed IDE/device results and expand its hands-on exercises.
+Next: develop Part III catalogs, search and the request/pricing workflow; expand earlier chapters against actual device observations when available. Preserve the Part I source milestone for Chapters 4–5 using companion docs/milestones.md.
