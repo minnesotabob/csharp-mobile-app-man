@@ -1,3 +1,11 @@
+# Technical/editorial audit — first pass, November 15, 2026 (Central)
+
+The first structural/source-inventory audit of Chapters 1–18 is recorded in [technical-audit-01.md](technical-audit-01.md). All chapters have learning objectives and standalone summaries; Chapters 15–18 now separate exercises from summaries. Chapters 12–17 gained targeted troubleshooting. Markdown fence parity and explicit companion source-filename checks passed. The companion learning guide was corrected to describe this initial instructional work accurately.
+
+This does NOT certify code excerpts, native behavior, fresh CI or a revised typeset proof. The latest historical Chapter 18 result is 245 portable and 26 API tests, with Android compilation and loopback service smoke evidence; no new execution is asserted here. Continue with per-excerpt historical-revision checking, then fresh CI and PDF proof regeneration.
+
+## Earlier milestone record
+
 # Instructional revision checkpoint — November 15, 2026 (Central)
 
 Chapters 1–18 now have an initial instructional treatment in the review branch. Chapters 6–11 received learning objectives, source-oriented guided labs, troubleshooting, and independent Chapter Summary sections. Chapters 12–18 received explicit objectives and worked guided labs; Chapters 12–14 received separate chapter summaries while Chapters 15–18 retain existing summary/exercise sections. The technical scope and planned 40 chapters remain unchanged.
