@@ -264,6 +264,12 @@ No native OS job registration is included in this milestone. Before adding it, d
 
 Offline reliability begins with a precise promise about available data and unfinished work. The catalog service reads a validated saved document before using the bundled fixture, and neither path requires a network request. Freshness is a documented 24-hour policy based on an injected clock; unknown and future timestamps remain usable but stale. Schema 3 preserves earlier local state while adding retrieval metadata and a bounded refresh intent. A ticket protects requests made during an active fetch, and one SQLite transaction commits the replacement and matching acknowledgment. Failure and cancellation preserve recovery opportunities. These portable rules do not grant unlimited mobile background execution. Native scheduling, UI responsiveness and device lifecycle behavior still need platform checks. Chapter 21 extends the discussion from public replacement to synchronization of user changes and conflicts.
 
+### Visual recap: four separate acceptance decisions
+
+![Part IV progress recap. Chapters 17 through 20 distinguish an accepted response, a defined public API contract, a committed local snapshot and recoverable refresh intent. User synchronization arrives in Chapter 21.](../assets/figures/recap-20-data-boundaries.png)
+
+A listener finding Northern Lights in a saved catalog has received a useful local result. That observation does not establish that a network request ran, a newer revision exists, or another device has the same favorites. Ask which of the four decisions the evidence establishes before describing the feature as complete. Chapter 21 adds a different problem: reconciling user changes rather than replacing public metadata.
+
 ## Exercises
 
 ### Guided exercise: the lost refresh request

@@ -168,16 +168,9 @@ SQLite exposes `PRAGMA user_version`, an application-owned integer stored in the
 
 Both upgrade steps run inside one SQLite transaction when the file begins at version 0. The complete `Migrate` implementation checks the current version before opening its upgrade transaction, performs controlled schema commands, checks cancellation, and commits once the desired schema is ready.
 
-The important sequence is:
+![Figure 19.1. At the Chapter 19 checkpoint, schema versions 0 and 1 upgrade inside a transaction, version 2 needs no upgrade, and a newer version is refused. A failed upgrade leaves the previously committed schema available for diagnosis and retry.](../assets/figures/fig-19-migration.png)
 
-```text
-Read user_version
-  -> Reject unsupported future version
-  -> Begin local transaction
-  -> Create missing version-1 tables (if necessary)
-  -> Create version-2 progress table (if necessary)
-  -> Commit both schema and user_version
-```
+Follow a saved favorite for Kai the Ninja through Figure 19.1. Opening a version-1 file adds reading progress without recreating the favorites table. Successful commit publishes the schema and version together. Failure before commit must not leave a version number that promises a table the file does not contain. Chapter 20 adds schema 3; use the Chapter 19 checkpoint when reproducing this diagram's exact version decisions.
 
 If an upgrade fails before commit, disposing the transaction rolls it back. On the next open, migration can retry against the still-committed schema. A migration must not update the version number *before* committing the corresponding schema.
 

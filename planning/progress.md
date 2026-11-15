@@ -1,3 +1,22 @@
+# Editorial follow-through — November 15, 2026 (Central)
+
+Added a Chapter 19 migration/rollback figure, a Chapters 17-20 progress recap and a
+Chapter 9 performance-observation lab. The lab defines reproducible fixture/device
+conditions and explains which measurement can support which conclusion; no results
+are invented. The migration figure explicitly targets the schema-2 teaching checkpoint.
+
+The regenerated proof has **194 pages, 27 bookmarks and 14 distinct images** (three
+Part illustrations and eleven authored figures). Trim and outer text-boundary checks
+passed across all pages. The added lab, migration figure and recap were rendered for
+visual inspection. This is an editorial revision; no application source changed and
+no new app build, device observation or performance result is claimed.
+
+Current source remains on `work/chapter16-pricing`; `main` is an earlier milestone.
+Native screenshots and Chapter 20 browser integration remain outstanding. Chapter 21
+synchronization is the next planned implementation chapter.
+
+## Earlier milestone record
+
 # Editorial visual revision — November 15, 2026 (Central)
 
 Applied the supplied Chapters 1-20 editorial review without changing the 40-chapter

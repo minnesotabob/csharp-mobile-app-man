@@ -127,6 +127,25 @@ Replacing the whole result set is reasonable for our small local search. An API-
 
 Keep list and detail scrolling independently bounded in the wide layout. Avoid wrapping both in one large scrolling parent that prevents the list from receiving a useful viewport.
 
+## 9.10 Establish a performance baseline before optimizing
+
+Imagine a listener scrolling past Minnesota Bob to find a particular song. A correct result is useful only if the list remains practical to navigate. Begin with a reproducible observation rather than a claim that shared C# or a particular control guarantees speed. This optional measurement lab prepares for Chapter 37; it does not add a remote-artwork implementation or report a benchmark.
+
+1. Use a disposable fixture containing 500 valid records with distinct IDs. Keep its generation deterministic, preserve required relationships, and record the fixture revision. Retain the existing placeholder so the first comparison isolates list and layout work.
+2. Record the source commit, device, OS, build configuration, text size and profiler. Use a physical device for conclusions about shipping behavior. Label emulator observations separately. Keep the debugger attachment and profiler settings consistent between comparisons.
+3. Define the journey: open Discover, scroll to the end and back, select one known ID, return, and repeat five times. Record visible stalls and the instrumented interval you actually measured. An app-side timer cannot prove the time at which a native frame became visible.
+4. Capture a memory trace for the repeated journey. Inspect whether retained objects keep increasing and use a suitable profiler to identify owners before calling the change a leak. Allocation, retained managed memory and process memory measure different things.
+5. Change one suspected cause, such as unnecessary layout nesting. Repeat the same journey with the same fixture and conditions. Preserve individual observations; do not report the fastest pass as the normal result. Confirm that selection, large text and navigation still work.
+
+| Observation to record | What it can establish |
+|---|---|
+| Repeated scroll trace and visible stalls | Where to investigate frame or layout work on this device |
+| Retained-object trace after repeated navigation | Which objects remain reachable and their ownership paths |
+| Source image dimensions and decode activity, once artwork exists | Whether thumbnail work uses excessive source resources |
+| Fixture, commit and device details | Whether a later comparison repeats the same experiment |
+
+**Worked interpretation:** If search completes promptly but scrolling still stalls, the search timing does not explain native presentation. Inspect layout, binding and image work in the trace. If an apparent improvement disappears when large text is restored, it has not met the original conditions. Battery, startup and real image-loading measurements receive dedicated treatment in Chapter 37; this list exercise does not establish those results.
+
 ## Checkpoint and exercises
 
 CatalogCard and DetailsView now provide two purposeful reusable components. Their binding context, selected appearance, and image fallback are explicit. Remote artwork and pagination remain planned implementation work.
@@ -146,5 +165,7 @@ Reusable views help a catalog maintain consistent display and semantics, but the
 Images: https://learn.microsoft.com/en-us/dotnet/maui/user-interface/controls/image  
 CollectionView: https://learn.microsoft.com/en-us/dotnet/maui/user-interface/controls/collectionview/  
 Visual states: https://learn.microsoft.com/en-us/dotnet/maui/user-interface/visual-states
+
+Performance measurement: https://learn.microsoft.com/en-us/dotnet/maui/deployment/performance
 
 Index: DataTemplate; reusable view; binding inheritance; selection; virtualization; image placeholder; MauiImage; stream lifetime; pagination; stable identity.

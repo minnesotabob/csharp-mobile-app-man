@@ -59,3 +59,19 @@ rights, privacy, accessibility and production checks remain separate.
 
 This is an editorial/figure change. Existing code verification remains historical;
 no app behavior or unit-test count is newly claimed from regenerating the PDF.
+
+## Follow-through revision — November 15, 2026 (Central)
+
+Added the Chapter 19 migration/rollback diagram and a Chapters 17-20 progress recap.
+Chapter 9 now includes a repeatable 500-record performance observation lab with an
+explicit measurement contract, device/build controls, retained-object investigation,
+and a worked interpretation. It introduces the method without claiming benchmark
+results or replacing the full Chapter 37 treatment. The guidance was checked against
+Microsoft's performance documentation; the page currently resolves to its .NET MAUI
+10 view, so it supports general measurement practice, not a verified .NET 11 profiler
+configuration. The migration diagram describes the Chapter 19 schema-2 checkpoint,
+not the later schema-3 implementation.
+
+The proof now has eleven authored technical figures, plus the three Part illustrations.
+Native screenshot capture remains outstanding. Next implementation work is Chapter 21;
+its user-state synchronization must remain separate from public catalog replacement.
