@@ -28,3 +28,16 @@
 - Conduct a substantive editorial pass on accuracy, continuity, duplicated explanations, and potential gaps. Chapter 19 has not been started by this audit.
 
 **Result:** First-pass structural and source-inventory audit complete. Editorial fixes committed. Technical certification and typeset proof review **not complete**.
+
+## Pass 2: targeted code-excerpt and contract cross-check — November 15, 2026
+
+Reviewed the manuscript's fenced code excerpts for Chapters 12–18 and compared selected signatures, snippets, contracts and stated behavior against the companion source at `work/chapter16-pricing`. Source files checked include `CatalogSnapshot.cs`, `CatalogItem.cs`, `CatalogSearch.cs`, `Favorites.cs`, `DebouncedQuery.cs`, `DetailViewModel.cs`, `ContentLinks.cs`, `SongPricing.cs`, `SongSubmission.cs`, `BoundedJsonClient.cs`, `CatalogDocument.cs`, `GnazzosWorld.Api/Program.cs`, launch settings, the local-API run guide, and submission tests.
+
+**Matches observed:** The Chapter 13 search signature, favorites-store contract and debounce revision guard match their implementations. Chapter 14's approved-HTTPS-host policy and browser adapter match the source. Chapter 16's versioned pricing multipliers (1, 1.9, 2.7) and quote/attempt record shapes match. The Chapter 17 20-second linked deadline and 1,048,576-byte payload limit match `BoundedJsonClient`. The Chapter 18 API's read-only routes and localhost:7443 launch profile match `Program.cs` and `launchSettings.json`. The reported Chapter 16 two-minute instrumental example totals (79.00, 150.10, 213.30 USD) follow the checked source.
+
+**Corrections committed:**
+- Chapter 12's optional `CatalogItem` constructor tail is identified explicitly as a Chapter 12 milestone excerpt; current source also includes the later optional `ReadingSample` field.
+- Chapter 14's abbreviated `OpenAsync` code snippet now says `result` is produced by omitted browser/exception handling, and points readers to the complete method rather than suggesting the fragment compiles independently.
+- Chapter 15 no longer implies the existing API accepts song requests. It accurately states that the API currently provides public catalog reads only and a future request endpoint must independently validate character limits.
+
+**Limits:** This targeted inspection is not an exhaustive diff of all 18 chapter claims or every line of source. No `dotnet` compilation/test command or native-device run was executed during this audit. Do not convert reviewed excerpts into a claim of fully reproducible code until the paired revision is checked and executed.
