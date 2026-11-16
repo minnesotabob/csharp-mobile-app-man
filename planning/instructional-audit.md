@@ -118,3 +118,15 @@ separate. Real SQLite and signed in-process API evidence are distinguished from 
 provider HTTP and pending hosted Stripe/CLI/native/iOS execution. The exact-byte vector
 failure and Git line-ending correction are explained as a protocol lesson. The chapter
 retains advanced scope without asserting a completed real-provider transaction.
+
+## Chapter 34 initial instructional revision — November 16, 2026 (Central)
+
+Added six outcomes/prerequisites, a lost-revision-reply and shared-tablet narrative,
+explained replay/journal/hash code, owned-route and controlled-transition tables,
+authored private-read figure, guided lab, troubleshooting, 118-word summary and worked/
+independent exercises. Runnable local synthetic fixture provides review/revision/delivery
+setup and a CI smoke; it is not real administration or payment. Actual HTTP/client
+private-byte verification is distinguished from memory-only native reporting, pending
+listening/offline composition, provider notices and real customer/admin service work.
+Resource authorization, snapshot versus receipt versions and logical revocation versus
+physical erasure remain explicit. The 40-chapter intermediate/advanced plan is unchanged.
