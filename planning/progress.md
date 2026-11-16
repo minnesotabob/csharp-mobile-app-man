@@ -1,3 +1,120 @@
+# Chapter 37 performance, reliability and accessibility — November 16, 2026 (Central)
+
+Final executable source: `c82eff270ec50c3ef4916c4401576ba1b893b1a9`.
+All six workflows pass at that exact revision:
+
+| Check | Executed result | Evidence |
+| --- | --- | --- |
+| Portable Release | 644 cases; no errors/failures/skips/not-run; build 0 warnings/errors | https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43876553252 |
+| API/probe Release | 109 cases; builds 0 warnings/errors; actual Kestrel public contract smoke passes | https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43876553224 |
+| Android Debug | Final compile 0 warnings/errors; merged capability checks pass | https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43876553443 |
+| Traceable acceptance | 18 projector checks, 644/109 C# cases, six mapped automated rows pass; six manual rows not_run and release readiness unassessed | https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43876553254 |
+| Published HTTPS recovery | Actual pinned-loopback Staging/restore/hold/release/redacted-trace drill passes | https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43876553320 |
+| Release performance investigation | API publish and runner build succeed without compiler diagnostics; actual search/API/retention report generated | https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43876553256 |
+
+The Android dependency-install phase retains the earlier cmdline-tools;21.0 resolution
+warning, separate from the final clean compile. Node runner deprecation messages are
+not C# warnings. No local dotnet runtime exists in this workspace; C# execution occurred
+on GitHub-hosted Windows. Eight new portable cases preserve deterministic stress data,
+reference/snapshot equivalence across both orders/queries/filters/favorites, ownership,
+invalid/empty input and view-model selection behavior. Existing suites remain intact.
+
+## Measurements actually observed
+
+Host: Microsoft Windows 10.0.26100, .NET 11.0.0, X64, four logical processors on a shared
+GitHub VM. Same build/data, 10,000 records, five queries, three paired warmups and 21
+alternating-order pairs. Complete ordered ID sequences are checked outside timing.
+No fixed elapsed-time pass threshold or forced GC is used in the search samples.
+
+| Metric per five-query batch | Reference filter + sort | Reused snapshot |
+| --- | ---: | ---: |
+| Median | 107.7073 ms | 93.4096 ms |
+| Nearest-rank p95 | 128.6835 ms | 121.0163 ms |
+| Median current-thread allocated bytes | 633,032 | 140,896 |
+
+Observed median time reduction is 13.27%; allocation reduction is 77.74%. These are
+scoped desktop observations, not a repeated-device speed guarantee. The first snapshot
+construction separately costs 28.8451 ms and allocates 1,196,968 bytes, including
+first-use/JIT work. Its cost is excluded from warmed queries, not free. Matching remains
+linear; remaining CPU work needs a trace before another optimization.
+
+Actual published public API child process-to-first-health is 614.9966 ms with 100 ms
+polling. After three warmups, 21 sequential five-record catalog HTTP/body reads have
+median 0.3119 ms, p95 0.3419 ms and 2,731 response-body bytes. This is loopback HTTP,
+not native first-frame startup, TLS/WAN load, capacity, wire/egress or energy evidence.
+
+The controlled omitted-Dispose experiment uses 32 existing BackgroundPlaybackOwner
+instances retained through a long-lived fake player's event, each with a synthetic
+64 KiB closure. Subscriber count changes from 32 to 0 after explicit disposal; observed
+weak owners change from 32 to 0. Only subscription invariants are required; weak counts
+are diagnostic observations. Forced GC occurs only in this reachability experiment,
+not in the application/search timing. This is not a discovered native page leak or
+physical erasure result.
+
+The safe observed JSON with all sample values is retained at
+`docs/reviews/ch37-desktop-evidence.json`, source/run identity unchanged. Artifact
+14229802314 expires November 23, 2026; digest
+`sha256:5d1e054946769e6a4db638ffb15ef2406458024e294c34cf2eac075fda379165`.
+Only safe JSON is uploaded; no raw process logs, dumps, private requests or environment
+secrets are exported by this workflow. Hash/source fields are not independent provenance.
+
+## Native, image and accessibility boundaries
+
+The new transient PerformanceLabPage is wired from Home. It prepares/searches bounded
+public metadata off the UI thread and fences obsolete results by visibility/generation.
+Its CollectionView has a finite Grid viewport outside the controls ScrollView, flexible
+text rows and cumulative template-construction inspection. Android compilation passes;
+no actual frame/scrolling/lifecycle observation is inferred from compilation or counts.
+The main browser still uses the original five bundled records with the stable snapshot.
+
+Original raw PNG variants are 1200x1400/13,263 encoded bytes and 96x112/7,112 bytes.
+One RGBA-plane estimate is 6,720,000 versus 43,008 bytes (156.25 ratio), not measured
+native memory; caches/downsampling/stride/GPU/intermediate buffers remain to observe.
+Generators, dimensions and byte hashes are retained. No existing private delivery cache
+policy is relaxed to enable the public stress fixture.
+
+The device/accessibility review under docs/reviews explicitly remains incomplete.
+Declared source-color ratios are calculated from App.xaml (minimum inspected pair
+8.0415:1, above 4.5:1); disabled/focus/high-contrast/rendered states remain unobserved.
+No native WCAG/accessibility acceptance or named-device result is invented.
+
+Physical Android/iOS startup/frames/decoded memory/energy/wire counters, TalkBack/
+VoiceOver, large text/localization/focus, actual OS recovery and signed-package/install/
+upgrade remain pending. Full trim/NativeAOT compatibility is not claimed: current
+string-path bindings, reflection JSON and auth/media dependencies need target-specific
+review. Current official .NET 11 CoreCLR/diagnostic/trim/AOT guidance is referenced in
+the chapter/worksheet; no Mono default or completed AOT publish is asserted.
+Public production hosting, live identity/MFA/provider checkout, real customer recovery,
+remote diagnostics/newsletter integration and iOS also retain their earlier constraints.
+
+## Manuscript and editorial proof
+
+Final chapter source `6eef168d92873bec05ad75f7f7d6857ced0863b5` independently passes
+PDF production CI:
+https://github.com/minnesotabob/csharp-mobile-app-man/actions/runs/43879295673
+
+Chapter 37 adds five outcomes/prerequisites, anniversary/catalog-scale narrative,
+explained snapshot/allocation/retention/UI-publication source, actual before/after and
+image-size tables, full Release/device profiling protocol, runtime/trim/AOT review,
+source palette/accessibility disposition, eight-step guided lab, troubleshooting,
+116-word summary, worked reasoning and three independent extensions. Two authored
+figures show matched measurement paths and event-root retention. The full planned
+40-chapter intermediate/advanced scope is preserved. The measured investigation does
+not complete the physical-device/accessibility observations in the outline.
+
+The proof has **387 pages**, 8 x 10 inches, 11-point body/9.5-point code,
+48 bookmarks and 39 distinct images (three original Part illustrations plus 36 authored
+figures). Chapter 37 starts on page 374. All trim sizes, expected markers and outer
+text boundaries pass. Contact-sheet inspection covered the new chapter; opening,
+diagrams, actual comparison/allocation tables, code, retention, summary/exercises and
+revised overview received larger inspection. Learning outcomes/prerequisites/build
+scope fit the chapter's first page. The existing downloadable PDF was updated successfully.
+
+Next: Chapter 38, Android Signing and Google Play Release. Recheck current official
+requirements, prepare a reproducible candidate/key-boundary workflow and keep actual
+account/store upload, secrets and install/upgrade observations explicit. No public
+publishing is implied by the tutorial. Chapter 39 retains iOS signing/publication work.
+
 # Chapter 36 complete-application testing — November 16, 2026 (Central)
 
 Final executable acceptance source: `dd137ed10809a40ae38217b485b331fe33552760`.
