@@ -130,3 +130,16 @@ private-byte verification is distinguished from memory-only native reporting, pe
 listening/offline composition, provider notices and real customer/admin service work.
 Resource authorization, snapshot versus receipt versions and logical revocation versus
 physical erasure remain explicit. The 40-chapter intermediate/advanced plan is unchanged.
+
+## Chapter 35 initial instructional revision — November 16, 2026 (Central)
+
+Added six outcomes/prerequisites, an anniversary-request restoration and diagnostic-leak
+narrative, deployment/recovery diagrams, resource-authority table, explained migration/
+backup/log/metric code, guided actual HTTPS staging drill, troubleshooting, 114-word chapter
+summary and worked/independent exercises. Substantial diagnostics coverage distinguishes
+structured fields from scrubbing, metrics from traces/audit, consent from remote export,
+and handled faults from fatal managed/native crashes. Current OpenTelemetry/Sentry
+references are selected without claiming an unconfigured SDK/device integration. Local
+newsletter confirmation remains a bounded separately consented port. Actual published
+loopback TLS/restore/safe-trace evidence is separate from public provisioning and complete
+customer/provider recovery. This chapter closes Part VII; the 40-chapter scope remains.
