@@ -174,7 +174,7 @@ A safe custom span does not prove that every built-in source, exporter or collec
 
 The staging runner sends private canaries in a query, headers and body. Its controlled endpoint throws an exception containing another private marker. The endpoint has a small body bound and shared rate budget; the handler returns a generic 503 with the generated operation ID.
 
-The test requires that ID in the response and matching 3501/3502 events in actual captured process output. It also checks that the raw output contains none of the canaries, old grant or certificate password. Only an allowlisted evidence summary is written; the raw capture, database and certificate are not uploaded.
+The test requires that ID in the response and a matching 3502 trace event in actual captured process output. API tests separately verify the 3501 completion fields. It also checks that the raw output contains none of the canaries, old grant or certificate password. Only an allowlisted evidence summary is written; the raw capture, database and certificate are not uploaded.
 
 This is an end-to-end diagnostic trace through a published HTTPS process, not only a fake logger assertion. The API tests separately inspect structured fields and metric tags, while the portable tests exercise schema, backup and consent contracts. Each layer supplies different evidence.
 
