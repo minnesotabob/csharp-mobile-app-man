@@ -45,3 +45,6 @@ All material is copyright 2026 John F. Gnazzo. Public visibility does not grant 
 - [Chapter 22 — Native-App Authentication and Managed Identity](chapters/ch22-native-authentication.md)
 
 - [Chapter 23 — Sessions, Secure Storage, and API Authorization](chapters/ch23-sessions-storage-authorization.md)
+
+- [Part VII — Customer Workflows and Order Delivery](parts/part-07/introduction.md)
+- [Chapter 32 — Quotes, Orders, and Customer Ownership](chapters/ch32-quotes-orders-ownership.md)

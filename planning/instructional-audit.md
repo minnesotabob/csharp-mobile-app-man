@@ -95,3 +95,15 @@ exercise and durable upload/inventory/location extensions preserve advanced scop
 The matching source has real temporary-file policy tests and original synthetic PNGs;
 its normalizer test port is explicitly simulated. Native codec, permission/provider,
 file-sharing and iOS results are not inferred from compile or test counts.
+
+## Chapter 32 / Part VII — November 15, 2026 (Central)
+
+Added server-owned quotes/orders and durable client reconciliation. Chapter includes
+six learning outcomes, prerequisites, the anniversary-request lost-reply narrative,
+explained transaction/persistence code, two contract tables, guided configuration and
+failure lab, troubleshooting, 122-word closing summary and worked/independent exercises.
+Part VII roadmap and acceptance-transaction diagram are authored source, not screenshots.
+Portable real SQLite and signed in-process API evidence are distinguished from simulated
+HTTP loss/fixture state changes and pending native identity/device/iOS observations.
+Accepted never implies verified payment or real production authorization. Forty-chapter
+plan and intermediate/advanced scope remain unchanged.
