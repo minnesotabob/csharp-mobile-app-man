@@ -59,7 +59,7 @@ jobs:
           for caption in ("Figure 1.1.", "Figure 7.1.", "Figure 17.1.", "Figure 18.1.", "Figure 19.1.", "Figure 20.1.", "Figure 21.1.", "Figure 22.1.", "Figure 23.1.", "Figure 23.2.", "Figure 24.1.", "Figure 25.1.", "Figure 25.2.", "Figure 26.1.", "Figure 27.1.", "Figure 28.1.", "Figure 29.1.", "Figure 30.1.", "Figure 31.1.", "Figure 32.1.", "Figure 33.1.", "Figure 34.1.", "Figure 35.1.", "Figure 35.2.", "Figure 36.1.", "Figure 37.1.", "Figure 37.2.", "Figure 38.1.", "Figure 38.2.", "Figure VIII.1.", "Figure VII.1.", "Figure VI.1.", "Figure V.1.", "Figure I.1."):
               assert caption in text, f"Missing authored figure caption: {caption}"
           images = {img[0] for page in pdf for img in page.get_images(full=True)}
-          assert len(images) >= 41, f"Expected Part art plus thirty-eight figures, got {len(images)}"
+          assert len(images) >= 42, f"Expected Part art plus thirty-eight figures, got {len(images)}"
           for i,page in enumerate(pdf):
               assert abs(page.rect.width-576)<0.1 and abs(page.rect.height-720)<0.1, f"Page {i+1}: wrong trim"
               for ln in page.get_text("dict")["blocks"]:

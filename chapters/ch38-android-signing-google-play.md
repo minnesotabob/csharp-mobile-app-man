@@ -96,6 +96,15 @@ For an APK, apksigner verify checks its signature; the audit then checks the rep
 
 This was an observed failure during the lab's development. Publishing completed, but the first audit expected only the older numbered label and found zero certificates. The diagnostic output showed the actual certificate matched the expected digest. The correction broadened the supported label syntax and added regression cases; it did not remove certificate verification or accept arbitrary output.
 
+The actual version-1 badging diagnostic at source 2c9ca943d7b702c94c9d13974fc76491e1422c10 reported these SDK fields:
+
+```text
+minSdkVersion:'26'
+targetSdkVersion:'37'
+```
+
+This records the built package's minimum and target, not a Play approval. The same merged output includes biometric and fingerprint permissions contributed beyond the small handwritten manifest. Review dependency contributions in the final artifact instead of treating the source manifest as the complete permission list.
+
 For the AAB, jarsigner verifies the archive, keytool reads the embedded certificate and bundletool validates its structure. The audit inspects the dumped bundle manifest for the ID, version, SDK values, testOnly flag, backup policy and isolated probe. Signing an AAB is not the same operation as signing an APK; use the appropriate tool for each artifact.
 
 | Check | What it establishes | What still needs another observation |
@@ -150,7 +159,7 @@ Permissions are contents:read and no production signing secret is configured. Th
 
 The package job's success cannot imply that the upgrade job passed. Likewise, a skipped upgrade job is not a successful test. Read both conclusions and their exact source revision. The companion verification record holds the executed results; a procedure written in this chapter remains an expectation until that record contains an observation.
 
-The initial Release publishing runs completed but failed the older certificate-output parser; installation was skipped. The audit has eleven local Python tests covering valid certificate formats, package-field order and rejected boundaries. A subsequent run passed certificate verification but stopped at package-metadata parsing, before installation. That parser now reads the named attributes independently of their order; the next complete run must produce its own evidence. Previous Debug compilation and portable C# results remain valid for their recorded revisions, but cannot stand in for this run.
+The initial Release publishing runs completed but failed the older certificate-output parser; installation was skipped. The audit has twelve local Python tests covering valid certificate formats, package-field order and rejected boundaries. A subsequent run passed certificate verification but stopped at package-metadata parsing, before installation. The diagnostic identified minSdkVersion as the current label, replacing the older sdkVersion label expected by the checker. The parser now accepts either single minimum field, reads package attributes independently of their order, and still rejects an incorrect or ambiguous minimum. The next complete run must produce its own evidence. Previous Debug compilation and portable C# results remain valid for their recorded revisions, but cannot stand in for this run.
 
 ## 38.8 Prepare a real candidate as a separate build profile
 
@@ -193,7 +202,7 @@ Before rollout, assign an owner for release monitoring and support. If the track
 ## Guided Lab: identify the update evidence
 
 1. Start from the recorded lab source, review the script's isolated ID and confirm no production credentials are needed.
-2. Run the eleven audit regression tests and publish into a fresh directory.
+2. Run the twelve audit regression tests and publish into a fresh directory.
 3. Run the complete package audit using the workflow's pinned tools. Keep the source revision and package hashes together.
 4. On a fresh emulator, run smoke.py with that directory. Expect Home launch, version 1, a seeded synthetic draft, version 2, the same UID and a verified draft.
 5. Read package-evidence.json and upgrade-evidence.json. Check the actual ABI, API level, page size, source and run identity.

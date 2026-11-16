@@ -61,3 +61,21 @@ They explain the separate upload/distribution/lab signers and the draft-preservi
 package-update protocol. They are not screenshots or proof of store/device execution.
 Captions provide descriptions in the chapter; actual evidence stays in the companion
 verification record. No customer data or private signing material appears in the figures.
+
+## Part VIII original illustration — November 16, 2026
+
+`part-08-verification-release.jpg` is original generated conceptual artwork, retained
+as a JPEG for print integration without compositional changes. Its scene combines
+phone/tablet catalogs, an unfinished checklist, test-bench inspection and maintenance
+tools in grayscale pencil shading to match Parts I and II. It is illustrative, not
+a native app capture, flowchart, device result or store-approval claim. The Part
+introduction retains the authored exact roadmap separately.
+
+Prompt: Original Part VIII opener for an 8x10 black-and-white C# mobile-development
+book. Grayscale graphite-pencil and fine charcoal on white paper; orderly developer
+test bench with phone/tablet content catalogs, abstract covers and gray text bars,
+paper checklist including an unfinished box, magnifying glass, circuit board and
+modest screwdriver. Faint laboratory shelves, no people or clutter. Landscape 3:2,
+high contrast for print, generous margins. No readable text, logos, code, watermark,
+flowchart or approval claim. Generated with the built-in image tool; the master PNG
+is retained separately and the manuscript consumes the JPEG.
