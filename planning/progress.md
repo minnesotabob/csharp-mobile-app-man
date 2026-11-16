@@ -1,3 +1,93 @@
+# Chapter 35 hosting, diagnostics and recovery — November 16, 2026 (Central)
+
+Final executable source: `89eeecf23fffa599fbc3f262f79f711f8624afe4`.
+All four independent Windows workflows pass at that exact revision:
+
+| Check | Executed result | Evidence |
+| --- | --- | --- |
+| Portable Release | 636 cases; zero errors/failures/skips/not-run; build 0 warnings/errors | https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43860402055 |
+| API/probe Release | 107 cases; zero errors/failures/skips/not-run; builds 0 warnings/errors; actual Kestrel public contract smoke passes | https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43860401915 |
+| Android Debug compilation | Final compile 0 warnings/errors; merged capability checks pass | https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43860401923 |
+| Published HTTPS staging/recovery | API publish and runner build pass; actual pinned-loopback TLS drill passes | https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43860402147 |
+
+The Android dependency-install phase still emits the earlier cmdline-tools;21.0
+resolution warning. It is separate from the final clean compile. Runner Node deprecation
+messages are not C# compiler warnings. This workspace has no dotnet runtime; execution
+evidence comes from these GitHub-hosted Windows jobs, not a local test claim.
+
+The 19 new portable cases exercise real SQLite initialization, legacy migration,
+future-version refusal without mutation, online WAL snapshot, manifest/byte tampering,
+new-directory restore and exact-generation hold release. They also cover typed/default-off
+local diagnostics and separately consented newsletter boundaries. Eight new API cases
+cover opt-in routes, readiness, restore release, safe failure fields, body bound, bounded
+metric labels and invalid deployment flags. Initial source passed portable/Android/real
+staging, but five API cases exposed services registered before test-host configuration
+was final. Lazy settings and final options validation corrected that host-layering defect;
+the final 107 cases all pass. No failed result is counted as acceptance.
+
+## What the published-process drill actually established
+
+OperationsLab launches the published API DLL under explicit Staging with synthetic
+business writes disabled and an allowlisted environment. It creates an ephemeral
+localhost certificate; its fixed-origin client pins the exact certificate, checks the
+hostname and rejects other TLS errors/redirects. No machine trust root is installed.
+It verifies a real restored SQLite snapshot and original WAV artifact through HTTPS:
+
+- Liveness 200 while restore hold makes readiness 503; exact-generation review changes
+  readiness to 200 without restarting the process.
+- Original order/history and verified TEST event replay remain intact; the pre-backup
+  delivery grant has been invalidated. No live source file is replaced.
+- A controlled failure returns generic 503 plus a generated operation ID. The matching
+  3502 trace is read from actual process output; API tests independently check 3501
+  completion fields and bounded Meter tags.
+- URL/header/body/exception canaries, old grant and certificate password are absent
+  from the bounded raw capture. Liveness remains 200 afterward.
+- Only an allowlisted evidence JSON is uploaded, with seven-day retention. Raw logs,
+  database, private audio and PFX/private-key material are not CI artifacts.
+
+The seeded payment is a locally verified synthetic TEST fixture. This is actual
+published-process HTTPS/recovery/diagnostic evidence, not public cloud provisioning,
+real payment, customer recovery or a fatal crash. See operations-lab.md for reproducible
+commands, configuration, recovery worksheet and acceptance matrix.
+
+## Native, provider and production limits
+
+Android compilation does not establish local consent UX, persistence/lifecycle,
+accessibility, managed/native fatal-crash capture or iOS. DiagnosticsLabPage initializes
+no remote SDK and exports no records. Sentry.Maui is a documented maintained candidate,
+not a configured or compatibility-tested integration. Server ILogger/Meter/ActivitySource
+projections are exercised locally; no remote OpenTelemetry collector is configured.
+The newsletter port sends nothing and never equates pending confirmation with subscribed.
+
+Schema 1 and restore release are lab-specific. Plaintext synthetic backups plus a hash
+are not authenticated/encrypted offsite recovery. Public hosting/TLS/proxy/secrets/storage,
+real artifact inventories, provider/client reconciliation after the snapshot, production
+traffic cutover, retention/erasure and realistic RPO/RTO/load/cost measurements remain
+explicit work. Production operations and real business authorization are not enabled.
+
+## Manuscript and editorial proof
+
+Final chapter source `bf6cff99e1a31e46bef39a09d86401d026645d9c` independently passes
+PDF production CI:
+https://github.com/minnesotabob/csharp-mobile-app-man/actions/runs/43862245092
+
+Chapter 35 adds six learning outcomes, prerequisites, the anniversary restore/diagnostic
+narrative, explained migration/backup/log/metric code, a guided published HTTPS lab,
+troubleshooting, a 114-word summary, one worked exercise and three independent exercises.
+Two authored figures separate deployment resources and restore review. This completes
+Part VII while preserving the intermediate/advanced scope and planned 40 chapters.
+
+The proof has **358 pages**, 8 x 10 inches, 11-point body/9.5-point code, 45 bookmarks
+and 35 distinct images (three Part illustrations plus 32 authored figures). Chapter 35
+starts on page 346. All page dimensions, expected markers and outer text boundaries pass.
+The new chapter was inspected as a contact sheet; opening, diagrams, code, diagnostic
+explanation and summary/exercises received enlarged inspection. No native screenshot or
+fatal-crash observation is invented. The existing downloadable PDF was updated successfully;
+the saved file preserves all manuscript text and bookmarks.
+
+Next: Part VIII introduction and Chapter 36, Testing the Complete Application. Preserve
+actual-source versus native/provider evidence and the remaining release constraints.
+
 # Chapter 34 tracking, revisions and private delivery — November 16, 2026 (Central)
 
 Final executable/fixture source: `4a4ba828dc7d32dee68c8334da9f8687c2c000ff`.
