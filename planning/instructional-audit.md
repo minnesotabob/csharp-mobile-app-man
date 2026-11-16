@@ -107,3 +107,14 @@ Portable real SQLite and signed in-process API evidence are distinguished from s
 HTTP loss/fixture state changes and pending native identity/device/iOS observations.
 Accepted never implies verified payment or real production authorization. Forty-chapter
 plan and intermediate/advanced scope remain unchanged.
+
+## Chapter 33 initial instructional revision — November 16, 2026 (Central)
+
+Added six outcomes, prerequisites, a forged-return/closed-browser narrative, authored
+payment-boundary figure, explained reservation/signature/transaction source, transition
+table, guided sandbox procedure, troubleshooting, a 115-word summary and worked/
+independent exercises. Test payments, real order production and store eligibility remain
+separate. Real SQLite and signed in-process API evidence are distinguished from simulated
+provider HTTP and pending hosted Stripe/CLI/native/iOS execution. The exact-byte vector
+failure and Git line-ending correction are explained as a protocol lesson. The chapter
+retains advanced scope without asserting a completed real-provider transaction.

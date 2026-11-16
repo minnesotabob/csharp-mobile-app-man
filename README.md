@@ -48,3 +48,5 @@ All material is copyright 2026 John F. Gnazzo. Public visibility does not grant 
 
 - [Part VII — Customer Workflows and Order Delivery](parts/part-07/introduction.md)
 - [Chapter 32 — Quotes, Orders, and Customer Ownership](chapters/ch32-quotes-orders-ownership.md)
+
+- [Chapter 33 — Payment Boundaries and Verified Events](chapters/ch33-payment-boundaries-verified-events.md)
