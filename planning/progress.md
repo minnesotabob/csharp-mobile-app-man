@@ -1604,3 +1604,10 @@ SDK example, actual emulator record, diagrams, troubleshooting and summary/exerc
 inspection. The About This Draft overview was shortened to keep copyright on the
 same page; the preface follows cleanly on the next page. Part/chapter starts remain
 new-page starts. The proof remains editorial, not a finished paperback or EPUB.
+
+Independent PDF production also passed at manuscript source
+`649b66c6a2bd829ba4436ef963a203caa988d8df`:
+https://github.com/minnesotabob/csharp-mobile-app-man/actions/runs/43951781223
+The existing downloadable opening-draft-8x10.pdf was successfully updated to the
+402-page proof after visual and boundary inspection. The final progress-only commit
+does not change the chapter, rendering source or verified PDF bytes.
