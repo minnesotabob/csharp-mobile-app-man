@@ -24,4 +24,4 @@ architecture/planning figures, not native screenshots. Existing Part art keeps i
 original 5.12-inch width. Figure and caption stay together.
 
 
-Chapter 38 adds two signing/update diagrams and a 14-page instructional draft. Table subheadings stay with their tables; new Part/chapter starts remain on separate pages.
+Chapter 38 adds two signing/update diagrams and an expanded instructional draft. Table subheadings stay with their tables; new Part/chapter starts remain on separate pages.

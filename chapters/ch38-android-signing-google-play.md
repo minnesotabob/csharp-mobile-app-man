@@ -60,7 +60,7 @@ The procedure has six steps:
 2. Generate a random secret and a PKCS12 keypair using keytool. The certificate identifies an invented tutorial organization and expires after two days. This is not a recommended production certificate lifetime.
 3. Write separate password files for the store-password and key-password readers. Both contain the same PKCS12 secret. Separate files avoid a reader consuming the first line before another option reads it.
 4. Copy the existing Android manifest into an owned generated path and set android:testOnly to true. Preserve the other declared permissions and backup policy.
-5. Publish version-1 and version-2 x86-64 APKs and a version-2 arm64 AAB, all in Release with the isolated ID and signer. Require exactly one signed artifact in each explicit destination.
+5. Write distinct generated manifests with each variant’s explicit version code/name, then publish version-1 and version-2 x86-64 APKs and a version-2 arm64 AAB, all in Release with the isolated ID and signer. Require exactly one signed artifact in each explicit destination.
 6. Export only the certificate's SHA-256 digest with the packages. In finally, remove the password environment variable and the owned temporary key, password files and generated manifest.
 
 The complete script passes file references to MSBuild rather than printing a password value. The important fragment is:
@@ -137,7 +137,7 @@ The observed sequence it requires is:
 
 1. Confirm an emulator, x86-64 ABI, supported API level and reported page size.
 2. Install v1.apk with the explicit test-only allowance and read the installed version and UID.
-3. Launch the actual app's Home screen and wait for its native accessibility-tree text.
+3. Resolve the installed MAIN/LAUNCHER activity, start its explicit component as a launcher would, and wait for the actual Home screen's native accessibility-tree text.
 4. Invoke the isolated probe to save and read back an invented SongRequest through FileRequestDraftStore.
 5. Force-stop the process, then update with v2.apk using replacement installation. Do not uninstall between versions.
 6. Require version 2 and the same package UID. Relaunch Home, then start a new probe instance and verify the persisted draft.
@@ -159,7 +159,19 @@ Permissions are contents:read and no production signing secret is configured. Th
 
 The package job's success cannot imply that the upgrade job passed. Likewise, a skipped upgrade job is not a successful test. Read both conclusions and their exact source revision. The companion verification record holds the executed results; a procedure written in this chapter remains an expectation until that record contains an observation.
 
-The initial Release publishing runs completed but failed the older certificate-output parser; installation was skipped. The audit has twelve local Python tests covering valid certificate formats, package-field order and rejected boundaries. A subsequent run passed certificate verification but stopped at package-metadata parsing, before installation. The diagnostic identified minSdkVersion as the current label, replacing the older sdkVersion label expected by the checker. The parser now accepts either single minimum field, reads package attributes independently of their order, and still rejects an incorrect or ambiguous minimum. The next complete run must produce its own evidence. Previous Debug compilation and portable C# results remain valid for their recorded revisions, but cannot stand in for this run.
+The package rehearsal at source b0e47290365de434a87c2973a2761bce5334fd40, workflow 43945607138, passed twelve Python audit tests and all three signed Release publishes. Each publish reported zero compiler warnings and errors. The independent package audit verified version codes 1 and 2, minimum API 26, target API 37, the expected signer and ten native libraries in each artifact. Both APK ZIP-alignment checks and the AAB structure/signature checks passed. The companion retains the safe package report with its original source/run identity.
+
+Development exposed three useful failure boundaries: a signature-tool label change, the current minSdkVersion label and stale versioned manifest inputs. The final parser supports the known formats while preserving identity/SDK assertions; the builder supplies distinct manifests with explicit version values. These corrections do not turn a malformed or wrongly signed package into a pass.
+
+The first emulator reached a different boundary before installation: pm path returns a nonzero status when a package is absent, which the generic command wrapper correctly refused as an error. The freshness check now uses pm list packages and requires an empty successful response. A failed package-manager command still stops the test; an existing matching package is still refused. The manifest inspection also confirmed a valid MAIN/LAUNCHER filter when an implicit shell start failed. The harness now resolves that activity and starts its explicit component, then still requires the native Home observation. Consult docs/verification.md for the separate corrected install/update observation, including its exact source/run and environment. A package-job pass cannot substitute for that result.
+
+### Actual emulator result
+
+The completed recheck used the immutable candidate built at b15607e6afe2427d4d21b38a913dafcbbc85a082 in package run 43947661043. Harness revision 698aa3d431d0f7e39239c3a31a174263acf0295c executed the test in run 43950480975. The report keeps those identities separate rather than claiming that a new test script rebuilt the application.
+
+The observed environment was a GitHub-hosted sdk_gphone64_x86_64 emulator, Android API 35, x86-64 ABI and 4096-byte pages. Version 1 installed and launched Home; the probe saved the invented draft. Version 2 replaced it without uninstalling, retained the UID, relaunched Home and read back the same draft in a new process. Both APK hashes matched their original package report. The bounded results are retained in docs/reviews/ch38-upgrade-evidence.json alongside the matching package report.
+
+This is an actual signed Release installation/update observation, not a physical-device or Play-track result. Runtime 16 KiB, full migrations, account/provider journeys, background media and accessibility acceptance remain separate. The optional android-upgrade-candidate.yml workflow can recheck a frozen public fixture with an identified harness; its artifact expires after seven days, so a future missing artifact requires a newly audited candidate, not weakened identity checks.
 
 ## 38.8 Prepare a real candidate as a separate build profile
 
@@ -218,15 +230,21 @@ Suppose instead the API-35 emulator reports a 4096-byte page size. State that th
 
 ## Troubleshooting
 
-### Package and signing failures
+### Signing and package inspection
 
 | Symptom | Diagnostic check | Corrective action |
 | --- | --- | --- |
 | APK verifies but certificate parser fails | Compare supported signer labels and public certificate digest | Update the bounded parser and regression tests; keep expected identity checks |
 | Signing reports a password read failure | Check separate file references, encoding and JDK/tool behavior | Use the complete script and owned first-line password files; never print secrets |
 | Bundle missing from output | Inspect explicit format, publish result and signed-file count | Stop on the actual failed step; use a fresh destination |
+
+### Installation and runtime recovery
+
+| Symptom | Diagnostic check | Corrective action |
+| --- | --- | --- |
+| Fresh-package check fails on a clean emulator | Inspect whether the presence query treats absence as a command error | Use the successful empty package-list result; preserve refusal on real command failure or existing installation |
 | Update rejected as incompatible | Compare package ID and signing certificate from both packages | Reuse same-run fixture packages; do not uninstall to claim update success |
-| Home launch fails only in Release | Capture an appropriate local diagnostic and inspect trimming/dependencies | Fix the specific candidate; repeat signed-package checks |
+| Signed package installs but Home does not start | Distinguish an unresolved implicit intent from a native startup exception; inspect the merged launcher filter | Resolve/start the explicit launcher component, then require Home; diagnose a genuine Release crash separately |
 | Audit finds a 4 KiB native library | Identify the exact dependency and ABI | Update/rebuild with supported tools, then repeat package and runtime checks |
 
 ### Distribution and account failures
@@ -243,7 +261,7 @@ Android release preparation ties a stable package identity and increasing versio
 
 ## Independent Exercises
 
-1. Add a controlled regression proving that a package with a public-key digest but no certificate digest cannot satisfy the signer audit. Explain the distinction before changing the parser.
+1. Extend the metadata policy to reject duplicate package fields and an unexpected nonzero versionCodeMajor. Write failing cases first and explain why a short version code alone would be an incomplete identity check for that extension.
 2. Design an upgrade matrix covering the last two supported storage schemas and an interrupted migration. Specify what data is seeded and which recovery outcomes establish success.
 3. Extend the evidence record for a named 16 KiB environment. Keep static library checks and executed runtime scenarios separate, and document what remains untested.
 4. Prepare a release-review worksheet for the actual production scope, including provider SDK data, account deletion, payment classification, reviewer access and stop criteria. Do not submit the disposable bundle.
@@ -264,4 +282,4 @@ Checked November 16, 2026. Recheck before submission; policy dates are not perma
 
 ## Editorial index terms
 
-Android App Bundle; APK; app signing; upload key; certificate fingerprint; version code; testOnly; ReleaseProbeActivity; package identity; apksigner; jarsigner; bundletool; ELF alignment; 16 KiB pages; install/upgrade; Play App Signing; Data safety; account deletion; MFA reviewer access; internal testing; closed testing; staged rollout.
+Android App Bundle; APK; app signing; upload key; certificate fingerprint; version code; testOnly; ReleaseProbeActivity; package identity; apksigner; jarsigner; bundletool; ELF alignment; 16 KiB pages; install/upgrade; Play App Signing; Data safety; account deletion; MFA reviewer access; internal testing; closed testing; staged rollout; explicit launcher component; immutable candidate; package and harness provenance.
