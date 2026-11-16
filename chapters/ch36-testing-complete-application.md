@@ -110,7 +110,7 @@ The composed test crosses real client serialization, journal persistence, bearer
 
 ## 36.6 Make evidence generation fail closed
 
-The Python standard-library reporter reads bounded xUnit XML. It accepts the documented result vocabulary Pass, Fail, Skip and NotRun, checks summary counts against actual cases, rejects duplicate display identities and refuses environmental runner errors. It rejects DTD/entity declarations and unsupported schema versions rather than guessing their meaning.
+The Python standard-library reporter reads bounded xUnit XML. It accepts the documented result vocabulary Pass, Fail, Skip and NotRun, checks summary counts against actual cases, rejects duplicate per-run case IDs and refuses environmental runner errors. It rejects DTD/entity declarations and unsupported schema versions rather than guessing their meaning. Display names are human-readable and need not be unique; the parser uses the documented per-run case IDs to reject duplicate records. Type/method metadata is optional in the XML, but a missing required selector still cannot satisfy its mapped requirement. The first real report run exposed this distinction and corrected overly strict identity/metadata assumptions.
 
 For every plan row, the reporter finds exact type/method matches and requires the expected count with all rows passed. A missing selector or changed count produces not_satisfied. A failure anywhere in either complete suite fails the automated gate, even if that case is not part of the six-requirement spine.
 
@@ -127,7 +127,7 @@ status = (
 
 The surrounding implementation validates the versioned plan before this projection. Notice the explicit length condition: all([]) is true in Python. Checking only whether all observed cases passed would accidentally turn an absent test into success.
 
-Malformed input, impossible summary totals, an existing output file or a runner/environment error produces exit 2 with no new acceptance claim. A valid unsatisfied report produces exit 1. A satisfied automated gate produces exit 0 while leaving manual rows unexecuted and release readiness unassessed. The reporter's 16 focused checks include missing selectors, changed theory counts, skipped/not-run cases, duplicate identities, environment errors and private-output exclusion.
+Malformed input, impossible summary totals, an existing output file or a runner/environment error produces exit 2 with no new acceptance claim. A valid unsatisfied report produces exit 1. A satisfied automated gate produces exit 0 while leaving manual rows unexecuted and release readiness unassessed. The reporter's 18 focused checks include missing selectors, changed theory counts, skipped/not-run cases, duplicate identities, environment errors and private-output exclusion.
 
 These are tests of an evidence boundary that can mislead a release decision. They are not extra application features or a reason to count Python checks as C# domain cases. Keep their totals separate.
 
