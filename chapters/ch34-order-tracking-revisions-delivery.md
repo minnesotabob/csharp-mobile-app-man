@@ -191,7 +191,7 @@ Owned tracking combines bounded history, revisions, delivery metadata and notice
 
 **Independent exercise — private playback workspace.** Design per-owner storage, bounded verified publication, player lifetime, cache eviction, sign-out cleanup and process recovery for a private delivery. Preserve Chapter 29's public-cache rejection and distinguish logical invalidation from physical erasure. Test native decoding/listening separately.
 
-**Independent exercise — notification outbox.** Add an atomic outbox entry when a delivery notice is created. Make a simulated worker safe across duplicate processing and a crash after a send. Carry only a bounded generic hint; require an owned read after activation. Do not send real messages in the exercise.
+**Independent exercise — notification outbox.** Add an atomic delivery-notice outbox entry. Make a simulated worker safe across duplicate processing and a crash after sending. Carry a generic hint and require an owned read after activation. Use simulated messages only.
 
 **Independent exercise — delivery replacement.** Extend the controlled service with versioned artifact replacement and migration of active grants. Specify which earlier descriptors remain visible, how stale accesses fail and how outstanding customer revisions are reconciled. Include a read already authorized when replacement occurs.
 
