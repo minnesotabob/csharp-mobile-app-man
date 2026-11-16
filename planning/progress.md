@@ -1,3 +1,63 @@
+# Chapter 30 — notifications, deep links and sharing — November 15, 2026 (Central)
+
+Added native local notification permission/post/tap adapters, canonical typed links,
+a bounded SQLite routing inbox, ready-window routing, explicit private-request sign-in
+continuation and public share-sheet invocation. Optional push registration includes a
+persist-before-send generation coordinator, current-session HTTP sink and scoped,
+owner-bound API registry with body/budget/cap/expiry limits. No live FCM/APNs project,
+SDK token acquisition, delivery sender/receiver or verified HTTPS association is enabled.
+
+Corrected executable source: `23e90f12d28060120d331d02a9e77d07a1091843`.
+
+- Portable Release build: **0 warnings/errors; 488 cases pass** (40 new parser/inbox/
+  registration-policy cases), no errors/failures/skipped/not-run cases. Earlier Chapter
+  21 and 25 console labs also execute successfully.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43772049238
+- API/probe Release builds at unchanged API/core parent
+  `09ed64e9d2cb16851b080d0a9816b767b1984f24`: **0 warnings/errors; 62 cases pass**
+  (9 new cases), no errors/failures/skipped/not-run cases. Actual session sink registers
+  and removes through signed-token middleware. Kestrel public media range/hash and
+  catalog smoke remains successful; no native/provider delivery is inferred.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43771527612
+- Android Debug compilation: **success; 0 final compiler warnings/errors**. Merged
+  notification permission, canonical VIEW/DEFAULT/BROWSABLE scheme/host filter and
+  earlier media service assertions pass. Dependency setup retains the historical
+  cmdline-tools;21.0 warning, separate from final compilation.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43772049172
+- Manuscript source `d0d13380b78503cfddf1ee26a0871247e7b8f8db`: independent PDF CI
+  passes page size, expected chapter/figure markers and text boundaries.
+  https://github.com/minnesotabob/csharp-mobile-app-man/actions/runs/43806478870
+
+The first native pass exposed nullable notification manager results and an assertion
+that expected host/scheme on one data node. Generated Android filters use separate
+nodes with collective semantics. The corrected adapter handles manager absence; the
+assertion validates and emits the complete matching filter. It remains configuration
+evidence, not an OS activation test.
+
+The chapter contains public Minnesota Bob/private anniversary-request journeys,
+validation/inbox/readiness/authorization figure, explained excerpts, guided acceptance,
+troubleshooting, 114-word summary and worked/independent exercises. It names remaining
+account cleanup/outbox and real SDK/provider gates instead of implying registration
+success is delivery. No private content appears in notification or share samples.
+
+Proof: **308 pages**, 8 x 10 inches, 11-point body/9.5-point code, 39 bookmarks,
+28 distinct images (three Part illustrations plus 25 authored figures). Chapter 30
+starts at page 300. About This Draft expansion shifts earlier positions by one page;
+historical records retain their original proof pagination. Every page passed local
+trim/text-bound checks; contact sheet and enlarged revised opening/figure/end-page
+inspection confirmed readable layout. Updated working PDF saved successfully.
+
+**Pending:** iOS compilation; native permission/channel behavior, warm/cold/default
+tap ordering, ready-window activation, private-read cancellation and share-sheet return.
+Live FCM/APNs acquisition/delivery, installation/provider proof, durable registry and
+account cleanup/outbox, verified HTTPS association and routing metadata backup/privacy
+review remain unimplemented or unverified. No global exactly-once navigation claim.
+
+Next planned chapter: 31, Native Capabilities, Attachments, and Platform Extensions.
+The planned 40 chapters and intermediate/advanced scope remain. Historical records follow.
+
+---
+
 # Chapter 29 — downloads and media storage — November 15, 2026 (Central)
 
 Added a separate foreground public download lab, trusted descriptor and safe storage
