@@ -155,3 +155,17 @@ Actual TestServer, SQLite and published-process boundaries remain separate from 
 identity/payment providers, native UI, accessibility and signed-package observations.
 The generated report always retains not_run manual rows and unassessed release readiness.
 The selected regression spine is not characterized as full requirement coverage.
+
+## Chapter 37 initial instructional revision — November 16, 2026 (Central)
+
+Added five outcomes/prerequisites, anniversary/catalog-scale narrative, explained
+search-snapshot and measurement code, actual matched Release before/after data with
+construction/sample/host limits, event-root retention investigation and two authored
+figures. Large metadata and original image variants have complete generators/native
+composition. The guided lab, troubleshooting, 116-word summary and worked/independent
+exercises preserve advanced scope. Current .NET 11 CoreCLR, diagnostics, trimming/AOT
+guidance is checked against official sources; no obsolete Mono default is introduced.
+Source palette arithmetic and an explicit incomplete device/accessibility review stay
+separate from unexecuted physical startup/scrolling/decoded-memory/energy/screen-reader
+and signed-publish observations. Actual desktop numbers are retained with source/run
+identity; no native benchmark or completed accessibility acceptance is invented.
