@@ -135,3 +135,13 @@ callbacks, strict link grammar, duplicate/expiry policy, scoped registration and
 result limits. Guided native/provider gates, troubleshooting, a 114-word summary and
 worked/independent exercises make scope and evidence inspectable. No provider delivery,
 OS screenshot or verified domain association is inferred from compilation or API tests.
+
+## Chapter 31 application of the review
+
+The optional anniversary-song reference leads the reader through provider selection,
+preflight/native normalization, scoped replacement and separately retained share copies.
+Figure 31.1 names each owner and the commit fence. The chapter explains limits of header
+checks and metadata stripping rather than implying a complete decoder/security proof.
+A resource-lifetime table, guided device worksheet, troubleshooting, optional-location
+extension, 122-word summary and worked/independent exercises close Part VI. Native
+provider/codec/share observations and iOS compilation remain pending.

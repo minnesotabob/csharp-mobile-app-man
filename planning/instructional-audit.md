@@ -85,3 +85,13 @@ exercise and three independent extensions. The source includes native local adap
 public share-sheet invocation and real authenticated registration-pipeline tests.
 Live provider SDK/delivery, durable account cleanup, HTTPS association, native callback
 acceptance and iOS compilation remain explicit pending gates.
+
+## Chapter 31 initial instructional revision
+
+Added six learning outcomes, concrete optional-reference narrative, ownership diagram,
+explained picker/lease excerpts, lifetime table, native capability/handler selection,
+guided acceptance, troubleshooting and a 122-word summary. A late-provider worked
+exercise and durable upload/inventory/location extensions preserve advanced scope.
+The matching source has real temporary-file policy tests and original synthetic PNGs;
+its normalizer test port is explicitly simulated. Native codec, permission/provider,
+file-sharing and iOS results are not inferred from compile or test counts.
