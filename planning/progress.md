@@ -1,3 +1,61 @@
+# Chapter 31 — native capabilities and attachments — November 15, 2026 (Central)
+
+Added optional provider-stream reference selection, strict bounded UTF-8/photo policy,
+native image normalization behind a portable port, PNG framing/CRC/ancillary removal,
+late-result scope fencing, verified staged replacement and separately retained share
+copies. Narrow Android FileProvider configuration, connectivity hints and optional
+haptics accompany the local lab. No customer upload/account attachment composition or
+location acquisition is supplied; the optional location extension remains an exercise.
+
+Corrected workflow/executable source: `82a68ba52c2a83b84d5c1f68be7d4e733312e338`.
+
+- Portable Release build: **0 warnings/errors; 523 cases pass** (35 new real-file/
+  synthetic-image/fallback cases), no errors/failures/skipped/not-run cases. Both earlier
+  synchronization/account console labs also execute successfully.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43809402430
+- API/probe Release builds at unchanged API/core parent
+  `64eac79b6fa795ecef58b15fa746caa29e641f58`: **0 warnings/errors; 62 cases pass**;
+  public Kestrel catalog/media range/hash loopback smoke passes. No attachment API added.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43808574847
+- Android Debug compilation: **success; 0 final compiler warnings/errors**. Merged
+  capability permissions, absent camera/location permissions, one narrow source share
+  root and merged provider-resource reference pass with prior media/link assertions.
+  Dependency setup retains the historical cmdline-tools;21.0 warning, separate from
+  final compilation.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43809402360
+- Manuscript source `7b3a8d1dc3c1977f8f1d76db8927b0314926eaf5`: independent PDF CI
+  passes page size, expected chapter/figure markers and text boundaries.
+  https://github.com/minnesotabob/csharp-mobile-app-man/actions/runs/43809723662
+
+The initial compile/tests were successful; an XML assertion confused the element name
+with its name attribute through PowerShell's XML adapter. XPath now validates the same
+strict root policy and emits exact source/merged XML. That correction changes workflow,
+not application behavior, and remains configuration rather than runtime URI evidence.
+
+The chapter closes Part VI with an anniversary-reference journey, provider/normalize/
+stage/export ownership diagram, explained source, resource-lifetime table, guided native
+acceptance, troubleshooting, optional location design, 122-word summary and worked/
+independent exercises. It distinguishes declared-resource checks from a full decoder
+proof and metadata stripping from removal of private information in pixels.
+
+Proof: **317 pages**, 8 x 10 inches, 11-point body/9.5-point code, 40 bookmarks,
+29 distinct images (three Part illustrations plus 26 authored figures). Chapter 31
+starts at page 309. Every page passed local trim/text-bound inspection; contact sheet
+and enlarged revised opening/figure/code/end-page checks confirmed readable layout.
+Updated working PDF saved successfully with Chapter 31.
+
+**Pending:** iOS compilation and native provider/codec/permission/orientation/metadata/
+share URI/grant/tablet/receiver results; cache/process/write behavior and capability
+settings. Portable normalizer tests are simulated. Customer uploads, durable account
+attachment composition, orphan inventory and optional location implementation remain
+separate. No cross-process lock, decoder isolation, delivery/revocation or physical-erasure
+claim is inferred from the sample. Native acceptance worksheet records every pending row.
+
+Next: Part VII introduction and Chapter 32, Quotes, Orders, and Customer Ownership.
+The planned 40 chapters and intermediate/advanced scope remain. Historical records follow.
+
+---
+
 # Chapter 30 — notifications, deep links and sharing — November 15, 2026 (Central)
 
 Added native local notification permission/post/tap adapters, canonical typed links,
