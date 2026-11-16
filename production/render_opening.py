@@ -76,7 +76,7 @@ def markdown(text, source=None):
             table.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),colors.HexColor('#e4e4e4')),('VALIGN',(0,0),(-1,-1),'TOP'),('LEFTPADDING',(0,0),(-1,-1),7),('RIGHTPADDING',(0,0),(-1,-1),7),('TOPPADDING',(0,0),(-1,-1),7),('BOTTOMPADDING',(0,0),(-1,-1),7),('LINEBELOW',(0,0),(-1,0),0.75,colors.black),('LINEBELOW',(0,1),(-1,-1),0.35,colors.HexColor('#bbbbbb'))]))
             # Keep a table's immediate heading with the complete table.
             group = [table]
-            if result and isinstance(result[-1], Paragraph) and result[-1].style.name == 'h2':
+            if result and isinstance(result[-1], Paragraph) and result[-1].style.name in ('h2', 'h3'):
                 group.insert(0, result.pop())
             result.extend([KeepTogether(group),Spacer(1,12)]);continue
         if line.startswith('# '):
