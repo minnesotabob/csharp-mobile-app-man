@@ -388,3 +388,23 @@ for a,b in zip(points,points[1:]):
 f.text(535,675,'weak observation only',34)
 f.note('Observed subscribers: 32 -> 0 after Dispose. GC observations do not establish native cleanup or physical erasure.');f.save('fig-37-retention-root')
 print('Created',len(list(OUT.glob('*.png'))),'authored figures')
+
+
+f=Figure('38.1  Keep signing authorities separate','The disposable lab does not use either production signing key.')
+f.box(80,270,730,230,'Developer upload key',('Signs production AAB','Private key stays controlled'))
+f.box(990,270,730,230,'Google Play App Signing',('Verifies upload certificate','Signs generated device APKs'))
+f.box(990,770,730,230,'Customer installation',('Receives distribution certificate','Update and provider identity matter'))
+f.box(80,770,730,230,'Separate disposable lab',('Test-only package and short-lived key','Never enters the production path'))
+f.arrow([(810,385),(990,385)],'upload',830,300)
+f.arrow([(1355,500),(1355,770)],'distribute',1395,610)
+f.note('Certificate fingerprints are public metadata. Private keys carry signing authority.');f.save('fig-38-signing-boundaries')
+
+f=Figure('38.2  Preserve the update boundary','A new process must read the draft saved by the previous package version.')
+f.box(80,270,730,230,'Install signed version 1',('Fresh isolated emulator package','Launch Home and save invented draft'))
+f.box(990,270,730,230,'Replace with version 2',('Same package and signing identity','Stop process; update without uninstall'))
+f.box(990,770,730,230,'Relaunch and verify',('Version 2 and unchanged UID','New process reads the saved draft'))
+f.box(80,770,730,230,'Record and clean up',('Package hashes and named environment','Uninstall only after verification'))
+f.arrow([(810,385),(990,385)],'seeded',825,300)
+f.arrow([(1355,500),(1355,770)],'update',1400,610)
+f.arrow([(990,885),(810,885)],'observed result',785,1025)
+f.note('Local APK update is distinct from Play distribution, full migration coverage and 16 KiB execution.');f.save('fig-38-install-upgrade')

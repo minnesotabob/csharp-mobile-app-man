@@ -1,3 +1,33 @@
+Warning: truncated output (original token count: 26737)
+Total output lines: 1540
+
+# Chapter 38 Android release preparation — November 16, 2026 (Central)
+
+Chapter 38 now has a full instructional draft: five outcomes, prerequisites, Windows
+signing walkthrough, APK/AAB inspection, separate upload/app-signing authorities,
+static native alignment versus runtime evidence, an isolated install/update exercise,
+Play preparation/test tracks, account/MFA review access, guided reasoning, troubleshooting,
+summary, independent extensions and dated primary references. Two authored figures
+show signing boundaries and data-preserving update order. These are diagrams, not
+runtime captures.
+
+The signing lab existed as unfinished companion source before this continuation.
+Its actual Release publishes reached the audit but a legacy certificate-label parser
+failed against the build tool's V3.0 Signer label. Run 43919374656 exposed the public
+certificate digest, which matched the expected signer. The corrected parser preserves
+one-signer/all-certificate identity checks and rejects public-key-only, missing,
+foreign and multiple-signer output. Ten Python audit tests pass locally. The corrected
+executable source is fe9ef42703c64d772594f4c337cabd9198faf8b2; complete workflow
+43941497381 must be assessed separately from the earlier failed run.
+
+The new 8x10 proof adds Chapter 38 to the linked contents and preserves new-page
+starts. Runtime tests, exact workflow outcomes and final proof observations will be
+recorded below after inspection. No test-only package is submitted to a store.
+
+Next: Chapter 39, iOS Signing and App Store Release from Windows. Existing public
+hosting, provider/account deletion, customer recovery, physical-device/accessibility,
+16 KiB runtime and store acceptance work remain distinct from package rehearsal.
+
 # Chapter 37 performance, reliability and accessibility — November 16, 2026 (Central)
 
 Final executable source: `c82eff270ec50c3ef4916c4401576ba1b893b1a9`.
@@ -706,112 +736,7 @@ Executed companion source: `373dad1f2ebe14843989c3f4bb578e5a97b02b19`.
   historical unresolved cmdline-tools;21.0 warning, separate from final compilation.
   https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43769261603
 - Manuscript source `7384dff5c02c119201c623a04ab014243c44b830`: independent PDF CI
-  passes page size, chapter/figure markers and text boundaries.
-  https://github.com/minnesotabob/csharp-mobile-app-man/actions/runs/43769864461
-
-The chapter includes the Minnesota Bob trip-north narrative, private anniversary-song
-boundary, receive/verify/promote diagram, response decision table, explained source,
-guided restart/TLS lab, troubleshooting, 124-word summary and worked/independent
-exercises. Updated Part VI roadmap wording describes scope without conflating pending
-native work with implementation. The planned 40 chapters and advanced scope remain.
-
-Proof: **298 pages**, 8 x 10 inches, 11-point body/9.5-point code, 38 bookmarks,
-27 distinct images (three Part illustrations plus 24 authored figures). Chapter 29
-starts at page 290. Every page passed local trim/text-bound checks; new contact sheet
-and enlarged figure inspection confirm readable layout. The updated working PDF was
-saved successfully with Chapter 29.
-
-**Pending:** iOS compilation and native HTTPS trust/reachability, cancellation timing,
-process restart, cache eviction, competing disk usage and actual write/rename behavior.
-A free-space check is not a reservation and rename is not power-loss durability.
-Public cache storage is replaceable/anonymous; private delivery service/access,
-account-scoped publication, encryption/backup, background transfer registration and
-downloaded-path player composition remain unimplemented. The native acceptance matrix
-records these limits rather than converting compiler/test success into device claims.
-
-Next planned chapter: 30, Notifications, Deep Links, and Sharing. Historical records follow.
-
----
-
-# Chapter 28 — background playback and system controls — November 15, 2026 (Central)
-
-Added a separate opt-in native audio lab, portable BackgroundPlaybackOwner, original
-60-second PCM timing fixture, public metadata/system-command observations, Media3
-focus/noisy configuration, iOS audio background mode and pause-only observers. One
-mounted host survives the internal browse panel; Shell departure destroys its owner.
-The chapter includes a Minnesota Bob listening journey, lifecycle diagram, explained
-source, guided device worksheet, troubleshooting, 124-word summary and exercises.
-
-Corrected executable source: `a9e893d75689a48ecfbbe9f4e107fc5761780481`.
-The first checks exposed a remote-pause checkpoint defect and an inaccessible pinned
-toolkit Player API. The correction saves the event's position and configures the public
-native PlayerView/IExoPlayer, with visible failure if absent. The final follow-up handles
-nullable builder bindings explicitly rather than suppressing compiler warnings.
-
-- Portable Release build: 0 warnings/errors; **413 cases pass**, including 18 new
-  simulated playback-owner cases plus one new fixture header/hash case. No errors,
-  failures/skips/not-run cases; Chapter 21 and 25 console labs execute successfully.
-  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43767142547
-- API/probe Release builds at unchanged API parent bedeec9000f65a3492989fe80778bd7f1a3e76b6:
-  0 warnings/errors; **46 API cases pass**; public loopback smoke passes.
-  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43766620130
-- Android Debug compilation: **success; 0 final compiler warnings/errors**.
-  Merged manifest assertions pass for both foreground-service permissions and the
-  toolkit mediaPlayback service type. Dependency installation retains its historical
-  unresolved cmdline-tools;21.0 setup warning; this is separate from final compilation.
-  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43767142544
-- Revised manuscript proof source: `1d50a58b08c2536f9aca06bc1cab1a17c5fe8c04`.
-  Independent PDF CI passed page size, chapter/figure markers and text boundaries.
-  https://github.com/minnesotabob/csharp-mobile-app-man/actions/runs/43767216352
-
-Proof: **289 pages**, 8 x 10 inches, 11-point body/9.5-point code, 37 bookmarks,
-26 distinct embedded images (three Part illustrations plus 23 authored figures).
-Chapter 28 starts at page 281. Local checks covered every page's trim/text bounds;
-contact-sheet and enlarged new-page inspection found readable text, code and figure.
-Existing working PDF updated successfully with the corrected native source excerpt.
-
-Native listening, decoding, system controls, focus gain/loss, calls, wired/Bluetooth
-routes, task removal, process death, power constraints and iOS compilation remain
-pending. Timers are best effort; no app-wide/process-resilient playback architecture,
-private delivery access or real Minnesota Bob media is claimed. The public native view
-hierarchy is a pinned toolkit compatibility dependency, rechecked on upgrades.
-
-Next planned chapter: 29, Downloads and Media Storage. The 40-chapter plan and
-intermediate/advanced teaching scope remain unchanged. Historical entries follow.
-
----
-
-# Part VI / Chapter 27 - foreground audio and podcast progress - November 15, 2026 (Central)
-
-Added Part VI's media roadmap, Chapter 27's source-ownership diagram, foreground
-native player/lab, original generated WAV fixtures with provenance/hash manifest,
-absolute-time SQLite progress, guided work, failure recovery, troubleshooting and
-worked exercises. Streaming-service links are not treated as playable audio files.
-
-Corrected companion source: `c73f3cd25e175d7e89de84f3cbdaa9bacdd86af6`.
-Initial compilation exposed a documentation namespace/parameter mismatch; the sample
-uses CommunityToolkit.Maui and isAndroidForegroundServiceEnabled: false. It pins
-MediaElement 12.0.0 with SDK 11.0.100 and MAUI 11.0.10. Android minimum becomes API 26.
-
-- Portable Release compilation: 0 warnings/errors; **394 cases pass**, including 34
-  new playback/storage/fixture cases; no errors/failures/skips/not-run cases. Both
-  earlier console labs execute successfully.
-  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43764322521
-- API/probe Release builds: 0 warnings/errors; **46 API cases pass**; public loopback
-  smoke passes with no errors/failures/skips/not run.
-  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43764322453
-- Android Debug compilation: success; **0 final compiler warnings/errors**. Dependency
-  setup retains the documented unresolved cmdline-tools;21.0 warning.
-  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43764322496
-
-The proof contains **280 pages, 36 bookmarks and 25 distinct images**: three Part
-illustrations and twenty-two authored technical figures. Part VI begins on page 268;
-Chapter 27 begins on page 270. All 13 new pages were rendered for inspection; the
-source diagram, bootstrap, evidence, summary/exercises and references received larger
-page review. All-page 8x10 trim/text-boundary and figure-reference checks pass.
-
-Limits: tests supply native observations and inspect real SQLite/source WAV bytes;
-they do not listen or prove a phone decoded the packaged assets. Foreground page owns
+  passes page siz…1737 tokens truncated… page owns
 one player, source tickets reject late events, and checkpoints are anonymous/local,
 unencrypted and not account-synchronized. Periodic/boundary save is not a guarantee at
 arbitrary process death. Native listening, seeks, lifecycle/cleanup, audio focus/calls,
@@ -1509,4 +1434,5 @@ Device/emulator launch, native navigation/keyboard/rotation, screen-reader/large
 Earlier local workload/test attempts were blocked by automatic review after attempted cloud metadata access; they were not retried. Separate GitHub-hosted Windows CI provides the evidence above.
 
 Next: Chapter 13 search, filters, sorting and favorites; later Chapters 14–16 detail journeys and the request/pricing workflow; expand earlier chapters against actual device observations when available. Preserve the Part I source milestone for Chapters 4–5 using companion docs/milestones.md.
+
 

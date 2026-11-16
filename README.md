@@ -59,3 +59,6 @@ All material is copyright 2026 John F. Gnazzo. Public visibility does not grant 
 - [Chapter 36 — Testing the Complete Application](chapters/ch36-testing-complete-application.md)
 
 - [Chapter 37 — Performance, Reliability, and Accessibility Review](chapters/ch37-performance-reliability-accessibility.md)
+
+
+- [Chapter 38 — Android Signing and Google Play Release](chapters/ch38-android-signing-google-play.md)
