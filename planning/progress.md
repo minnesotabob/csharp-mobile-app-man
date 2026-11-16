@@ -1,3 +1,98 @@
+# Chapter 34 tracking, revisions and private delivery — November 16, 2026 (Central)
+
+Final executable/fixture source: `4a4ba828dc7d32dee68c8334da9f8687c2c000ff`.
+SDK 11.0.100; C# 15; MAUI 11.0.10; Android minimum API 26.
+
+- Portable Release build: **0 warnings/errors; 617 cases pass** (27 new fulfillment
+  cases), no errors/failures/skipped/not-run cases. Chapter 21/25 console labs and the
+  new Chapter 34 synthetic fulfillment console smoke execute successfully.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43825891878
+- API/probe Release builds at unchanged API/core implementation
+  `025d86e13ac447b5cdcf2f4ddadf17e0d2dfa7e6`: **0 warnings/errors; 99 cases pass**
+  (12 new fulfillment cases), no errors/failures/skipped/not-run cases. Public Kestrel
+  catalog/media range/hash loopback smoke passes.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43823960239
+- Android Debug compilation: **success; 0 final compiler warnings/errors**. Existing
+  merged media/notification/link/capability/share configuration assertions pass.
+  Dependency setup retains its historical unresolved cmdline-tools;21.0 warning,
+  separate from final compilation.
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43825891872
+
+Initial source passed all 617/99 cases and Android compilation. Two xUnit analyzer
+warnings (Single predicate and test cancellation) and a nullable Home event-handler
+warning were corrected. A runnable synthetic local fixture and CI smoke were added;
+application policy/core/API code is unchanged from its verified initial implementation.
+The final Android run checks the corrected native handler. No compiler pass is treated
+as native identity, file-read, accessibility or listening evidence.
+
+Real temporary SQLite tests cover owned live paging, coherent tracking/history/notices,
+revision replay before later version/state checks, changed-key facts, stale/foreign/
+invalid/capacity outcomes, two independent writer connections and forced notice-insert
+rollback. They cover atomic/replayed delivery publication, hashed owner/version-bound
+grants, exact expiry/renewal, capacity, reopen, revocation and publication replay that
+cannot restore revoked access. New controlled publication requires verified TEST paid
+state; legacy graph-only fixtures cannot substitute for it.
+
+The production revision journal/coordinator is tested for reopen/account/resource
+partitioning, unresolved replacement blocking, local persistence failure before HTTP,
+committed-but-lost reply with both databases reopened after a later review, and sign-out
+before a delayed committed reply. Simulated HTTP loss is explicit; database operations
+are real. Private-client tests verify the exact original WAV, corrupt/oversized/wrong
+media rejection and owned-buffer clearing on disposal.
+
+Signed JWT in-process API integration exercises actual quote/accept HTTP, controlled
+signed synthetic payment/production/review, customer revision, later review/delivery,
+production TrackingApiClient/coordinator and exact authorized WAV bytes. It verifies
+no-store, nosniff, strict revision fields, owned list/detail scopes, foreign/anonymous/
+missing/expired/revoked/wrong-delivery access, query-grant rejection, unsupported Range
+and absent static fixture path. This is an actual service/client contract test with
+controlled publication/payment, not a real commission, provider charge or native read.
+
+Native page supports explicit owned pages/history/notices, save/send/retry revision and
+memory-only verified sample retrieval. It creates no private cache, player or share file.
+Notices are durable in-app observations, not APNs/FCM/email receipts. Grants last two
+minutes and remain bound to JWT owner/current artifact/version/state; expiry/revocation
+cannot erase a response already authorized. VerifiedDelivery clears its owned array,
+not all managed/OS/transport copies. The WAV is original generated public-source test
+content; route tests establish access policy, not secrecy of those known sample bytes.
+
+FulfillmentLab smoke uses a temporary database. Its explicit local seed/review/deliver/
+revoke commands require GNAZZO_SYNTHETIC_FIXTURES=1 and direct disposable-development
+database authority. They manufacture signed TEST payment evidence and are never real
+administration or production authorization. See fulfillment-lab.md for runnable commands,
+configuration, protocol, artifact provenance and pending acceptance matrix.
+
+**Pending:** native identity/TLS/list/selection/editor/lifecycle/screen-reader/large-text
+and memory verification observations; iOS compilation; actual private listening/offline/
+export composition; real customer/admin/artifact ingestion, provider push/email, complete
+production authorization, replacement/retention/migration/audit/backups/recovery and
+privacy export/deletion composition. Sign-out retains original-owner pending revisions;
+logical revocation and buffer clearing are not physical erasure.
+
+
+Manuscript source `0756d1799c296630ff50252e4eb5e0812b816591` independently passes PDF
+trim, expected chapter/figure markers and text boundaries:
+https://github.com/minnesotabob/csharp-mobile-app-man/actions/runs/43825986897
+
+The 3,233-word chapter adds six outcomes, a lost-revision/shared-tablet narrative,
+explained replay/journal/hash source, owned-route and controlled-transition tables,
+authored private-read diagram, guided runnable-fixture/customer journey, troubleshooting,
+118-word summary and worked/independent exercises. It distinguishes immutable revision
+receipts from later tracking snapshots, in-app notice from provider delivery, and future
+read revocation from physical erasure. The cumulative draft-status page is condensed to
+avoid an isolated copyright line; typography/trim are unchanged and footer date updated.
+
+Proof: **345 pages**, 8 x 10 inches, 11-point body/9.5-point code, 44 bookmarks,
+33 distinct images (three Part illustrations plus 30 authored figures). Chapter 34
+starts on page 336. All pages pass local trim/text-bound checks; contact and enlarged
+opening/about/diagram/code/closing-page views confirm readable layout. Updated working
+PDF saved successfully with Chapter 34.
+
+Next: Chapter 35, Hosting, Diagnostics, and Operating the Small Backend. Preserve the
+planned 40 chapters and intermediate/advanced scope. Historical verification follows.
+
+---
+
 # Chapter 33 payment boundaries and verified events — November 16, 2026 (Central)
 
 Final executable source: `bbeb33e201ffa0cc233bfd1e7991aad4fe9ca416`.
