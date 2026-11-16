@@ -1,3 +1,103 @@
+# Chapter 36 complete-application testing — November 16, 2026 (Central)
+
+Final executable acceptance source: `dd137ed10809a40ae38217b485b331fe33552760`.
+The C# composed journey was introduced at `2326551d55d2209d861509781dbf2dec7c58d791`;
+subsequent executable changes affect the Python projection/workflow only. No application,
+Core or API production source changed in Chapter 36.
+
+| Check | Executed result | Evidence |
+| --- | --- | --- |
+| Portable Release at final source | 636 cases pass; no errors/failures/skips/not-run; build 0 warnings/errors | https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43872069017 |
+| Complete acceptance workflow at final source | 18 Python projector checks; 636 portable and 109 API cases; both builds 0 warnings/errors; automated evidence gate passes | https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43872068773 |
+| API/probe workflow at unchanged C# test source | 109 cases pass; API/probe builds 0 warnings/errors; actual Kestrel public HTTP smoke passes | https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43869939065 |
+
+The 636 portable cases are unchanged; two new API theory rows exercise actual clients,
+real on-disk journals, signed bearer middleware and the real API pipeline through
+TestServer. DropCommittedReply fires after the endpoint returns success. The rows cover
+acceptance or revision uncertainty, journal reopen/reconciliation, one operation/order,
+revision replay after later review, duplicate synthetic TEST payment events, server
+store/host reopen, coherent history, private WAV grant/read/hash and foreign-owner denial.
+The fault-fired and absent-confirmation assertions prevent an unnoticed happy-path pass.
+Provider checkout, identity discovery and production/review transitions remain controlled
+fixtures. TestServer is in-process, not a native UI, real socket/TLS or live provider run.
+
+## Acceptance evidence actually generated
+
+The final workflow generates fresh xUnit XML and projects it through the versioned plan
+within one source-bound job. All six exact method selectors resolve with their reviewed
+case counts: 2 order-recovery, 5 authorization and one each sync replay, media resume,
+restore review and diagnostic privacy. The six manual rows remain **not_run**, and
+release_readiness remains **unassessed**. The selected spine is not full requirement
+coverage or a percentage of the application's behavior. Complete suites must also pass;
+an unmapped failure still fails the gate.
+
+The projector's 18 checks separately exercise missing selectors/count changes, failed/
+skipped/not-run cases, environment errors, invalid schema, duplicate per-run IDs,
+optional metadata, equal display names, UTF-8/UTF-16 declaration handling, private-output
+exclusion and non-overwrite. These Python checks are not counted as C# cases.
+Only the bounded acceptance-report.json is uploaded, with seven-day retention. Raw XML,
+private failure messages, paths and captured output remain outside uploaded artifacts.
+Runner console output is a separate channel and these public fixtures stay synthetic.
+Input hashes enable comparison; they do not authenticate an arbitrary report or prove
+its revision. Same-job workflow execution supplies the association in this lab.
+
+The initial report workflow failed input validation even while all 636/109 C# cases
+passed. Safe diagnostic codes identified the case-identity guard. The parser initially
+required unique human display names and type/method metadata for every row. It now uses
+documented per-run IDs, accepts absent optional metadata for unmapped cases and still
+refuses to satisfy an absent required selector. Success was first demonstrated at
+`6d6e8f02f71d216caafe2784ae528741313f3bc9` in run 43871552234, then verified at the final
+encoding-guard revision above. The initial failed report is not counted as acceptance.
+
+## Evidence retained separately
+
+Application/API/Core source remains identical to the Chapter 35 verified implementation
+`89eeecf23fffa599fbc3f262f79f711f8624afe4`:
+
+- Android Debug final compilation and merged capability checks pass in
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43860401923.
+  The dependency-install phase's cmdline-tools;21.0 resolution warning remains recorded
+  separately from the final compile's zero warnings/errors. No new native run is claimed.
+- Actual published-process pinned-loopback HTTPS, restored readiness hold/release,
+  preserved TEST payment replay, invalidated old grants and redacted failure trace pass in
+  https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/43860402147.
+  This is isolated synthetic staging, not public provisioning or customer recovery.
+
+Chapter 36 adds the device/provider record format and proposed risk-based phone/tablet/
+iPhone/iPad matrix in complete-application-testing.md. No device model/OS observation,
+Appium driver/session, accessibility acceptance, OS process-kill recovery, live MFA,
+hosted TEST payment or iOS release result is fabricated. Those manual rows stay not_run.
+No production business authority, remote crash/exporter, real newsletter integration,
+signed package/install/upgrade or final release approval is supplied by this chapter.
+This workspace has no dotnet runtime; C# execution occurred on GitHub-hosted Windows.
+
+## Manuscript and editorial proof
+
+Final chapter source `9aaa2b04edc0f6fa56d0e14ac3d1e3aada25989c` independently passes
+PDF production CI:
+https://github.com/minnesotabob/csharp-mobile-app-man/actions/runs/43872121912
+
+Part VIII's introduction and roadmap connect regression, native/provider observation,
+release preparation and maintenance. Chapter 36 adds five outcomes/prerequisites,
+anniversary uncertainty/recovery narrative, explained actual test/handler/reporter
+listings, evidence-layer and troubleshooting tables, safe artifact/provenance reasoning,
+risk-based device/accessibility/provider matrix, eight-step guided lab, a 122-word summary,
+one worked exercise and three independent extensions. Two new authored figures show the
+Part roadmap and evidence projection. The 40-chapter intermediate/advanced scope remains.
+
+The final proof has **373 pages**, 8 x 10 inches, 11-point body/9.5-point code,
+47 bookmarks and 37 distinct images: three original Part illustrations plus 34 authored
+figures. Part VIII starts on page 359 and Chapter 36 on page 361. All page sizes, expected
+markers and outer text boundaries pass. The new material received contact-sheet review;
+opening/roadmap, evidence figure, code/parser, troubleshooting and summary/exercises were
+inspected at larger scale. The About This Draft overview stays on one page without an
+orphaned copyright line. Existing downloadable PDF was updated successfully.
+
+Next: Chapter 37, Performance, Reliability, and Accessibility Review. Add reproducible
+large-data/image fixtures and measured investigations while keeping named-device
+benchmarks, physical-device behavior and accessibility results pending until observed.
+Preserve the planned 40 chapters and explicit release/provider constraints.
+
 # Chapter 35 hosting, diagnostics and recovery — November 16, 2026 (Central)
 
 Final executable source: `89eeecf23fffa599fbc3f262f79f711f8624afe4`.
