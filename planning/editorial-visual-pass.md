@@ -125,3 +125,13 @@ chapter includes response decisions, exact source/API walkthrough, guided restar
 TLS work, storage policy, troubleshooting, a 124-word summary and worked/independent
 exercises. Public data and simulated failure conditions are named honestly. Native
 screenshots, HTTPS/device storage behavior and iOS compilation remain pending.
+
+## Chapter 30 application of the review
+
+The public Minnesota Bob tap and private anniversary-request continuation form the
+running journeys. Figure 30.1 separates validation, bounded persistence, ready-window
+navigation and server-authorized reads. The chapter explains native permission/tap
+callbacks, strict link grammar, duplicate/expiry policy, scoped registration and share
+result limits. Guided native/provider gates, troubleshooting, a 114-word summary and
+worked/independent exercises make scope and evidence inspectable. No provider delivery,
+OS screenshot or verified domain association is inferred from compilation or API tests.

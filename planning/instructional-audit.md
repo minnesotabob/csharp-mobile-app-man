@@ -75,3 +75,13 @@ worked plus three independent exercises. Source includes native foreground contr
 portable real-file tests, actual API range integration and a loopback byte/hash smoke.
 The sample explicitly rejects private delivery descriptors; it does not claim an
 account-authorized customer delivery or completed native/TLS acceptance.
+
+## Chapter 30 initial instructional revision
+
+Added six learning outcomes, public/private event narratives, an inbound-routing
+figure, explained fixed-route and persist-before-send excerpts, explicit local/push
+scope, guided acceptance, troubleshooting, 114-word summary, a SQLite receipt worked
+exercise and three independent extensions. The source includes native local adapters,
+public share-sheet invocation and real authenticated registration-pipeline tests.
+Live provider SDK/delivery, durable account cleanup, HTTPS association, native callback
+acceptance and iOS compilation remain explicit pending gates.
