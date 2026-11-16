@@ -137,7 +137,7 @@ GET test-payment requires orders:read and an owned order lookup. It returns the 
 
 The native action uses the accepted request from the current account/resource partition, acquires a current session lease and checks that lease around HTTP. It displays TEST payment state and version. It neither opens the hosted URL nor interprets a navigation callback as a receipt. Leaving the route clears the display.
 
-The fixed return/cancel pages accept no payment authority and perform no database writes. Adding paid=true or a fabricated session ID to their query strings changes nothing. Closing a browser also does not prove cancellation at the provider. A successful late event can arrive after the customer has left.
+The fixed return/cancel pages accept no payment authority and perform no database writes. Adding paid=true or a fabricated session ID to their query strings changes nothing. Canceled orders cannot start/reuse checkout through this API or expose its URL on later reads. A previously obtained provider URL may still be usable; this lab does not expire that external session. Closing a browser also does not prove cancellation at the provider. A successful late event can arrive after the customer has left.
 
 `StartProductionForPaymentLab` is a controlled in-process fixture: it requires Paid, an Accepted order and the expected order version in one transaction. A paid-after-cancellation result remains blocked for review. This is not a real administrative authorization service. Chapter 32's older graph-only `AdvanceForLab` remains a separate fixture and must never become a production bypass.
 
