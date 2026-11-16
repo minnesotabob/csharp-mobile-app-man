@@ -143,3 +143,15 @@ references are selected without claiming an unconfigured SDK/device integration.
 newsletter confirmation remains a bounded separately consented port. Actual published
 loopback TLS/restore/safe-trace evidence is separate from public provisioning and complete
 customer/provider recovery. This chapter closes Part VII; the 40-chapter scope remains.
+
+## Chapter 36 initial instructional revision — November 16, 2026 (Central)
+
+Added Part VIII introduction/roadmap and a chapter with five outcomes/prerequisites,
+anniversary lost-reply narrative, explained real client/API/journal composition, exact
+case-count requirement mapping, safe artifact generation and failure handling. The
+guided lab, evidence-layer/matrix/troubleshooting tables, authored acceptance figure,
+122-word summary and worked/independent exercises preserve intermediate/advanced scope.
+Actual TestServer, SQLite and published-process boundaries remain separate from live
+identity/payment providers, native UI, accessibility and signed-package observations.
+The generated report always retains not_run manual rows and unassessed release readiness.
+The selected regression spine is not characterized as full requirement coverage.

@@ -54,3 +54,6 @@ All material is copyright 2026 John F. Gnazzo. Public visibility does not grant 
 - [Chapter 34 — Order Tracking, Revisions, and Delivery](chapters/ch34-order-tracking-revisions-delivery.md)
 
 - [Chapter 35 — Hosting, Diagnostics, and Operating the Small Backend](chapters/ch35-hosting-diagnostics-operations.md)
+
+- [Part VIII introduction](parts/part-08/introduction.md)
+- [Chapter 36 — Testing the Complete Application](chapters/ch36-testing-complete-application.md)
