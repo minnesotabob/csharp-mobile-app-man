@@ -1,2 +1,7 @@
 fonts/
 *.pdf
+proof-navigation.json
+__pycache__/
+*.epub
+epub-inventory.json
+epubcheck-report.json

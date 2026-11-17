@@ -1,3 +1,249 @@
+# Scope corrections and first reflowable EPUB — November 17, 2026 (Central)
+
+Completed a targeted milestone/integration wording pass in twelve documents. Early
+API/navigation/storage/media limitations now name their chapter checkpoints and
+separate later bounded implementations from still-pending native/production work.
+No application source or companion C# changed. This does not close the remaining
+full technical, line-edit, device or provider acceptance.
+
+## EPUB production and actual validation
+
+Added production/build_epub.py, audit_epub.py and epub.css. The EPUB derives from
+the same 61-document source inventory as the PDF, combines chapter/Part/Appendix
+headings, assigns unique internal anchors, packages the existing figures and uses
+relative body/code/table styling. Its 111-entry subject index links directly to
+sections rather than importing paper page numbers. No unrelated cover is used.
+Raw HTML parsing is disabled so generic-type prose is escaped as text; code blocks
+are independently checked for exact preservation.
+
+Actual local checks: Pandoc 3.1.11.1 and official W3C EPUBCheck 5.4.0 with Java 21.
+EPUBCheck reports zero fatals/errors/warnings/infos. Package audit passes 64 XHTML
+documents, all 155 exact code blocks, 46 described image placements, 111 subject
+links, 285 resolving local package references and complete manifest/spine. MuPDF
+opened the actual EPUB at 390x780 and 820x1000; title/navigation, code and tables
+received visual reflow review. A reader may still paginate a code block across
+screens despite CSS cohesion requests; no code text is omitted. Apple Books,
+Kindle conversion, actual hardware, screen-reader acceptance and final publishing
+metadata/cover remain pending. Structural conformance is not accessibility or
+store certification. See planning/epub-proof-review.md for exact hashes/tool scope.
+
+## Updated PDF and saved deliverables
+
+The corrected PDF remains 464 pages and 61 bookmarks. Production checks pass all
+trim/text/image/chapter markers. Navigation audit verifies 442 numbered chapter
+reference expressions, 111 exact paginated headings and 222 matching index links.
+The twelve changed-statement pages received contact-sheet inspection.
+The existing opening-draft-8x10.pdf was saved successfully as version 28.
+The first Building-Mobile-Apps-CSharp15-proof.epub was saved successfully as
+libfile_d89a607b942c81918a2d79b08bc8a0a5. Both local identities were applied by the
+ordered prepared upload helper. No additional public artifact or deployment exists.
+
+No GitHub push or remote workflow execution was attempted. The earlier explicit
+main-publication requirement remains unresolved; changes are committed locally.
+
+Next: remaining Part artwork and actual native captures, broader editorial/source
+review, EPUB reader/accessibility acceptance, outstanding device/provider/iOS gates
+and final production facts/credits. Do not characterize this EPUB or app as ready
+for public distribution solely from these checks.
+
+# Publication matter and linked subject index — November 17, 2026 (Central)
+
+Added a draft publication notice, acknowledgments, conservative author biography,
+companion-code/errata guide and materials/third-party notice map. Biography uses the
+known author/creative/location/family facts without adding degrees, awards, years
+of experience or unconfirmed credentials. ISBN/date/edition assignment, final
+credits and any redistribution-license audit remain pending. No dedication was
+invented. Existing title/imprint, 40-chapter scope and 8x10 typography are preserved.
+
+The reader guide now reflects the existing appendices and draft instructional passes.
+It distinguishes the proof index from final paperback indexing and notes matching
+source checkpoints. Later local work awaiting repository publication remains identified
+honestly in the companion access guidance; no unavailable milestone is promised.
+
+## Curated index and cross-reference validation
+
+planning/subject-index.json selects 111 unique substantive section openings across
+chapters and appendices. production/subject_index.py validates exact source headings
+and collects actual page locators through ReportLab multiBuild. Entries are sorted,
+with linked terms and page locators. The index does not populate itself from every
+word occurrence, guessed page ranges or old proof pagination. Its final editorial
+coverage remains a production review task.
+
+production/audit_navigation.py checks 61 included source documents, 428 numbered
+chapter-reference expressions and relative Markdown targets. Each of the 111 source
+headings is verified in the actual locator page. All 222 index links resolve, in the
+correct term/locator order, to their corresponding section page objects. The checker
+handles this PyMuPDF version's /Fit link representation by inspecting actual PDF
+Dest references, rather than treating every LINK_NAMED classification as broken.
+The existing production workflow now includes this audit and index-plan/source triggers.
+
+## Saved proof and review
+
+464 pages, 61 bookmarks, the unchanged 46 distinct images and a three-page subject
+index beginning on page 462. Publication notice page 2, acknowledgments 8, companion
+resources 457, materials/notices 459 and author bio 461. Added front matter shifts
+chapter page numbers; all index and contents locators were regenerated together.
+All required section/figure/image markers, 8x10 trim and outer text boundaries pass
+locally. Contact-sheet and larger review covered the new matter, contents/overview,
+reader guidance and compact index. Body/code remain 11/9.5 pt.
+Final PDF SHA-256: 0806be93cdaded5e4e728a94b2e7267fec8cbce934f8bb6980b52627272fa1fa.
+Existing opening-draft-8x10.pdf replaced successfully as version 27.
+
+No application/companion code changed, and no new C#/API/Android/iOS/provider/device
+execution is claimed. No push or other GitHub publication was attempted; earlier
+explicit-main-authorization requirement still applies. Remote CI was not run.
+
+Next: final editorial/continuity and source-listing review, remaining Part artwork
+and real app captures, incomplete device/provider/privacy/iOS acceptance, final
+publication facts/credits and accessible EPUB production. Re-review the subject index
+when text stabilizes. The proof is still not a finished publication or released app.
+
+# Appendices and glossary continuation — November 17, 2026 (Central)
+
+Added the four planned substantive appendices and an alphabetical 73-entry glossary:
+
+- Appendix A: targeted C# contracts, await/cancellation/result ownership, nullability,
+  records/collections, events/disposal and DI, with excerpts from actual companion files.
+- Appendix B: source versus historical/proposed tools, local/network/TLS identity,
+  Android/iOS boundary diagnosis, customer-journey faults and bounded reporting.
+- Appendix C: project/API/fixture/configuration navigation, protected synthetic routes,
+  identity and storage distinctions, and complete-lab references.
+- Appendix D: bounded optional watch-companion design, actual platform/tooling limits,
+  stale/disconnected command policy and maintenance criteria. No watch code is promised.
+- Glossary: 73 definitions with chapter pointers, including identity, storage,
+  network/media, release and verification terms. These are not final index page numbers.
+
+## Source and editorial checks
+
+Companion snapshot inspected: 3f07b25743c00ef0a1ad64347f310673f5ecad7c.
+No application or companion source changed. DebouncedQuery excerpts and named source
+paths were checked directly; the five-record bundled catalog was verified. Relevant
+endpoint/configuration/identity/platform declarations and existing labs were inspected.
+Primary platform sources were checked for the watch discussion. No new C# execution,
+mobile build, device observation or live-provider result is claimed. Existing pending
+native/privacy/provider/signing gates are unchanged.
+
+The renderer combines each Appendix label/title into one contents/bookmark entry,
+watches appendices/back-matter in proof CI, and distinguishes glossary term labels
+with the existing heading font without altering body/code sizes. The production
+validation requires all four appendices and the glossary.
+
+## Saved print proof
+
+454 pages, 56 bookmarks and the same 46 distinct images. Appendix starts: A 428,
+B 434, C 440, D 446; glossary 449. All expected markers, 8x10 trim and outer text
+boundaries pass the production workflow's validation locally. All 27 new reference
+pages received contact-sheet review; code, tool/configuration tables, glossary,
+contents and draft overview received larger inspection. Final PDF hash:
+8d9103e2bec5aecf99ed944985aa2f4dd13245a49564593a7dbffa218fc7900c.
+The existing opening-draft-8x10.pdf was updated successfully to version 26.
+
+No GitHub push was attempted in this continuation. Prior automatic-review publication
+blocks remain unresolved; local commits preserve the work. No new remote CI is claimed.
+
+Next: complete the remaining front/back matter and companion/errata reference, review
+cross-references and prepare the substantive index after text stabilizes. Final author
+bio/legal/ISBN details must use confirmed information. Remaining Part artwork,
+verified native screenshots, device/provider/iOS acceptance and accessible EPUB are
+still outstanding. The manuscript remains an editorial proof.
+
+# Chapter 40 release rehearsal and maintenance — November 17, 2026 (Central)
+
+All forty planned chapters now have instructional drafts. Chapter 40 adds five
+outcomes/prerequisites, candidate/source/evidence mapping, existing workflow inventory,
+explained packet validation, actual synthetic failure/restoration, distribution authority,
+old/new client compatibility, rollback limits, dependency/diagnostic maintenance,
+reader checkpoints/errata, owner-role worksheet, guided reasoning, troubleshooting,
+summary and independent extensions. Two authored diagrams show evidence and recovery.
+
+## Executed new sample
+
+Companion implementation: 22489d1906110ebf4925aa6b2a2b04c0b2833130.
+Later companion documentation: 3f07b25. Actual local Python is 3.12.14 on Linux.
+All 17 boundary tests pass without skips. The synthetic packet validates, changed
+candidate bytes are rejected, and restoring the owned fixture validates again.
+Retained JSON keeps its original selected manuscript metadata
+ dcd2f9b1bfe64a9a80c99beb51b8d2aa76224e56 (the preceding Chapter 39 checkpoint).
+It is not relabeled as the later Chapter 40 manuscript. Generated receipt passes are
+invented fixtures, not new app/platform passes. Fixed output retains manual not_run,
+distribution blocked and release readiness unassessed. No application C# changed.
+
+The new workflow is manual-dispatch only, contents-read, secret-free and unexecuted.
+No fresh C# suites, Android/API, iOS/device, live provider or store run is claimed.
+Existing real Android update and published HTTPS restore observations retain their
+original source/harness/run identities and limits. The chapter explains how a real
+subject graph differs from the deliberately strict single-artifact synthetic fixture.
+
+## Manuscript and saved proof
+
+The proof is 427 pages, 51 bookmarks and 46 distinct images: four Part illustrations
+plus forty-two authored technical diagrams/recaps. Chapter 39 starts on page 403;
+Chapter 40 starts on page 416. All 427 pages pass the production workflow's actual
+chapter/caption/image, 8x10 trim and outer text-boundary validation locally. A contact
+sheet covers all twelve new pages; opening, contents, About This Draft, code, workflow
+and summary/exercise/reference pages received larger visual inspection. Body/code
+remain 11/9.5 pt. The existing PDF was replaced successfully as version 25.
+
+## GitHub publication remains blocked
+
+The continuation request did not satisfy automatic review's explicit-main-publication
+requirement. Both attempted Chapter 39 pushes were rejected again. No indirect route,
+alternative publication or additional push was attempted. All Chapter 39–40 changes
+are committed locally; remote manuscript main remains e688ee8 and companion main
+remains 0d81cdc. No new GitHub production CI result is claimed. User must explicitly
+authorize pushing both repositories to main before publication is retried.
+
+## Next work
+
+Begin the targeted appendices and consolidate the environment/source reference, then
+glossary, index planning and remaining front/back matter. Preserve all advanced scope.
+In parallel when prerequisites exist, execute Chapter 39's iOS/native/signing gates,
+complete physical-device/provider/privacy acceptance, remaining Part artwork and
+verified app captures. Final index pagination and accessible EPUB follow stable text.
+Forty chapter drafts do not certify release readiness or a finished publication.
+
+# Chapter 39 iOS release instructional draft — November 16, 2026 (Central)
+
+Added Chapter 39, iOS Signing and App Store Release from Windows, with five
+learning outcomes, prerequisites, explicit project evaluation, compatible-toolchain
+research, controlled signing/archive procedures, source-to-artifact configuration,
+TestFlight/update recovery, reviewer access, troubleshooting, guided reasoning,
+summary and independent extensions. Two authored grayscale diagrams distinguish
+build locations and candidate gates. Companion documentation commit: 2a2bf75.
+
+Actual source review found the macOS-conditional iOS framework entry, existing
+URL/background/photo declarations, and no checked-in iOS entitlements/privacy
+manifest files. Generated output and dependency behavior remain to inspect.
+The primary-source candidate is SDK 11.0.100, workload set 11.0.100.1, iOS pack
+27.2.11039 and Xcode 27.2. The Microsoft release's macOS 16.6+ wording conflicts
+with Apple's Tahoe 26.6+ Xcode table; host planning explicitly follows Apple's table.
+No toolchain upgrade was applied to the companion.
+
+The new proof has 415 pages, 50 bookmarks and 44 distinct images (four Part
+illustrations and forty technical figures/recaps). Chapter 39 begins on page 403.
+All pages pass 8x10 trim and outer text-boundary checks. A contact sheet covered
+all thirteen new pages; opening, declaration table, publish/inspection source and
+summary/exercises received larger visual inspection. Body/code remain 11/9.5 pt.
+The production workflow now requires Chapter 39 and both new figure captions.
+
+No production application C# changed. No fresh portable, API or Android execution
+is claimed for documentation-only edits. iOS simulator compilation/launch, device
+archive signing, Windows remote publication, TestFlight processing, physical-device
+acceptance and store submission remain not_run. Chapter 39's planned signed-candidate
+outcome is still incomplete. The release worksheet retains each pending gate.
+
+PDF writeback succeeded: existing opening-draft-8x10.pdf, version 24, 415 pages.
+Manuscript implementation commit e5d12b2 and companion documentation commit 2a2bf75
+are local only. Automatic approval review rejected both pushes to default main as
+insufficiently authorized by the continuation request. No push retry or alternative
+publication was attempted. Remote manuscript remains e688ee8; remote companion
+remains 0d81cdc. Independent production CI has not run for the new chapter.
+
+Next: execute iOS verification on a compatible Mac with controlled signing assets
+when available; Chapter 40 release automation and maintenance remains the next
+unwritten chapter. Complete front/back matter, index, remaining artwork, native
+captures and accessible EPUB also remain in the agreed scope.
+
 # Chapter 38 Android signing and observed upgrade — November 16, 2026 (Central)
 
 The signed candidate was built at `b15607e6afe2427d4d21b38a913dafcbbc85a082`.

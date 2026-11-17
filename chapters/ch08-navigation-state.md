@@ -131,7 +131,7 @@ Back behavior, application interruption, and a canceled asynchronous task are re
 
 ## Checkpoint and exercises
 
-The app has named top-level destinations, a public detail route, a stable-ID payload, and tested parsing/unavailable states. It does not yet implement external deep links, account-dependent routes, or restart restoration.
+At the Chapter 8 checkpoint, the app has named top-level destinations, a public detail route, a stable-ID payload, and tested parsing/unavailable states. External deep links and account-dependent routes arrive in later chapters; a complete restart-restoration journey still needs its own implementation and native verification.
 
 1. Open a record, return, and record whether query/selection remain on each device.
 2. Send an unknown ID after a valid ID and inspect stale-content clearing.

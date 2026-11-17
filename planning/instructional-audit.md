@@ -169,3 +169,51 @@ Source palette arithmetic and an explicit incomplete device/accessibility review
 separate from unexecuted physical startup/scrolling/decoded-memory/energy/screen-reader
 and signed-publish observations. Actual desktop numbers are retained with source/run
 identity; no native benchmark or completed accessibility acceptance is invented.
+
+
+## Chapters 39–40 initial instructional drafts — November 17, 2026 (Central)
+
+Chapter 39 supplies the Windows/Mac boundary, explicit target evaluation, verified
+primary-source toolchain research with documented macOS wording discrepancy,
+signing/inspection/TestFlight procedures, two authored figures and worked guidance.
+Its signed iOS candidate remains incomplete; native execution stays pending.
+Chapter 40 supplies a complete Python synthetic release rehearsal with 17 passing
+local boundary tests and actual changed-byte rejection/restoration, explained
+source/evidence identities, owner-role/compatibility/maintenance worksheets, two
+figures, guided work and summary/extensions. Synthetic receipts do not represent app
+passes. Both drafts preserve intermediate/advanced scope. The 427-page proof passes
+local production validation and visual review. Final native/provider acceptance and
+remaining book-production work are still open.
+
+
+## Reference continuation — November 17, 2026
+
+Four substantive appendices and a 73-entry glossary now supplement the forty drafts.
+The targeted refresher uses actual companion excerpts; environment and configuration
+references separate source settings, historical evidence and proposed/unexecuted paths.
+The optional watch appendix remains design guidance with explicit platform boundaries.
+The 454-page proof passes local production and visual inspection. No application source
+or native verification changed. Final index, front/back matter, remaining artwork and
+captures, accessible EPUB and outstanding technical acceptance remain open.
+
+
+## Publication and navigation continuation — November 17, 2026
+
+Draft notice/acknowledgments, companion/errata guidance, materials notice map and a
+conservative author biography now accompany the manuscript. The reader guide's
+appendix/index/pass descriptions were refreshed. A curated 111-entry subject index
+uses actual multi-pass section pagination and links both terms and locators. The
+new audit passes 61 source documents, 428 numbered chapter-reference expressions,
+111 exact paginated headings and 222 correctly ordered destinations. The 464-page
+proof passes local production checks and visual inspection. Final coverage/editing,
+publication facts/credits and outstanding technical/EPUB work remain open.
+
+
+## Milestone-scope and EPUB continuation — November 17, 2026
+
+Twelve documents now distinguish early chapter limitations, later bounded source
+and pending production/native composition more precisely. The PDF retains 464 pages
+with refreshed navigation and reviewed changed pages. The first reflowable EPUB
+preserves 155 code blocks, 46 described images and 111 linked subject entries; EPUBCheck
+5.4.0 reports no errors or warnings. Two-viewport MuPDF review is separate from actual
+Apple Books/Kindle/accessibility acceptance. No application C# or native evidence changed.

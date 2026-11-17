@@ -52,3 +52,9 @@ not infer that a Linux runner or Windows-only publish can replace Apple tools.
 The manuscript's 40-chapter plan and comprehensive intermediate/advanced scope
 remain unchanged. Pending Mac/device/store evidence must remain visible even if a
 simulator compilation succeeds. This note does not certify a signed iOS candidate.
+
+## Instructional continuation
+
+Chapter 39 and companion lab now exist. See planning/progress.md for the 415-page
+proof and source findings. Native/signing/store tasks above remain unexecuted; the
+signed-candidate outcome is not complete.

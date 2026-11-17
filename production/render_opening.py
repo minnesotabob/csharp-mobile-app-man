@@ -1,6 +1,8 @@
 from pathlib import Path
 from html import escape
 import re
+import json
+from subject_index import load_targets, SubjectIndex
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -12,6 +14,7 @@ from reportlab.platypus import BaseDocTemplate, PageTemplate, Frame, Paragraph, 
 ROOT = Path(__file__).resolve().parents[1]
 FONT_DIR = ROOT / 'production/fonts'
 OUT = ROOT / 'production/opening-draft-8x10.pdf'
+INDEX_TARGETS = load_targets(ROOT)
 for name, filename in [('Body', 'SourceSerif4-Regular.ttf'), ('Head', 'SourceSans3-Regular.ttf'), ('Code', 'SourceCodePro-Regular.ttf')]:
     pdfmetrics.registerFont(TTFont(name, str(FONT_DIR / filename)))
     pdfmetrics.registerFontFamily(name, normal=name, bold=name, italic=name, boldItalic=name)
@@ -39,7 +42,10 @@ def markdown(text, source=None):
     result=[]; lines=text.splitlines(); i=0; paragraph=[]; reference_mode=False
     def flush():
         if paragraph:
-            result.append(Paragraph(fmt(' '.join(paragraph)),styles['reference'] if reference_mode else styles['body'])); paragraph.clear()
+            formatted = fmt(' '.join(paragraph))
+            if source is not None and source.name == 'glossary.md':
+                formatted = re.sub(r'<b>(.*?)</b>', r'<font name="Head">\1</font>', formatted)
+            result.append(Paragraph(formatted,styles['reference'] if reference_mode else styles['body'])); paragraph.clear()
     while i<len(lines):
         line=lines[i]
         if line.startswith(('## Editorial index terms', 'Editorial index terms:')):
@@ -84,7 +90,12 @@ def markdown(text, source=None):
         elif line.startswith('### '):
             flush();result.append(Paragraph(fmt(line[4:]),styles['h3']))
         elif line.startswith('## '):
-            flush();reference_mode = line[3:].lower().startswith(('references', 'sources', 'companion references', 'official references'));result.append(Paragraph(fmt(line[3:].replace(' and index terms','')),styles['h2']))
+            flush();reference_mode = line[3:].lower().startswith(('references', 'sources', 'companion references', 'official references'))
+            heading = line[3:].replace(' and index terms','')
+            flow = Paragraph(fmt(heading),styles['h2'])
+            if source is not None:
+                flow._subject_entries = INDEX_TARGETS.get((source.relative_to(ROOT).as_posix(), heading), [])
+            result.append(flow)
         elif line.startswith('*Illustration brief:') or line.startswith('*Editorial status:'):
             flush();result.append(Paragraph(fmt(line.strip('*')),styles['small']))
         elif line.startswith('- ') or re.match(r'^\d+\.\s', line):
@@ -114,7 +125,7 @@ def footer(c,doc):
     c.drawString(left,696,'BUILDING MOBILE APPS WITH C# 15')
     c.drawRightString(right,696,'OPENING DRAFT')
     c.setLineWidth(.4);c.line(left,686,right,686)
-    c.drawString(left,30,'8 × 10 in  |  11 pt body  |  9.5 pt code  |  November 16, 2026')
+    c.drawString(left,30,'8 × 10 in  |  11 pt body  |  9.5 pt code  |  November 17, 2026')
     c.drawRightString(right,30,str(doc.page));c.restoreState()
 
 class BookDoc(BaseDocTemplate):
@@ -124,10 +135,13 @@ class BookDoc(BaseDocTemplate):
         self.pageTemplate = self.pageTemplates[self.page % 2]
         super().handle_pageBegin()
     def afterFlowable(self, flowable):
+        for term, anchor in getattr(flowable, '_subject_entries', []):
+            self.canv.bookmarkPage(anchor)
+            self.notify('SubjectIndexEntry', (0, term, self.page, anchor))
         if not isinstance(flowable,Paragraph) or flowable.style.name!='h1': return
         text=flowable.getPlainText()
-        if text in ['Contents','About This Draft'] or self.page==1: return
-        if re.fullmatch(r'(Chapter \d+|Part [IVX]+)',text):
+        if text in ['Contents','About This Draft','Publication Notice'] or self.page==1: return
+        if re.fullmatch(r'(Chapter \d+|Part [IVX]+|Appendix [A-D])',text):
             self.section_prefix=text;return
         if self.section_prefix:
             text=self.section_prefix+' - '+text;self.section_prefix=''
@@ -140,14 +154,27 @@ doc=BookDoc(str(OUT),pagesize=(576,720),leftMargin=68.4,rightMargin=46.8,topMarg
 doc.addPageTemplates([
     PageTemplate(id='odd',frames=[Frame(68.4,51,460.8,615,id='odd-frame',leftPadding=0,rightPadding=0,topPadding=0,bottomPadding=0)],onPage=footer,autoNextPageTemplate='even'),
     PageTemplate(id='even',frames=[Frame(46.8,51,460.8,615,id='even-frame',leftPadding=0,rightPadding=0,topPadding=0,bottomPadding=0)],onPage=footer,autoNextPageTemplate='odd')])
-story=[Spacer(1,84),Paragraph('Building Mobile Apps<br/>with C# 15',styles['h1']),Spacer(1,16),Paragraph('.NET 11 and .NET MAUI 11',styles['h2']),Paragraph('A Windows Developer’s Guide to Android, iPhone, and Tablets',styles['body']),Spacer(1,36),Paragraph('John F. Gnazzo',styles['h2']),Paragraph('DGreatGnazzini Press LLC',styles['body']),Spacer(1,50),Paragraph('Opening manuscript and typography proof. First drafts; not a finished book. Final illustrations, screenshots, front matter, and index are still in development.',styles['small']),PageBreak()]
+story=[Spacer(1,84),Paragraph('Building Mobile Apps<br/>with C# 15',styles['h1']),Spacer(1,16),Paragraph('.NET 11 and .NET MAUI 11',styles['h2']),Paragraph('A Windows Developer’s Guide to Android, iPhone, and Tablets',styles['body']),Spacer(1,36),Paragraph('John F. Gnazzo',styles['h2']),Paragraph('DGreatGnazzini Press LLC',styles['body']),Spacer(1,50),Paragraph('Opening manuscript and typography proof. First drafts; not a finished book. Final illustrations, screenshots, technical acceptance and publication details remain in development.',styles['small']),PageBreak()]
+story.extend(markdown((ROOT/'front-matter/publication-notice.md').read_text(),ROOT/'front-matter/publication-notice.md'))
+story.append(PageBreak())
 toc=TableOfContents()
 toc.levelStyles=[ParagraphStyle('toc',fontName='Head',fontSize=10.5,leading=12,spaceBefore=0)]
 story.extend([Paragraph('Contents',styles['h1']),toc,PageBreak()])
-story.extend(markdown('# About This Draft\n\nThis editorial proof uses Source Serif 4, Source Sans 3 and Source Code Pro on 8 × 10 pages, with 11-point body text, 9.5-point code, mirrored binding margins and new-page starts for major divisions. It contains the preface, reader guide, introduction, eight Part introductions and Chapters 1–38. Thirty-eight authored technical figures and recaps accompany four original Part illustrations. Native app screenshots remain production work.\n\nThe 40-chapter plan retains introductory, intermediate and advanced instruction. Chapters include learning outcomes, explained source, guided work, troubleshooting, summaries and exercises. They remain editorial drafts; short first drafts are not final chapter lengths. Remaining Part artwork, front/back matter, index, accessible EPUB, ISBN/legal details, dedication, acknowledgments and biography are unfinished.\n\nThe companion develops catalogs, forms, pricing, HTTP/API contracts, local storage, offline synchronization, managed identity/session policies, media and customer workflows. Provider and commerce examples retain explicit fixture boundaries. No live identity tenant is configured by default; lifecycle fixtures do not delete a hosted account. TEST payment evidence and sample delivery do not authorize real work. Public hosting, complete customer recovery, live providers and privacy lifecycle composition need separate acceptance.\n\nPart VIII adds composed acceptance tests, measured Release search/API/retention investigations and an isolated Android signing/update rehearsal. Actual API-35 emulator observations now establish test-only Release installation, Home launch, a saved synthetic draft, replacement by version 2 and recovery with the same package UID. Static 16 KiB library checks do not establish a 16 KiB runtime. Full native feature journeys, physical devices, accessibility, live providers, Play distribution and iOS compilation/signing remain unverified.\n\nExact executed source revisions, test totals, candidate/harness identities and workflow links appear in docs/verification.md and planning/progress.md. Print-layout checks, portable tests, in-process API tests, published HTTPS checks, compilation and an emulator rehearsal establish different evidence. Remaining manual acceptance rows and release readiness are not passed by inference.\n\nCopyright 2026 John F. Gnazzo. All rights reserved.'))
-for rel in ['front-matter/preface.md','front-matter/how-to-use-this-book.md','front-matter/introduction.md','parts/part-01/introduction.md','chapters/ch01-mobile-landscape.md','chapters/ch02-defining-gnazzos-world.md','chapters/ch03-windows-environment.md','chapters/ch04-first-application.md','chapters/ch05-testable-foundations.md','parts/part-02/introduction.md','chapters/ch06-xaml-layouts-resources.md','chapters/ch07-bindings-commands-mvvm.md','chapters/ch08-navigation-state.md','chapters/ch09-collections-images-reuse.md','chapters/ch10-accessibility-localization.md','chapters/ch11-adaptive-layouts.md','parts/part-03/introduction.md','chapters/ch12-catalog-models.md','chapters/ch13-search-filters-favorites.md','chapters/ch14-content-details-samples-links.md','chapters/ch15-custom-song-request.md','chapters/ch16-pricing-reliable-submission.md','parts/part-04/introduction.md','chapters/ch17-http-resilient-networking.md','chapters/ch18-companion-aspnet-core-api.md','chapters/ch19-local-storage-migrations.md','chapters/ch20-offline-background-work.md','chapters/ch21-synchronization-conflicts.md','parts/part-05/introduction.md','chapters/ch22-native-authentication.md','chapters/ch23-sessions-storage-authorization.md','chapters/ch24-mfa-recovery.md','chapters/ch25-profiles-privacy-lifecycle.md','chapters/ch26-threat-modeling-security.md','parts/part-06/introduction.md','chapters/ch27-audio-playback-progress.md','chapters/ch28-background-system-controls.md','chapters/ch29-downloads-media-storage.md','chapters/ch30-notifications-links-sharing.md','chapters/ch31-native-capabilities-attachments.md','parts/part-07/introduction.md','chapters/ch32-quotes-orders-ownership.md','chapters/ch33-payment-boundaries-verified-events.md','chapters/ch34-order-tracking-revisions-delivery.md','chapters/ch35-hosting-diagnostics-operations.md','parts/part-08/introduction.md','chapters/ch36-testing-complete-application.md','chapters/ch37-performance-reliability-accessibility.md','chapters/ch38-android-signing-google-play.md']:
+story.extend(markdown('# About This Draft\n\nThis editorial proof uses Source Serif 4, Source Sans 3 and Source Code Pro on 8 × 10 pages, with 11-point body text, 9.5-point code, mirrored binding margins and new-page starts for major divisions. It contains the preface, reader guide, introduction, eight Part introductions, Chapters 1–40, four appendices, a glossary and a curated subject index. Forty-two authored technical figures and recaps accompany four original Part illustrations. Native app screenshots remain production work.\n\nThe 40-chapter plan retains introductory, intermediate and advanced instruction. Chapters include learning outcomes, explained source, guided work, troubleshooting, summaries and exercises. They remain editorial drafts; short first drafts are not final chapter lengths. Remaining Part artwork, final editorial and index review, accessible EPUB and ISBN/edition details are unfinished. Notices, acknowledgments and author biography are drafted for review.\n\nThe companion develops catalogs, forms, pricing, HTTP/API contracts, local storage, offline synchronization, managed identity/session policies, media and customer workflows. Provider and commerce examples retain explicit fixture boundaries. No live identity tenant is configured by default; lifecycle fixtures do not delete a hosted account. TEST payment evidence and sample delivery do not authorize real work. Public hosting, complete customer recovery, live providers and privacy lifecycle composition need separate acceptance.\n\nPart VIII adds composed acceptance tests, measured Release search/API/retention investigations and an isolated Android signing/update rehearsal. Actual API-35 emulator observations now establish test-only Release installation, Home launch, a saved synthetic draft, replacement by version 2 and recovery with the same package UID. Static 16 KiB library checks do not establish a 16 KiB runtime. Full native feature journeys, physical devices, accessibility, live providers, Play distribution and iOS compilation/signing remain unverified.\n\nExact executed source revisions, test totals, candidate/harness identities and workflow links appear in docs/verification.md and planning/progress.md. Print-layout checks, portable tests, in-process API tests, published HTTPS checks, compilation and an emulator rehearsal establish different evidence. Remaining manual acceptance rows and release readiness are not passed by inference.\n\nCopyright 2026 John F. Gnazzo. All rights reserved.'))
+for rel in ['front-matter/preface.md','front-matter/acknowledgments.md','front-matter/how-to-use-this-book.md','front-matter/introduction.md','parts/part-01/introduction.md','chapters/ch01-mobile-landscape.md','chapters/ch02-defining-gnazzos-world.md','chapters/ch03-windows-environment.md','chapters/ch04-first-application.md','chapters/ch05-testable-foundations.md','parts/part-02/introduction.md','chapters/ch06-xaml-layouts-resources.md','chapters/ch07-bindings-commands-mvvm.md','chapters/ch08-navigation-state.md','chapters/ch09-collections-images-reuse.md','chapters/ch10-accessibility-localization.md','chapters/ch11-adaptive-layouts.md','parts/part-03/introduction.md','chapters/ch12-catalog-models.md','chapters/ch13-search-filters-favorites.md','chapters/ch14-content-details-samples-links.md','chapters/ch15-custom-song-request.md','chapters/ch16-pricing-reliable-submission.md','parts/part-04/introduction.md','chapters/ch17-http-resilient-networking.md','chapters/ch18-companion-aspnet-core-api.md','chapters/ch19-local-storage-migrations.md','chapters/ch20-offline-background-work.md','chapters/ch21-synchronization-conflicts.md','parts/part-05/introduction.md','chapters/ch22-native-authentication.md','chapters/ch23-sessions-storage-authorization.md','chapters/ch24-mfa-recovery.md','chapters/ch25-profiles-privacy-lifecycle.md','chapters/ch26-threat-modeling-security.md','parts/part-06/introduction.md','chapters/ch27-audio-playback-progress.md','chapters/ch28-background-system-controls.md','chapters/ch29-downloads-media-storage.md','chapters/ch30-notifications-links-sharing.md','chapters/ch31-native-capabilities-attachments.md','parts/part-07/introduction.md','chapters/ch32-quotes-orders-ownership.md','chapters/ch33-payment-boundaries-verified-events.md','chapters/ch34-order-tracking-revisions-delivery.md','chapters/ch35-hosting-diagnostics-operations.md','parts/part-08/introduction.md','chapters/ch36-testing-complete-application.md','chapters/ch37-performance-reliability-accessibility.md','chapters/ch38-android-signing-google-play.md','chapters/ch39-ios-signing-app-store.md','chapters/ch40-automated-releases-maintenance.md','appendices/appendix-a-csharp-refresher.md','appendices/appendix-b-environment-troubleshooting.md','appendices/appendix-c-contracts-data-configuration.md','appendices/appendix-d-watch-companions.md','back-matter/glossary.md','back-matter/companion-and-errata.md','back-matter/materials-and-notices.md','back-matter/about-author.md']:
     story.append(PageBreak());story.extend(markdown((ROOT/rel).read_text(),ROOT/rel))
+story.extend([PageBreak(),Paragraph('Subject Index',styles['h1']),
+    Paragraph('Selected substantive section openings. Locators and links refer to this editorial proof and regenerate during typesetting; final index review follows stable pagination.',styles['small'])])
+subject_index=SubjectIndex()
+subject_index.levelStyles=[ParagraphStyle('subject-index',fontName='Head',fontSize=10.5,leading=13,spaceBefore=1)]
+subject_index.tableStyle=TableStyle([('VALIGN',(0,0),(-1,-1),'TOP'),('LEFTPADDING',(0,0),(-1,-1),0),('RIGHTPADDING',(0,0),(-1,-1),0),('TOPPADDING',(0,0),(-1,-1),0),('BOTTOMPADDING',(0,0),(-1,-1),0)])
+story.append(subject_index)
 doc.multiBuild(story)
+expected=sum(len(rows) for rows in INDEX_TARGETS.values())
+assert len(subject_index._entries)==expected, 'Missing or duplicated paginated index target'
+(ROOT/'production/proof-navigation.json').write_text(json.dumps({
+    'schema':1,'index':[{'term':text,'page':page,'anchor':key}
+    for _,text,page,key in sorted(subject_index._entries,key=lambda row:row[1].casefold())]},indent=2)+'\n')
 print(OUT)
 
 

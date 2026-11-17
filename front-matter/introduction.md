@@ -55,7 +55,7 @@ Accessibility is likewise continuous work. Semantic headings, meaningful labels,
 
 ## Reading toward public release
 
-A complete development example needs more than a successful debug build. We will address release configuration, signing, platform requirements, store metadata, privacy declarations, and support. Current storefront rules must be reviewed when the relevant chapter is implemented and again before submission. This matters especially for a business that mixes public catalogs, digital media, and custom services.
+A complete development example needs more than a successful debug build. We will address release configuration, signing, platform requirements, store metadata, privacy declarations, and support. Current storefront rules must be reviewed while preparing the release procedures and again before an actual submission. The procedures in Chapters 38-39 do not imply that every platform or store gate has executed. This matters especially for a business that mixes public catalogs, digital media, and custom services.
 
 After release, devices, dependencies, and services continue to change. We will close with versioned data, update strategies, diagnostics, and a release process that distinguishes test results from decisions requiring a person. The goal is to leave you able to explain, change, and maintain what you have built.
 

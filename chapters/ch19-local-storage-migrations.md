@@ -180,7 +180,7 @@ If an upgrade fails before commit, disposing the transaction rolls it back. On t
 
 This tests a real file upgrade—not a mocked migration service. It also demonstrates why dropping and recreating the database would be a serious defect: it might produce the new tables but would discard legitimate saved state.
 
-**Production extension:** An unrecoverable migration can require a controlled backup, an explicit repair path and a minimum supported version policy. This teaching implementation does not yet run `PRAGMA integrity_check`, manage a backup rotation or repair a damaged database. Do not silently delete corrupted or unsupported data to make the app launch.
+**Production extension:** An unrecoverable migration can require a controlled backup, an explicit repair path and a minimum supported version policy. This Chapter 19 public-storage implementation does not run `PRAGMA integrity_check`, manage a backup rotation or repair a damaged database. Chapter 35 later introduces verified backup/restore for a separate commerce store; it does not automatically add those features to this public-storage adapter. Do not silently delete corrupted or unsupported data to make the app launch.
 
 ## 19.6 Write parameterized queries, not SQL-shaped strings
 

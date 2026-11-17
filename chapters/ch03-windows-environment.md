@@ -165,7 +165,7 @@ The minimum supported Android API and the build target are not the same setting.
 
 Apple build tools run on a Mac. Windows-to-Mac development needs a compatible IDE, SDK/workloads, Xcode, reachable build host, and signing configuration. An iOS package on Windows does not replace those requirements.
 
-The scaffold has iOS source and conditionally adds its target on macOS. It does not yet implement a complete remote Windows-to-Mac setup. An iOS simulator compilation, a signed device build, and App Store distribution are distinct milestones.
+The scaffold has iOS source and conditionally adds its target on macOS. It does not provide a verified complete remote Windows-to-Mac build. Chapter 39 supplies the preparation and publication procedure while retaining native execution as pending. An iOS simulator compilation, a signed device build, and App Store distribution are distinct milestones.
 
 You can complete portable/Android exercises before arranging iOS equipment, but should know the requirement now. An iOS folder is source, not compatibility evidence.
 

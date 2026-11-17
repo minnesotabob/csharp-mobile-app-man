@@ -90,7 +90,7 @@ These declarations are a **Chapter 12 milestone excerpt**, not a complete stand-
 
 ReleaseDate uses DateOnly because an editorial release date is a calendar value. It is not a timestamp showing the instant an API response arrived. If a later provider offers territory-specific release times, preserve that distinct meaning in a separate field.
 
-DurationSeconds is an integer rather than formatted text such as “3:07.” Presentation can convert seconds into a localized duration. The fixture does not yet contain verified recording lengths, so it leaves durations absent.
+DurationSeconds is an integer rather than formatted text such as “3:07.” Presentation can convert seconds into a localized duration. These five bundled catalog records do not contain verified recording lengths, so their durations remain absent. Later original audio fixtures have separate media identities and do not supply missing metadata for these catalog records.
 
 Edition is available for books. Our sample labels Kai as Book One, preserving the source description without inventing an ISBN or publication date. The value is display metadata; it is not an identifier linking every edition of a work.
 

@@ -175,7 +175,7 @@ Reload also validates a candidate before replacing the old set. A failed reload 
 
 The browser remains usable when favorites cannot load. An error explains the problem, and Reload favorites provides an explicit retry. Corrupt saved JSON is not silently treated as an empty collection.
 
-The current app offers no automatic repair or destructive reset for corrupted preferences. During development, inspect the fixture or clear test-app data deliberately. Later storage chapters will add a fuller recovery design.
+The current app offers no automatic repair or destructive reset for corrupted preferences. During development, inspect the fixture and preserve the failing synthetic data before changing it. Chapter 19 introduces a separate SQLite persistence/recovery boundary; it does not silently migrate or repair this preferences example. Clearing owned disposable test-app data is a deliberate reset, not evidence of recovery or a data-preserving upgrade.
 
 ## 13.9 Use preferences for a bounded local example
 

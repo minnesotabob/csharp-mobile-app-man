@@ -148,7 +148,7 @@ Imagine a listener scrolling past Minnesota Bob to find a particular song. A cor
 
 ## Checkpoint and exercises
 
-CatalogCard and DetailsView now provide two purposeful reusable components. Their binding context, selected appearance, and image fallback are explicit. Remote artwork and pagination remain planned implementation work.
+CatalogCard and DetailsView now provide two purposeful reusable components. Their binding context, selected appearance, and image fallback are explicit. Remote artwork and native catalog pagination remain follow-up implementation work. Chapter 18 later adds service-side paging; that does not by itself implement a paged native collection.
 
 1. Add two synthetic records with equal titles and distinct IDs, then inspect selection.
 2. Remove the placeholder resource locally and identify the build/runtime boundary.

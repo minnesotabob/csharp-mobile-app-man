@@ -1,5 +1,12 @@
 # Building Mobile Apps with C# 15
 
+## Publication checkpoint
+
+The current main snapshot includes the prepared Chapter 39–40 and editorial updates.
+See [original checkpoints](source-history/README.md) to recover exact local commit
+identities cited by the book and verification records. Publication does not convert
+pending device, provider or iOS observations into passed checks.
+
 **.NET 11 and .NET MAUI 11: A Windows Developer’s Guide to Android, iPhone, and Tablets**  
 John F. Gnazzo
 
@@ -62,3 +69,37 @@ All material is copyright 2026 John F. Gnazzo. Public visibility does not grant 
 
 
 - [Chapter 38 — Android Signing and Google Play Release](chapters/ch38-android-signing-google-play.md)
+
+- [Chapter 39 — iOS Signing and App Store Release from Windows](chapters/ch39-ios-signing-app-store.md)
+
+- [Chapter 40 — Automated Releases and Long-Term Maintenance](chapters/ch40-automated-releases-maintenance.md)
+
+
+## Reference material
+
+- [Appendix A — Targeted C# Refresher](appendices/appendix-a-csharp-refresher.md)
+- [Appendix B — Environment and Troubleshooting](appendices/appendix-b-environment-troubleshooting.md)
+- [Appendix C — API, Data, and Configuration](appendices/appendix-c-contracts-data-configuration.md)
+- [Appendix D — Watch Companions and Future Extensions](appendices/appendix-d-watch-companions.md)
+- [Glossary and Acronyms](back-matter/glossary.md)
+
+## Publication and reader resources
+
+- [Publication notice](front-matter/publication-notice.md)
+- [Acknowledgments](front-matter/acknowledgments.md)
+- [Companion code, updates, and errata](back-matter/companion-and-errata.md)
+- [Materials and third-party notices](back-matter/materials-and-notices.md)
+- [About the author](back-matter/about-author.md)
+- [Curated subject-index targets](planning/subject-index.json)
+
+The subject index resolves selected section locators during the same multi-pass
+layout as the contents. It links both terms and page numbers. This proof index
+still requires final editorial review after text stabilizes.
+
+## EPUB proof
+
+The first reflowable EPUB build and package audit are in
+[production instructions](production/README.md#reflowable-epub-proof).
+The code listings, figures, chapter navigation and subject index come from the
+same editorial source as the PDF. See [actual validation](planning/epub-proof-review.md)
+for the scope and remaining reader/store acceptance.

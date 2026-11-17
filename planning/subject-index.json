@@ -1,0 +1,560 @@
+{
+  "schema": 1,
+  "entries": [
+    {
+      "term": "Accessibility, complete tasks",
+      "source": "chapters/ch10-accessibility-localization.md",
+      "heading": "10.4 Verify complete tasks with assistive technology"
+    },
+    {
+      "term": "Accessibility, release review",
+      "source": "chapters/ch37-performance-reliability-accessibility.md",
+      "heading": "37.11 Review accessibility as part of the performance decision"
+    },
+    {
+      "term": "Account deletion, completion versus acceptance",
+      "source": "chapters/ch25-profiles-privacy-lifecycle.md",
+      "heading": "25.9 Separate accepted processing from completed removal"
+    },
+    {
+      "term": "Account partitions",
+      "source": "chapters/ch25-profiles-privacy-lifecycle.md",
+      "heading": "25.2 Partition storage and invalidate old work"
+    },
+    {
+      "term": "Adaptive layouts",
+      "source": "chapters/ch11-adaptive-layouts.md",
+      "heading": "11.1 Adapt to the viewport"
+    },
+    {
+      "term": "Android, install and update",
+      "source": "chapters/ch38-android-signing-google-play.md",
+      "heading": "38.6 Rehearse installation and update without erasing evidence"
+    },
+    {
+      "term": "Android, native-library alignment",
+      "source": "chapters/ch38-android-signing-google-play.md",
+      "heading": "38.5 Treat native alignment as a separate compatibility question"
+    },
+    {
+      "term": "Android, signing keys",
+      "source": "chapters/ch38-android-signing-google-play.md",
+      "heading": "38.2 Separate the three signing relationships"
+    },
+    {
+      "term": "API, independent authorization",
+      "source": "chapters/ch23-sessions-storage-authorization.md",
+      "heading": "23.7 Validate independently in the API"
+    },
+    {
+      "term": "API, contract evolution",
+      "source": "chapters/ch40-automated-releases-maintenance.md",
+      "heading": "40.6 Plan compatibility across mixed versions"
+    },
+    {
+      "term": "API, paging and revision",
+      "source": "chapters/ch18-companion-aspnet-core-api.md",
+      "heading": "Page one snapshot at a time"
+    },
+    {
+      "term": "API, problem responses",
+      "source": "chapters/ch18-companion-aspnet-core-api.md",
+      "heading": "Return problems without exception details"
+    },
+    {
+      "term": "API, testing boundaries",
+      "source": "chapters/ch18-companion-aspnet-core-api.md",
+      "heading": "Verify three different boundaries"
+    },
+    {
+      "term": "Attachments, byte limits",
+      "source": "chapters/ch31-native-capabilities-attachments.md",
+      "heading": "31.3 Apply byte limits before trusting content"
+    },
+    {
+      "term": "Attachments, replacement safety",
+      "source": "chapters/ch31-native-capabilities-attachments.md",
+      "heading": "31.5 Preserve the confirmed reference until replacement succeeds"
+    },
+    {
+      "term": "Audio, background ownership",
+      "source": "chapters/ch28-background-system-controls.md",
+      "heading": "28.1 Give continuation an owner"
+    },
+    {
+      "term": "Audio, focus and interruption",
+      "source": "chapters/ch28-background-system-controls.md",
+      "heading": "28.4 Delegate audio focus to Media3"
+    },
+    {
+      "term": "Audio, progress and resume",
+      "source": "chapters/ch27-audio-playback-progress.md",
+      "heading": "27.6 Restore a useful position without autoplay"
+    },
+    {
+      "term": "Audio, stale observations",
+      "source": "chapters/ch27-audio-playback-progress.md",
+      "heading": "27.5 Reject obsolete native events twice"
+    },
+    {
+      "term": "Authorization, resource ownership",
+      "source": "chapters/ch32-quotes-orders-ownership.md",
+      "heading": "32.2 Derive ownership at the authenticated boundary"
+    },
+    {
+      "term": "Backups, SQLite",
+      "source": "chapters/ch35-hosting-diagnostics-operations.md",
+      "heading": "35.5 Back up a database, not a convenient live filename"
+    },
+    {
+      "term": "Binding context and modes",
+      "source": "chapters/ch07-bindings-commands-mvvm.md",
+      "heading": "7.2 Understand binding context and binding mode"
+    },
+    {
+      "term": "Cancellation, stale search results",
+      "source": "chapters/ch13-search-filters-favorites.md",
+      "heading": "13.6 Cancellation needs an ownership check"
+    },
+    {
+      "term": "Capabilities, least privilege",
+      "source": "chapters/ch31-native-capabilities-attachments.md",
+      "heading": "31.2 Request only the capability being used"
+    },
+    {
+      "term": "Catalog, coherent snapshots",
+      "source": "chapters/ch12-catalog-models.md",
+      "heading": "12.6 Load related files as a coherent snapshot"
+    },
+    {
+      "term": "Catalog, stable identity",
+      "source": "chapters/ch12-catalog-models.md",
+      "heading": "12.2 Keep identity independent of display text"
+    },
+    {
+      "term": "Certificates and provisioning",
+      "source": "chapters/ch39-ios-signing-app-store.md",
+      "heading": "39.5 Understand certificates and provisioning"
+    },
+    {
+      "term": "Collections, finite viewport",
+      "source": "chapters/ch37-performance-reliability-accessibility.md",
+      "heading": "37.7 Keep the collection viewport finite"
+    },
+    {
+      "term": "Commands, asynchronous actions",
+      "source": "chapters/ch07-bindings-commands-mvvm.md",
+      "heading": "7.6 Model an asynchronous action as a command"
+    },
+    {
+      "term": "Configuration, startup validation",
+      "source": "chapters/ch35-hosting-diagnostics-operations.md",
+      "heading": "35.2 Treat configuration as validated startup input"
+    },
+    {
+      "term": "Connectivity, uncertainty",
+      "source": "chapters/ch17-http-resilient-networking.md",
+      "heading": "Use connectivity as a hint"
+    },
+    {
+      "term": "Data binding, change notification",
+      "source": "chapters/ch07-bindings-commands-mvvm.md",
+      "heading": "7.3 Notify all affected values"
+    },
+    {
+      "term": "Database migration, atomicity",
+      "source": "chapters/ch19-local-storage-migrations.md",
+      "heading": "19.5 Create and upgrade the schema atomically"
+    },
+    {
+      "term": "Deep links, parsing",
+      "source": "chapters/ch30-notifications-links-sharing.md",
+      "heading": "30.3 Parse a small language, not arbitrary navigation"
+    },
+    {
+      "term": "Deep links, private access",
+      "source": "chapters/ch30-notifications-links-sharing.md",
+      "heading": "30.5 Continue private access deliberately"
+    },
+    {
+      "term": "Diagnostics, consent",
+      "source": "chapters/ch35-hosting-diagnostics-operations.md",
+      "heading": "35.10 Give mobile diagnostics their own consent boundary"
+    },
+    {
+      "term": "Diagnostics, structured logs",
+      "source": "chapters/ch35-hosting-diagnostics-operations.md",
+      "heading": "35.7 Design log records as data contracts"
+    },
+    {
+      "term": "Downloads, partial-file publication",
+      "source": "chapters/ch29-downloads-media-storage.md",
+      "heading": "29.5 Keep partials useful without treating them as complete"
+    },
+    {
+      "term": "Downloads, resume validation",
+      "source": "chapters/ch29-downloads-media-storage.md",
+      "heading": "29.3 Understand resume before writing the append"
+    },
+    {
+      "term": "Downloads, storage budgets",
+      "source": "chapters/ch29-downloads-media-storage.md",
+      "heading": "29.6 Budget storage before asking for more bytes"
+    },
+    {
+      "term": "Edition checkpoints and errata",
+      "source": "chapters/ch40-automated-releases-maintenance.md",
+      "heading": "40.9 Keep the book and companion useful"
+    },
+    {
+      "term": "Events, retention investigation",
+      "source": "chapters/ch37-performance-reliability-accessibility.md",
+      "heading": "37.6 Follow the event root in a retention investigation"
+    },
+    {
+      "term": "Evidence, acceptance report",
+      "source": "chapters/ch36-testing-complete-application.md",
+      "heading": "36.6 Make evidence generation fail closed"
+    },
+    {
+      "term": "Evidence, candidate identity",
+      "source": "chapters/ch40-automated-releases-maintenance.md",
+      "heading": "40.1 Define what a release contains"
+    },
+    {
+      "term": "External links, reviewed destinations",
+      "source": "chapters/ch14-content-details-samples-links.md",
+      "heading": "14.6 Treat a website destination as a reviewed capability"
+    },
+    {
+      "term": "Favorites, save failure",
+      "source": "chapters/ch13-search-filters-favorites.md",
+      "heading": "13.8 Save before changing visible state"
+    },
+    {
+      "term": "Favorites, stable IDs",
+      "source": "chapters/ch13-search-filters-favorites.md",
+      "heading": "13.7 Store IDs rather than catalog copies"
+    },
+    {
+      "term": "Foldables, verification",
+      "source": "chapters/ch11-adaptive-layouts.md",
+      "heading": "11.8 Treat foldable support as a separate evidence question"
+    },
+    {
+      "term": "Generations, restored server",
+      "source": "chapters/ch35-hosting-diagnostics-operations.md",
+      "heading": "35.6 Restore into a new directory and hold traffic"
+    },
+    {
+      "term": "Google Play, preparation",
+      "source": "chapters/ch38-android-signing-google-play.md",
+      "heading": "38.9 Walk through Google Play preparation"
+    },
+    {
+      "term": "HTTP, bounded bodies",
+      "source": "chapters/ch17-http-resilient-networking.md",
+      "heading": "Bound the body before trusting it"
+    },
+    {
+      "term": "HTTP, deadline",
+      "source": "chapters/ch17-http-resilient-networking.md",
+      "heading": "Give the whole operation one deadline"
+    },
+    {
+      "term": "HTTP, retries",
+      "source": "chapters/ch17-http-resilient-networking.md",
+      "heading": "Retry a narrow set of read failures"
+    },
+    {
+      "term": "Identity, browser callback",
+      "source": "chapters/ch22-native-authentication.md",
+      "heading": "22.5 Register the platform return path"
+    },
+    {
+      "term": "Identity, late responses and sign-out",
+      "source": "chapters/ch23-sessions-storage-authorization.md",
+      "heading": "23.5 Keep sign-out and late results consistent"
+    },
+    {
+      "term": "Images, pixel dimensions and memory",
+      "source": "chapters/ch37-performance-reliability-accessibility.md",
+      "heading": "37.8 Compare image pixels, not only PNG bytes"
+    },
+    {
+      "term": "iOS, Mac build boundary",
+      "source": "chapters/ch39-ios-signing-app-store.md",
+      "heading": "39.1 Draw the build boundary before buying equipment"
+    },
+    {
+      "term": "iOS, target evaluation",
+      "source": "chapters/ch39-ios-signing-app-store.md",
+      "heading": "39.3 Make iOS project evaluation explicit"
+    },
+    {
+      "term": "iOS, toolchain compatibility",
+      "source": "chapters/ch39-ios-signing-app-store.md",
+      "heading": "39.2 Resolve a toolchain, not four independent latest versions"
+    },
+    {
+      "term": "Keyboard and usable height",
+      "source": "chapters/ch11-adaptive-layouts.md",
+      "heading": "11.6 Account for height and keyboard space"
+    },
+    {
+      "term": "Local storage, selection",
+      "source": "chapters/ch19-local-storage-migrations.md",
+      "heading": "19.1 Pick a storage mechanism before writing a repository"
+    },
+    {
+      "term": "Localization, resource strings",
+      "source": "chapters/ch10-accessibility-localization.md",
+      "heading": "10.5 Move interface strings into resources"
+    },
+    {
+      "term": "Maintenance, dependency servicing",
+      "source": "chapters/ch40-automated-releases-maintenance.md",
+      "heading": "40.8 Maintain the dependency and diagnostic boundaries"
+    },
+    {
+      "term": "MFA, authenticator recovery",
+      "source": "chapters/ch24-mfa-recovery.md",
+      "heading": "24.6 Recover when the authenticator is unavailable"
+    },
+    {
+      "term": "MFA, sensitive-operation step-up",
+      "source": "chapters/ch24-mfa-recovery.md",
+      "heading": "24.7 Separate ordinary MFA from sensitive-operation step-up"
+    },
+    {
+      "term": "MVVM, view-model responsibility",
+      "source": "chapters/ch07-bindings-commands-mvvm.md",
+      "heading": "7.1 Define the view model's responsibility"
+    },
+    {
+      "term": "Navigation, identity payload",
+      "source": "chapters/ch08-navigation-state.md",
+      "heading": "8.4 Pass an identity, not an entire customer object"
+    },
+    {
+      "term": "Notifications, permission",
+      "source": "chapters/ch30-notifications-links-sharing.md",
+      "heading": "30.2 Ask for permission when the user chooses the feature"
+    },
+    {
+      "term": "Notifications, token rotation",
+      "source": "chapters/ch30-notifications-links-sharing.md",
+      "heading": "30.7 Treat token rotation and consent as lifecycle work"
+    },
+    {
+      "term": "Offline, durable refresh intent",
+      "source": "chapters/ch20-offline-background-work.md",
+      "heading": "20.5 Persist intent before starting work"
+    },
+    {
+      "term": "Offline, freshness",
+      "source": "chapters/ch20-offline-background-work.md",
+      "heading": "20.3 Make freshness a reproducible rule"
+    },
+    {
+      "term": "OpenAPI, development contract",
+      "source": "chapters/ch18-companion-aspnet-core-api.md",
+      "heading": "Describe development behavior with OpenAPI"
+    },
+    {
+      "term": "Operations, liveness and readiness",
+      "source": "chapters/ch35-hosting-diagnostics-operations.md",
+      "heading": "35.3 Liveness is not readiness"
+    },
+    {
+      "term": "Order acceptance, transaction",
+      "source": "chapters/ch32-quotes-orders-ownership.md",
+      "heading": "32.4 Make acceptance one transaction"
+    },
+    {
+      "term": "Order delivery, short-lived grants",
+      "source": "chapters/ch34-order-tracking-revisions-delivery.md",
+      "heading": "34.6 Obtain a short-lived read grant"
+    },
+    {
+      "term": "Order revision, durable operation",
+      "source": "chapters/ch34-order-tracking-revisions-delivery.md",
+      "heading": "34.3 A revision is a new durable operation"
+    },
+    {
+      "term": "Order submission, uncertainty",
+      "source": "chapters/ch32-quotes-orders-ownership.md",
+      "heading": "32.6 Preserve uncertainty honestly"
+    },
+    {
+      "term": "Outbox, pending edits",
+      "source": "chapters/ch21-synchronization-conflicts.md",
+      "heading": "21.4 Preserve pending edits in a durable outbox"
+    },
+    {
+      "term": "Payments, verified event bytes",
+      "source": "chapters/ch33-payment-boundaries-verified-events.md",
+      "heading": "33.5 Verify bytes before parsing meaning"
+    },
+    {
+      "term": "Payments, replay and atomic commit",
+      "source": "chapters/ch33-payment-boundaries-verified-events.md",
+      "heading": "33.7 Commit event receipt and state together"
+    },
+    {
+      "term": "Performance, controlled experiment",
+      "source": "chapters/ch37-performance-reliability-accessibility.md",
+      "heading": "37.1 Define the experiment before the optimization"
+    },
+    {
+      "term": "Performance, allocation measurement",
+      "source": "chapters/ch37-performance-reliability-accessibility.md",
+      "heading": "37.5 Measure allocations without calling them retained memory"
+    },
+    {
+      "term": "Privacy, export scope",
+      "source": "chapters/ch25-profiles-privacy-lifecycle.md",
+      "heading": "25.6 Export exactly the scope you advertise"
+    },
+    {
+      "term": "Private responses, caching",
+      "source": "chapters/ch26-threat-modeling-security.md",
+      "heading": "26.6 Keep private responses out of ordinary caches"
+    },
+    {
+      "term": "Pricing, source and version",
+      "source": "chapters/ch16-pricing-reliable-submission.md",
+      "heading": "Give the price a source and a version"
+    },
+    {
+      "term": "Quotes, expiry",
+      "source": "chapters/ch16-pricing-reliable-submission.md",
+      "heading": "Let service time decide expiration"
+    },
+    {
+      "term": "Reading samples, plain text",
+      "source": "chapters/ch14-content-details-samples-links.md",
+      "heading": "14.5 Render plain text as plain text"
+    },
+    {
+      "term": "Release, distribution authority",
+      "source": "chapters/ch40-automated-releases-maintenance.md",
+      "heading": "40.5 Add distribution authority deliberately"
+    },
+    {
+      "term": "Release, synthetic packet rehearsal",
+      "source": "chapters/ch40-automated-releases-maintenance.md",
+      "heading": "40.4 Run the rehearsal and break the candidate"
+    },
+    {
+      "term": "Restoration, generation hold",
+      "source": "chapters/ch35-hosting-diagnostics-operations.md",
+      "heading": "35.6 Restore into a new directory and hold traffic"
+    },
+    {
+      "term": "Rollback and forward recovery",
+      "source": "chapters/ch40-automated-releases-maintenance.md",
+      "heading": "40.7 Distinguish rollback from forward recovery"
+    },
+    {
+      "term": "Screen readers, task verification",
+      "source": "chapters/ch10-accessibility-localization.md",
+      "heading": "10.4 Verify complete tasks with assistive technology"
+    },
+    {
+      "term": "Secure sessions, credential storage",
+      "source": "chapters/ch23-sessions-storage-authorization.md",
+      "heading": "23.3 Store one bounded credential envelope"
+    },
+    {
+      "term": "Session renewal, persistence",
+      "source": "chapters/ch23-sessions-storage-authorization.md",
+      "heading": "23.4 Renew once and publish only after persistence"
+    },
+    {
+      "term": "SQL, parameterized queries",
+      "source": "chapters/ch19-local-storage-migrations.md",
+      "heading": "19.6 Write parameterized queries, not SQL-shaped strings"
+    },
+    {
+      "term": "Streams, ownership",
+      "source": "chapters/ch12-catalog-models.md",
+      "heading": "12.7 Preserve stream ownership"
+    },
+    {
+      "term": "Synchronization, conflict",
+      "source": "chapters/ch21-synchronization-conflicts.md",
+      "heading": "21.3 Trace the two-device conflict"
+    },
+    {
+      "term": "Synchronization, tombstones",
+      "source": "chapters/ch21-synchronization-conflicts.md",
+      "heading": "21.7 Carry deletions as versioned facts"
+    },
+    {
+      "term": "Test doubles, observable boundaries",
+      "source": "chapters/ch05-testable-foundations.md",
+      "heading": "5.8 Introduce doubles when dependencies arrive"
+    },
+    {
+      "term": "TestFlight",
+      "source": "chapters/ch39-ios-signing-app-store.md",
+      "heading": "39.8 TestFlight is a distribution experiment"
+    },
+    {
+      "term": "Testing, lost committed reply",
+      "source": "chapters/ch36-testing-complete-application.md",
+      "heading": "36.3 Put the fault after the actual commit"
+    },
+    {
+      "term": "Threat modeling",
+      "source": "chapters/ch26-threat-modeling-security.md",
+      "heading": "26.3 Translate threats into controls and evidence"
+    },
+    {
+      "term": "Trimming and deployment runtime",
+      "source": "chapters/ch37-performance-reliability-accessibility.md",
+      "heading": "37.12 Profile the actual .NET 11 deployment model"
+    },
+    {
+      "term": "XAML, resources and themes",
+      "source": "chapters/ch06-xaml-layouts-resources.md",
+      "heading": "6.5 Separate resources from theme choices"
+    },
+    {
+      "term": "XAML, measurement",
+      "source": "chapters/ch06-xaml-layouts-resources.md",
+      "heading": "6.3 Learn measurement before adding fixed sizes"
+    },
+    {
+      "term": "Await and task lifetime",
+      "source": "appendices/appendix-a-csharp-refresher.md",
+      "heading": "A.2 Task and await describe completion, not a dedicated thread"
+    },
+    {
+      "term": "Events and disposal",
+      "source": "appendices/appendix-a-csharp-refresher.md",
+      "heading": "A.7 Delegates and events create ownership relationships"
+    },
+    {
+      "term": "Nullable references",
+      "source": "appendices/appendix-a-csharp-refresher.md",
+      "heading": "A.5 Nullable references are a model, not input validation"
+    },
+    {
+      "term": "Troubleshooting, environment inventory",
+      "source": "appendices/appendix-b-environment-troubleshooting.md",
+      "heading": "B.1 Start with an environment inventory"
+    },
+    {
+      "term": "TLS, localhost and device networking",
+      "source": "appendices/appendix-b-environment-troubleshooting.md",
+      "heading": "B.3 Understand where localhost points"
+    },
+    {
+      "term": "Watch companions, optional scope",
+      "source": "appendices/appendix-d-watch-companions.md",
+      "heading": "D.1 Begin with the smallest useful promise"
+    }
+  ]
+}

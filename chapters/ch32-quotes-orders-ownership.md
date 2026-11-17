@@ -137,7 +137,7 @@ A stale version is a conflict even if the proposed transition would otherwise be
 
 `AdvanceForLab` is a trusted in-process fixture used by controlled tests. There is no customer HTTP status/payment update endpoint and no administrative UI here. The fixture's simulated InProduction transition is not permission to start paid work. Chapter 33 must establish verified payment evidence and the real production authorization rule before connecting such a transition to a live workflow.
 
-History records version, state and timestamp. It is not yet a complete administrative audit trail with actor, rationale and external event evidence. Nor do these tables supply high availability, backup validation or migration policy. Keep the fixture's convenient API separate from the production interface those responsibilities require.
+History records version, state and timestamp. It is not yet a complete administrative audit trail with actor, rationale and external event evidence. At this Chapter 32 checkpoint, the store has no high-availability, verified-backup or migration workflow. Chapter 35 later adds an explicit commerce schema and isolated backup/restore rehearsal. High availability and complete production recovery remain separate work. Keep the fixture's convenient API separate from the production interface those responsibilities require.
 
 ## 32.9 Guided Lab: accept, interrupt and reconcile
 

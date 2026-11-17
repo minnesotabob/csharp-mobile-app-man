@@ -151,7 +151,7 @@ Imagine a listener reporting that Northern Lights disappeared after Refresh. A u
 | Elapsed time and attempt number | Find slow or repeated operations | Define units and the logical operation scope |
 | App/API version and platform | Relate an incident to a release | Collect only the detail needed for diagnosis |
 
-This table is a design contract for later instrumentation, not a claim that the current adapter emits these events. The implementation already provides classified fetch failures and controlled tests. Chapter 35 will add systematic structured logging with `ILogger`, correlation, telemetry and crash-reporting choices; Chapter 37 will use diagnostic evidence to investigate performance.
+This table is a design contract for later instrumentation, not a claim that the current adapter emits these events. The implementation already provides classified fetch failures and controlled tests. Chapter 35 adds systematic structured logging with `ILogger`, correlation, telemetry and crash-reporting choices within its isolated operations lab; Chapter 37 uses diagnostic evidence to investigate performance. Those later facilities are not automatically emitted by this Chapter 17 adapter.
 
 Use message templates with named properties rather than concatenating arbitrary values into log text. Do not log tokens, authentication headers, a request story, email addresses or full payloads. A custom-song request can contain sensitive personal details even when an engineer considers its description harmless. Define retention and access to diagnostics as deliberately as access to the underlying records.
 

@@ -143,7 +143,7 @@ Navigation away and `Window.Stopped` both request pause/save, invalidate the mod
 
 Cleanup first removes current-element ownership so queued native events are refused. It then stops playback, clears the source and disconnects the handler, with cleanup attempted even if an earlier step fails. If cleanup cannot be confirmed, the page does not claim that the device was silent. Actual native disposal and audible stop behavior remain device observations.
 
-This foreground rule does not implement every interruption. A phone call, audio-focus loss, a headphone change and a locked screen involve platform behavior that Chapter 28 will address. The lifecycle worksheet records these separately. A passed policy test cannot tell us whether a particular phone routed audio correctly after a call.
+This foreground rule does not implement every interruption. A phone call, audio-focus loss, a headphone change and a locked screen involve platform behavior examined in Chapter 28's background/system-control lab. That later lab still distinguishes implemented policy from pending native observations. The lifecycle worksheet records these separately. A passed policy test cannot tell us whether a particular phone routed audio correctly after a call.
 
 The Forget selected progress action suspends playback before removing the row. Otherwise a timer could immediately recreate the checkpoint the listener just removed. A later deliberate playback may save new progress. This action removes one local checkpoint, not a provider account, downloaded file or another device's listening history.
 
