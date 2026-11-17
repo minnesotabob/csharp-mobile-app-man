@@ -1,3 +1,42 @@
+# Finishing pass: complete source/artifact reconciliation — November 17, 2026 (Central)
+
+Confirmed the current saved proof has all forty chapters, four appendices, glossary,
+index, 466 pages and 61 bookmarks. The saved version-29 PDF and matching EPUB included
+five Part illustrations and their opener placement updates that were missing from
+published main. Restored those existing illustrations as documented grayscale print
+JPEGs and copied the exact image/paragraph order into Parts III–VII. Recovered the
+matching title/overview/materials-notice wording. No chapter prose or application
+C# changed; no scene or native screenshot was generated.
+
+The repository README now lists all forty chapters in order, including previously
+omitted links to Chapters 19–20 and 24–31 and the Part VI introduction. Added
+planning/finishing-checklist.md to distinguish completed instruction/artwork from
+remaining source/excerpt, prose, screenshot, native/provider, EPUB-reader and final
+publication work. Updated the editorial-review response and production instructions;
+older dated progress entries remain historical.
+
+## Actual checks
+
+- Local PDF rebuild: 466 pages, 61 bookmarks, 51 distinct images. All 466 pages
+  preserve the saved proof's extracted text; all bookmark titles/destinations match.
+- Navigation audit: forty chapter bookmarks exactly once in order, eight Parts,
+  four appendices, eight distinct original Part illustrations, 442 numbered chapter
+  reference expressions, 111 exact index headings and 222 matching destinations.
+- PDF trim/text boundaries pass throughout. Visual inspection covers contents,
+  draft overview, the restored Part openers and the linked index. The new materials
+  paragraph was reconciled to the latest saved copy, rather than reverting its status.
+- EPUB audit: 64 XHTML documents preserve the saved EPUB's body text; 155 exact
+  code blocks, 51 described images, 111 subject links, 290 resolving package
+  references and complete manifest/spine. W3C EPUBCheck 5.4.0 reports zero fatals,
+  errors, warnings or infos. Pandoc remains 3.1.11.1; no new reader/device pass.
+- The existing saved PDF/EPUB remain the authoritative downloadable copies. The
+  compact print-asset rebuild does not replace their higher-size packaged artwork.
+
+No new C#, API, Android, iOS, provider, store or accessibility execution is claimed.
+This is a source/production reconciliation, not completion of the full line edit
+or native screenshot collection. Next: source-listing/milestone review and real
+native captures, followed by final reader, metadata and physical-proof acceptance.
+
 # GitHub publication completed — November 17, 2026 (Central)
 
 Both public minnesotabob repositories are now published on main. The reviewed

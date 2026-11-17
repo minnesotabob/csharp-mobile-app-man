@@ -14,6 +14,18 @@ sources=[ROOT/p for p in ast.literal_eval(source_list)]
 sources.append(ROOT/'front-matter/publication-notice.md')
 chapters={int(re.search(r'ch(\d+)',p.name).group(1)) for p in sources if p.parent.name=='chapters'}
 assert chapters==set(range(1,41))
+assert sum(p.parent.name=='chapters' for p in sources)==40, 'Each chapter must be included once'
+part_sources=[p for p in sources if p.parent.parent.name=='parts']
+assert len(part_sources)==8, 'Expected eight Part introductions'
+part_art=[]
+for source in part_sources:
+    images=re.findall(r'^!\[(.*?)\]\((.*?)\)',source.read_text(),re.M)
+    artwork=[(source.parent/target).resolve() for alt,target in images
+             if 'illustrations/' in target and not alt.startswith('Planning diagram:')]
+    assert len(artwork)==1, f'{source}: expected one original Part illustration'
+    assert artwork[0].is_file(), artwork[0]
+    part_art.extend(artwork)
+assert len(set(part_art))==8, 'Each Part needs its own original illustration'
 references=0
 for source in sources:
     assert source.is_file(),source
@@ -38,6 +50,11 @@ assert [r['term'].casefold() for r in report]==sorted(r['term'].casefold() for r
 by_term={row['term']:row for row in plan}
 pdf=fitz.open(ROOT/'production/opening-draft-8x10.pdf')
 toc=pdf.get_toc()
+rendered_chapters=[int(m[1]) for _,title,_ in toc
+                   if (m:=re.match(r'^Chapter (\d+) - ',title))]
+assert rendered_chapters==list(range(1,41)), 'PDF chapter bookmarks must run from 1 through 40 in order'
+assert sum(title.startswith('Part ') for _,title,_ in toc)==8, 'PDF must contain eight Parts'
+assert sum(title.startswith('Appendix ') for _,title,_ in toc)==4, 'PDF must contain four appendices'
 assert all(1<=row[2]<=len(pdf) for row in toc)
 normalize=lambda s:' '.join(s.split())
 for row in report:
@@ -58,5 +75,5 @@ for link in index_links:
 assert len(internal)==2*len(plan),'Each index term and locator must link'
 assert all(0<=page<index_start-1 for page in internal),'Index destination outside preceding content'
 assert internal==[row['page']-1 for row in report for _ in range(2)],'Index term/locator destination mismatch'
-print(f'PASS: {len(sources)} source documents, {references} numbered chapter references, '
+print(f'PASS: 40 ordered chapters, eight distinct Part illustrations, {len(sources)} source documents, {references} numbered chapter references, '
       f'{len(plan)} exact paginated subject headings and {len(internal)} index links')

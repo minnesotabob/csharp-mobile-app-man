@@ -1,11 +1,13 @@
 # Part V
 # Identity, MFA, and Account Security
 
-![Figure V.1. Identity roadmap: the public catalog stays available anonymously; hosted sign-in establishes a client identity; protected API access, provider MFA and account lifecycle require separate implementation and verification.](../../assets/figures/fig-part05-identity-roadmap.png)
+![Editorial illustration: An abstract account screen stands beside an open book and music catalog, a locked document box and a key.](../../assets/illustrations/part-05-identity-security.jpg)
 
 A listener can discover Minnesota Bob without an account. A customer returning to a private anniversary-song draft needs more than a familiar display name. The application must establish who signed in, which service can verify that identity, what the customer may access, and how recovery works when a phone or authentication factor is lost.
 
 Part IV deliberately used a simulated context to exercise synchronization before introducing provider configuration. That label is no longer sufficient for customer data. In this Part we replace assumptions about identity with explicit provider, device and server boundaries. A browser success, a local profile, an accepted access token and an authorized record are related decisions with different evidence.
+
+![Figure V.1. Identity roadmap: the public catalog stays available anonymously; hosted sign-in establishes a client identity; protected API access, provider MFA and account lifecycle require separate implementation and verification.](../../assets/figures/fig-part05-identity-roadmap.png)
 
 Chapter 22 introduces native-app sign-in with a managed provider and a maintained SDK. It preserves anonymous browsing, explains the browser return path, and distinguishes compiled integration from an observed provider round trip. Chapter 23 handles sessions, secure storage and independent API authorization. Chapter 24 develops provider-supported MFA and recovery, including their actual configuration and device checks. Chapter 25 addresses privacy, sign-out, export and deletion. Chapter 26 reviews threats and tests the account boundary against realistic misuse.
 

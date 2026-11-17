@@ -1,6 +1,8 @@
 # Part III
 # Useful Catalogs and Real Forms
 
+![Editorial illustration: A phone and tablet present book, music and podcast catalog cards beside an open book, record sleeve, blank request form and pencil.](../../assets/illustrations/part-03-catalogs-forms.jpg)
+
 A usable catalog needs consistent meaning as well as attractive cards. This Part develops the data behind the interface and then uses the same separation of rules and presentation to build a custom-song request.
 
 Chapter 12 adds stable creator relationships and optional metadata to the bundled catalog. It distinguishes unavailable content from missing information and validates related fixtures before the browser receives them.

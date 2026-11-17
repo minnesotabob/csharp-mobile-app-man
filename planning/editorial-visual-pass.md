@@ -1,3 +1,13 @@
+# Current review follow-through — November 17, 2026
+
+All forty chapter drafts and all eight Part illustrations are now present. The
+complete draft adds 42 technical figures/recaps and the Part IV planning diagram.
+Diagnostics, performance, security and release instruction extend through Chapter 40;
+the earlier implement-Chapters-21–40 entries below are historical. Native screenshots,
+remaining platform/provider acceptance and final editorial/reader/production checks
+are still outstanding. Use [the finishing checklist](finishing-checklist.md) for the
+current status and next actions. No new runtime observations are implied.
+
 # Editorial response: visual communication and reader engagement
 
 November 15, 2026 (Central). Review baseline: Chapters 1-20, 182-page proof.

@@ -1,6 +1,6 @@
 # Reproduce the opening typography specimen
 
-The opening PDF is an editorial draft, not the final paperback or accessible EPUB. It tests 8 × 10 pages, mirrored 0.95-inch inner/0.65-inch outer margins, 11/14-point body text, 9.5/12.5-point code, tables, and new-page starts. Short code examples stay together. The Part I and II illustrations, the Part III introduction, the Part IV planning diagram/introduction, Chapters 1–40, PDF bookmarks, and a linked table of contents are included. Other Part illustrations and verified app screenshots are pending.
+The PDF is an editorial proof, not the final paperback. A separately validated reflowable EPUB proof is also available. It tests 8 × 10 pages, mirrored 0.95-inch inner/0.65-inch outer margins, 11/14-point body text, 9.5/12.5-point code, tables, and new-page starts. Short code examples stay together. The eight Part illustrations and introductions, the Part IV planning diagram/introduction, Chapters 1–40, PDF bookmarks, and a linked table of contents are included. All eight Part illustrations are included; verified native app screenshots remain pending.
 
 Install Python/reportlab, download the following static TTFs into production/fonts, then run python production/render_opening.py from this repository. The renderer reads the Markdown sources; fonts/PDF are excluded from Git by the production .gitignore. This is a specimen renderer, not the final ebook or print production pipeline.
 
@@ -86,3 +86,17 @@ Actual packaging/conformance and reflow observations are retained in
 planning/epub-proof-review.md. EPUBCheck success does not certify screen-reader
 acceptance, Kindle conversion, Apple Books behavior or store readiness. This is the
 first editorial EPUB proof; its technical/native/publication gaps match the source.
+
+## Complete source and artwork inventory
+
+The current inventory includes all 40 chapters, all eight illustrated Part openers,
+four appendices, glossary and reader/publication matter. There are 51 image
+placements: eight conceptual Part illustrations, the separate Part IV planning
+diagram and 42 technical figures/recaps. See assets/illustrations/provenance.md
+for the restored artwork record. Existing generated files remain outside Git.
+
+The navigation audit also requires Chapters 1–40 exactly once in order in the PDF
+bookmarks, eight Parts, four appendices and a distinct existing original illustration
+for every Part. These checks protect content completeness; they do not complete
+editorial, native, accessibility or store acceptance. Current finishing status is
+maintained in planning/finishing-checklist.md.

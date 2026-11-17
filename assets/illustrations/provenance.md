@@ -79,3 +79,40 @@ modest screwdriver. Faint laboratory shelves, no people or clutter. Landscape 3:
 high contrast for print, generous margins. No readable text, logos, code, watermark,
 flowchart or approval claim. Generated with the built-in image tool; the master PNG
 is retained separately and the manuscript consumes the JPEG.
+
+## Parts III–VII artwork reconciliation — November 17, 2026
+
+The latest saved 466-page PDF (version 29) and matching EPUB already contained the
+completed original conceptual artwork for all eight Parts. The published source
+still lacked the five assets below. They were recovered from that actual EPUB,
+without inventing replacement artwork or regenerating scenes. The Part introductions
+now reproduce the saved image/paragraph order; their prose is unchanged.
+
+For consistency with the earlier print assets, the 1536 × 1024 source PNGs were
+format-converted to grayscale JPEG at quality 95 with 300-DPI metadata. There was
+no crop, resizing, drawing, text insertion or compositional edit. The original
+higher-size packaged images remain in the saved PDF/EPUB. Each restored print asset
+is placed at the existing 5.12 × 3.413-inch size. Captions provide descriptions.
+These are conceptual illustrations, not native screenshots or execution evidence.
+The exact original generation prompts were not present in the published source;
+this recovery record does not invent them.
+
+| Part | Restored print asset | Scene |
+| --- | --- | --- |
+| III | part-03-catalogs-forms.jpg | Catalog cards, books/music and a blank request form |
+| IV | part-04-data-workbench.jpg | Device/server workbench and disconnected cable |
+| V | part-05-identity-security.jpg | Account screen, private document box and key |
+| VI | part-06-media-devices.jpg | Media devices, controls and creative equipment |
+| VII | part-07-customer-workflows.jpg | Order list, request form, receipt and delivery |
+
+The separate Part IV planning diagram is preserved. With Parts I, II and VIII,
+there are eight original Part illustrations, one planning diagram and 42 authored
+technical figures/recaps. No native screenshot was added by this recovery.
+
+Recovered source and print-asset SHA-256 identities:
+
+- Part 3: source PNG `5bbac6825c48484ee0ff7ca861c2d323de2b20ac71864bb150e3d504348c476a`; print JPEG `a26bfbccca71affd5bf6bed3ec77860ed5acfc99a9c6950129d2347b0544e67c`.
+- Part 4: source PNG `59c320db6140242c3d07e3f4875e7576d2e3e38b0c20a569433df2f1a2d1b2dd`; print JPEG `465b6135ec2977ecb6cae9752e1ab6424d0971209a984ef49b264cbf28428946`.
+- Part 5: source PNG `dfbae4f60f2fe72c511b2d060bebb2b7add62e02b49e8ec47c2767bda3a3b2ea`; print JPEG `62d216cc7dce975eecad4b7d2d315dc1b51be6ff375ab405b76a4d4f4753adfb`.
+- Part 6: source PNG `6cc6d9cc583eeb020c1b7de1398680fd7c6a080bd51d2d0380fa52d7625594de`; print JPEG `39e79b6fd4dbbadef5d9be4969bf02efea646be3ea4b89c82f7283d356ac1250`.
+- Part 7: source PNG `ec653ba8510c2fdd2bb9aa11754ecddd469af6111db6b21dd90266d0ae07ad66`; print JPEG `86f5e4685f938e4e616462b563d3ea11db1910787022a28f542ce7ee233b9609`.

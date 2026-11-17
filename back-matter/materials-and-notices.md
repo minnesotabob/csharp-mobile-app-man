@@ -22,7 +22,7 @@ Do not infer a companion-code license from a dependency's license or from public
 
 The technical figures are authored diagrams with reproducible source in production/draw_editorial_figures.py. They describe boundaries, policies or named observations; they are not native screenshots. Captions distinguish a proposed workflow from an executed result.
 
-The current Part illustrations include generated editorial artwork. Their source, creation and grayscale preparation are recorded in assets/illustrations/provenance.md. Remaining Part artwork and genuine app captures are production work. A conceptual illustration cannot serve as evidence that a native screen or accessibility journey ran.
+The current Part illustrations include generated editorial artwork. Their source, creation and grayscale preparation are recorded in assets/illustrations/provenance.md. All eight Part illustrations are complete; genuine app captures remain production work. A conceptual illustration cannot serve as evidence that a native screen or accessibility journey ran.
 
 The companion includes original teaching text and audio fixtures, with their purpose and provenance identified in the source/labs. A fictitious episode is not a published podcast recording. A link to an external service is not permission to copy or distribute its media. Use the specific material's recorded rights and purpose when extending an exercise.
 
