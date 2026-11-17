@@ -1,3 +1,26 @@
+# GitHub publication completed — November 17, 2026 (Central)
+
+Both public minnesotabob repositories are now published on main. The reviewed
+source snapshots match the local Git trees exactly:
+
+- Manuscript: ac98cef2cc73d57d76193955966d1c09b7d5ce92.
+- Companion: 00e4598e642dd57141f5f64a5233bd4f88bb2cae.
+- Manuscript proof workflow passed: https://github.com/minnesotabob/csharp-mobile-app-man/actions/runs/44088936209
+- Companion portable build/tests and selected console labs passed: https://github.com/minnesotabob/csharp-mobile-app-code/actions/runs/44088647782
+
+Publication used the connected GitHub account after confirming public ownership
+and write authority. The published snapshots preserve the exact prepared file trees.
+Original local checkpoints cited in the book remain recoverable from each
+source-history/pre-publication.bundle. Fresh public clones successfully verified
+and fetched both bundles; companion 22489d1 and manuscript dcd2f9b were recovered
+as exact original commits. See source-history/README.md for the reader procedure.
+
+This later record changes documentation only. The workflow observations above
+retain their original snapshot identities and are not relabeled as runs of this
+record commit. No fresh API, Android, device, iOS, provider or store result is
+claimed. Those acceptance gaps remain as documented. Earlier publication-blocked
+entries below are historical and no longer describe the current GitHub status.
+
 # Scope corrections and first reflowable EPUB — November 17, 2026 (Central)
 
 Completed a targeted milestone/integration wording pass in twelve documents. Early
