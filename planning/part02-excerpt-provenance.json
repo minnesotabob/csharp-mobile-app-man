@@ -1,0 +1,203 @@
+{
+  "source_repository": "minnesotabob/csharp-mobile-app-code",
+  "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+  "validation": "Whitespace-normalized excerpt containment in the recorded source file.",
+  "excerpts": [
+    {
+      "source": "src/GnazzosWorld.App/Pages/HomePage.xaml",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "e5333cc8935f829f861f539f2fcefebb904b53c105f18ae3d535a121d804aa74",
+      "language": "xml",
+      "text": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<ContentPage xmlns=\"http://schemas.microsoft.com/dotnet/2021/maui\"\n             xmlns:x=\"http://schemas.microsoft.com/winfx/2009/xaml\"\n             xmlns:text=\n  \"clr-namespace:GnazzosWorld.Core.Localization;assembly=GnazzosWorld.Core\"\n             x:Class=\"GnazzosWorld.App.Pages.HomePage\"\n             Title=\"{x:Static text:UiText.Home}\">\n  <ScrollView>\n    <VerticalStackLayout Padding=\"24\" Spacing=\"20\">\n      <Label Text=\"Gnazzo's World\" FontSize=\"32\"\n             SemanticProperties.HeadingLevel=\"Level1\" />\n      <Label Text=\"{x:Static text:UiText.Welcome}\" FontSize=\"24\" />\n      <Label Text=\"{x:Static text:UiText.Intro}\" />\n      <Button Text=\"{x:Static text:UiText.Browse}\" Clicked=\"OnBrowse\" />\n    </VerticalStackLayout>\n  </ScrollView>\n</ContentPage>"
+    },
+    {
+      "source": "src/GnazzosWorld.App/Pages/HomePage.xaml.cs",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "6dd0b3f3a91d41f57237fa0182130e3fbca6af9bc733bad13d085a03997ea13e",
+      "language": "csharp",
+      "text": "using GnazzosWorld.Core.Localization;\nnamespace GnazzosWorld.App.Pages;\npublic partial class HomePage : ContentPage\n{\n    public HomePage() => InitializeComponent();\n    private async void OnBrowse(object? sender, EventArgs e)\n    {\n        try { await Shell.Current.GoToAsync(\"//main/discover/catalog\"); }\n        catch (Exception)\n        {\n            await DisplayAlertAsync(\n                UiText.Error, UiText.NavigationError, UiText.Ok);\n        }\n    }\n}"
+    },
+    {
+      "source": "src/GnazzosWorld.App/Pages/CatalogPage.xaml",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "3181741af1316ffbb11a20f2eb8870826e3e8d59de59047d148af748adfb73c9",
+      "language": "xml",
+      "text": "<Grid RowDefinitions=\"Auto,Auto,Auto,Auto,Auto,*\" RowSpacing=\"10\">\n      <SearchBar Placeholder=\"{x:Static text:UiText.SearchHint}\"\n                 Text=\"{Binding Query, Mode=TwoWay}\" />\n      <Picker Grid.Row=\"1\" Title=\"{x:Static text:UiText.Filter}\"\n              ItemsSource=\"{Binding FilterLabels}\"\n              SelectedIndex=\"{Binding FilterIndex, Mode=TwoWay}\" />\n      <Label Grid.Row=\"2\" Text=\"{Binding ResultSummary}\" />\n      <Button Grid.Row=\"3\" Text=\"{x:Static text:UiText.OpenSelected}\"\n              Command=\"{Binding OpenDetails}\" />\n      <Label Grid.Row=\"4\" Text=\"{Binding NavigationError}\" />"
+    },
+    {
+      "source": "src/GnazzosWorld.App/App.xaml",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "fdfa751753abf1f550a2825ae726e39b60b507a1e8d7f13987a8f24b7b30ea3c",
+      "language": "xml",
+      "text": "    <Color x:Key=\"PaperLight\">#FAFAF7</Color>\n    <Color x:Key=\"PaperDark\">#15212A</Color>\n    <Color x:Key=\"TextLight\">#15212A</Color>\n    <Color x:Key=\"TextDark\">#F5F5F0</Color>\n    <Color x:Key=\"Accent\">#22566B</Color>\n    <Color x:Key=\"SelectionLight\">#DCEBF0</Color>\n    <Color x:Key=\"SelectionDark\">#244A5B</Color>"
+    },
+    {
+      "source": "src/GnazzosWorld.App/App.xaml",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "61732bf32495d6f462aafa1ac61f98b2ca553598c5618363aab3c1dbac5a4974",
+      "language": "xml",
+      "text": "    <Style TargetType=\"Label\">\n      <Setter Property=\"FontSize\" Value=\"16\" />\n      <Setter Property=\"FontAutoScalingEnabled\" Value=\"True\" />\n      <Setter Property=\"TextColor\"\n\n        Value=\"{AppThemeBinding\n          Light={StaticResource TextLight},\n          Dark={StaticResource TextDark}}\" />\n    </Style>"
+    },
+    {
+      "source": "src/GnazzosWorld.App/Pages/CatalogPage.xaml",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "f4c25eac5682e48830b63f6c7ebddce36f3a00f70167bd7a4b4b7e297441551d",
+      "language": "xml",
+      "text": "      <SearchBar Placeholder=\"{x:Static text:UiText.SearchHint}\"\n                 Text=\"{Binding Query, Mode=TwoWay}\" />\n      <Picker Grid.Row=\"1\" Title=\"{x:Static text:UiText.Filter}\"\n              ItemsSource=\"{Binding FilterLabels}\"\n              SelectedIndex=\"{Binding FilterIndex, Mode=TwoWay}\" />\n      <Label Grid.Row=\"2\" Text=\"{Binding ResultSummary}\" />\n      <Button Grid.Row=\"3\" Text=\"{x:Static text:UiText.OpenSelected}\"\n              Command=\"{Binding OpenDetails}\" />\n      <Label Grid.Row=\"4\" Text=\"{Binding NavigationError}\" />"
+    },
+    {
+      "source": "src/GnazzosWorld.Core/Presentation/ObservableObject.cs",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "31b4a438221af376408c27dbb176e892325e3225f85ccd2c7bd1a00f7ad84a55",
+      "language": "csharp",
+      "text": "using System.ComponentModel;\nusing System.Runtime.CompilerServices;\nnamespace GnazzosWorld.Core.Presentation;\npublic abstract class ObservableObject : INotifyPropertyChanged\n{\n    public event PropertyChangedEventHandler? PropertyChanged;\n    protected void Notify([CallerMemberName] string? name = null)\n        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));\n}"
+    },
+    {
+      "source": "src/GnazzosWorld.Core/Presentation/CatalogBrowserViewModel.cs",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "a475fa8791a85368ca8a3a896afd6a53e6ad11ebacddfb44c95f07b0361aad93",
+      "language": "csharp",
+      "text": "    public string Query\n    {\n        get => query;\n        set\n        {\n            value ??= \"\";\n            if (query == value) return;\n            query = value;\n            Notify();\n            Rebuild();\n        }\n    }"
+    },
+    {
+      "source": "src/GnazzosWorld.Core/Presentation/CatalogBrowserViewModel.cs",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "31725a614e3761ffee0584a621b5894a5277c1dc4c4859ce70fa0e5ff26e65df",
+      "language": "csharp",
+      "text": "    private void Rebuild()\n    {\n        ContentKind? kind = filterIndex == 0 ? null\n            : (ContentKind)(filterIndex - 1);\n        Items = CatalogSearch.Find(catalog, query, kind);\n        Notify(nameof(Items));\n        Notify(nameof(ResultSummary));\n        SelectedItem = selectedItem;\n        NavigationError = \"\";\n    }"
+    },
+    {
+      "source": "src/GnazzosWorld.Core/Presentation/AsyncCommand.cs",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "f8b7e8b0a18b6d8b1263c38d0ed20940cd560e3d73e18f71137de8efc99e7183",
+      "language": "csharp",
+      "text": "using System.Windows.Input;\nnamespace GnazzosWorld.Core.Presentation;\n// A deliberately small teaching command; no platform dependency.\npublic sealed class AsyncCommand(\n    Func<Task> action, Func<bool> enabled, Action<Exception> onError) : ICommand\n{\n    private bool running;\n    public event EventHandler? CanExecuteChanged;\n    public bool CanExecute(object? parameter) => !running && enabled();\n    public void Refresh() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);\n    public async Task ExecuteAsync()\n    {\n        if (!CanExecute(null)) return;\n        running = true;\n        Refresh();\n        try { await action(); }\n        catch (Exception ex) { onError(ex); }\n        finally { running = false; Refresh(); }\n    }\n    public async void Execute(object? parameter) => await ExecuteAsync();\n}"
+    },
+    {
+      "source": "tests/GnazzosWorld.Core.Tests/PresentationTests.cs",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "1568816105df7274cba53fc2e9efb78a30a3229ba2fd609626ef05eb7f44db16",
+      "language": "csharp",
+      "text": "    private sealed class Navigation : ICatalogNavigation\n    {\n        public List<string> Opened { get; } = [];\n        public Task OpenItemAsync(string id)\n        {\n            Opened.Add(id);\n            return Task.CompletedTask;\n        }\n    }"
+    },
+    {
+      "source": "tests/GnazzosWorld.Core.Tests/PresentationTests.cs",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "b2d1e306fb5a65ba8f2147412bb83c9a4aec3eaf3b9ec15d3b39af1a5e436a49",
+      "language": "csharp",
+      "text": "    [Fact]\n    public void Query_and_filter_update_results_and_clear_hidden_selection()\n    {\n        var vm = new CatalogBrowserViewModel(\n            CatalogLoader.LoadBundled(), new Navigation());\n        vm.SelectedItem = vm.Items.First(x => x.Kind == ContentKind.Book);\n        vm.FilterIndex = 2; // Songs\n        Assert.Equal(2, vm.Items.Count);\n        Assert.Null(vm.SelectedItem);\n        Assert.False(vm.OpenDetails.CanExecute(null));\n        vm.Query = \"BERET\";\n        Assert.Equal(\"Béret violet\", Assert.Single(vm.Items).Title);\n        Assert.False(vm.Detail.HasItem);\n    }"
+    },
+    {
+      "source": "src/GnazzosWorld.App/AppShell.cs",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "50395cc6d99151154bc3e35d3894e69102760d36b274ebb014d2f8851c08f4ba",
+      "language": "csharp",
+      "text": "using GnazzosWorld.App.Pages;\nusing GnazzosWorld.Core.Localization;\nnamespace GnazzosWorld.App;\npublic sealed class AppShell : Shell\n{\n    public AppShell(HomePage home, CatalogPage catalog)\n    {\n        FlyoutBehavior = FlyoutBehavior.Disabled;\n        Routing.RegisterRoute(\"details\", typeof(DetailsPage));\n        var tabs = new TabBar { Route = \"main\" };\n        var homeTab = new Tab { Route = \"home\", Title = UiText.Home };\n        homeTab.Items.Add(new ShellContent\n            { Route = \"welcome\", Title = UiText.Home, Content = home });\n        var discoverTab = new Tab\n            { Route = \"discover\", Title = UiText.Discover };\n        discoverTab.Items.Add(new ShellContent\n            { Route = \"catalog\", Title = UiText.Discover, Content = catalog });\n        tabs.Items.Add(homeTab);\n        tabs.Items.Add(discoverTab);\n        Items.Add(tabs);\n    }\n}"
+    },
+    {
+      "source": "src/GnazzosWorld.App/Navigation/ShellCatalogNavigation.cs",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "7b5f83e6338b48e1389f9a78dd6bf6c67917d9da756bb110663540eebd22c875",
+      "language": "csharp",
+      "text": "using GnazzosWorld.Core.Presentation;\nnamespace GnazzosWorld.App.Navigation;\npublic sealed class ShellCatalogNavigation : ICatalogNavigation\n{\n    public Task OpenItemAsync(string id)\n    {\n        if (!RoutePayload.IsValidId(id))\n            throw new ArgumentException(\"Invalid catalog ID.\", nameof(id));\n        var shell = Shell.Current\n            ?? throw new InvalidOperationException(\"The shell is not ready.\");\n        return shell.GoToAsync(\"details\",\n            new ShellNavigationQueryParameters { [\"id\"] = id });\n    }\n}"
+    },
+    {
+      "source": "src/GnazzosWorld.App/Pages/DetailsPage.xaml.cs",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "ab29af212a2fff0defa86b77dd2f39b09c557615bb53673b82993f7bdbe567ab",
+      "language": "csharp",
+      "text": "using GnazzosWorld.Core.Presentation;\nnamespace GnazzosWorld.App.Pages;\npublic partial class DetailsPage : ContentPage, IQueryAttributable\n{\n    private readonly DetailViewModel viewModel;\n    public DetailsPage(DetailViewModel viewModel)\n    {\n        InitializeComponent();\n        this.viewModel = viewModel;\n        BindingContext = viewModel;\n    }\n    public void ApplyQueryAttributes(IDictionary<string, object> query)\n        => viewModel.Load(RoutePayload.ReadItemId(query));\n}"
+    },
+    {
+      "source": "src/GnazzosWorld.Core/Presentation/RoutePayload.cs",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "e2b4792eb35032856ba6f62ba94e0dc8ba367c89daa89331dab943e7fbea20df",
+      "language": "csharp",
+      "text": "namespace GnazzosWorld.Core.Presentation;\npublic static class RoutePayload\n{\n    public static string? ReadItemId(IDictionary<string, object> query)\n    {\n        ArgumentNullException.ThrowIfNull(query);\n        if (!query.TryGetValue(\"id\", out var value) || value is not string id)\n            return null;\n        return IsValidId(id) ? id : null;\n    }\n    public static bool IsValidId(string? id)\n        => !string.IsNullOrEmpty(id) && id.Length <= 128\n        && id.All(c => char.IsAsciiLetterOrDigit(c) || c is '-' or '_' or '.');\n}"
+    },
+    {
+      "source": "src/GnazzosWorld.App/MauiProgram.cs",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "6c1c5c99f185c081045837da8f04b559e103ed9da4bfdf831ec27fa4f807c0db",
+      "language": "csharp",
+      "text": "        builder.Services.AddSingleton<IReadOnlyList<CatalogItem>>(\n            _ => CatalogLoader.LoadBundled());\n        builder.Services.AddSingleton<\n            ICatalogNavigation, ShellCatalogNavigation>();\n        builder.Services.AddTransient<CatalogBrowserViewModel>();\n        builder.Services.AddTransient<DetailViewModel>();\n        builder.Services.AddTransient<HomePage>();\n        builder.Services.AddTransient<CatalogPage>();\n        builder.Services.AddTransient<DetailsPage>();\n        builder.Services.AddTransient<AppShell>();"
+    },
+    {
+      "source": "src/GnazzosWorld.App/Pages/CatalogPage.xaml",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "9f02a6f0c8de18505c758a42bee5eae7939371e9d913a137ffbb87bb50f084b2",
+      "language": "xml",
+      "text": "      <CollectionView Grid.Row=\"5\" ItemsSource=\"{Binding Items}\"\n                      SelectedItem=\"{Binding SelectedItem, Mode=TwoWay}\"\n                      SelectionMode=\"Single\"\n                      EmptyView=\"{x:Static text:UiText.Empty}\">\n        <CollectionView.ItemTemplate>\n          <DataTemplate x:DataType=\"catalog:CatalogItem\">\n            <views:CatalogCard />\n          </DataTemplate>\n        </CollectionView.ItemTemplate>\n      </CollectionView>"
+    },
+    {
+      "source": "src/GnazzosWorld.App/Views/CatalogCard.xaml",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "a7b153ccfde35f61f6894a737c3676e077b03203c1170d8feef9b796432d84cb",
+      "language": "xml",
+      "text": "  <Grid Padding=\"12\" ColumnDefinitions=\"48,*\" ColumnSpacing=\"12\">\n    <Image Source=\"catalog_placeholder.png\" WidthRequest=\"48\"\n           HeightRequest=\"56\" Aspect=\"AspectFit\"\n           AutomationProperties.IsInAccessibleTree=\"False\" />\n    <VerticalStackLayout Grid.Column=\"1\" Spacing=\"4\">\n      <Label Text=\"{Binding Title}\" FontAttributes=\"Bold\" />\n      <Label Text=\"{Binding Creator}\" />\n    </VerticalStackLayout>\n  </Grid>"
+    },
+    {
+      "source": "src/GnazzosWorld.App/Views/CatalogCard.xaml",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "1b30c64e6c5960fe2adb5a5c66cd7bd800cac8b4c5551d684b8050afece91856",
+      "language": "xml",
+      "text": "  <VisualStateManager.VisualStateGroups>\n    <VisualStateGroup Name=\"CommonStates\">\n      <VisualState Name=\"Normal\">\n        <VisualState.Setters>\n          <Setter Property=\"BackgroundColor\" Value=\"Transparent\" />\n        </VisualState.Setters>\n      </VisualState>\n      <VisualState Name=\"Selected\">\n        <VisualState.Setters>\n          <Setter Property=\"BackgroundColor\"\n\n        Value=\"{AppThemeBinding\n          Light={StaticResource SelectionLight},\n          Dark={StaticResource SelectionDark}}\" />\n        </VisualState.Setters>\n      </VisualState>\n    </VisualStateGroup>\n  </VisualStateManager.VisualStateGroups>"
+    },
+    {
+      "source": "src/GnazzosWorld.App/Views/DetailsView.xaml",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "af46809198c8e1a7387be82a5b8b91af2e948dadfbaa4f2dbc7a50ee266b345b",
+      "language": "xml",
+      "text": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<ContentView xmlns=\"http://schemas.microsoft.com/dotnet/2021/maui\"\n             xmlns:x=\"http://schemas.microsoft.com/winfx/2009/xaml\"\n             xmlns:vm=\n  \"clr-namespace:GnazzosWorld.Core.Presentation;assembly=GnazzosWorld.Core\"\n             x:Class=\"GnazzosWorld.App.Views.DetailsView\"\n             x:DataType=\"vm:DetailViewModel\">\n  <ScrollView>\n    <VerticalStackLayout Padding=\"16\" Spacing=\"12\">\n      <Label Text=\"{Binding Message}\" />\n      <Label Text=\"{Binding Title}\" FontSize=\"26\"\n             SemanticProperties.HeadingLevel=\"Level1\" />\n      <Label Text=\"{Binding Creator}\" />\n      <Label Text=\"{Binding Description}\" />\n    </VerticalStackLayout>\n  </ScrollView>\n</ContentView>"
+    },
+    {
+      "source": "src/GnazzosWorld.App/Pages/HomePage.xaml",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "c78f843fb072e419df46c9bbec70f6d28013d368decab6adbc46a0a544a70ebb",
+      "language": "xml",
+      "text": "      <Label Text=\"Gnazzo's World\" FontSize=\"32\"\n             SemanticProperties.HeadingLevel=\"Level1\" />"
+    },
+    {
+      "source": "src/GnazzosWorld.Core/Localization/Strings.resx",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "370668b96ed4d45c3a168ef8546c09b7ff5de087244c9e39c78e78874caf0c61",
+      "language": "xml",
+      "text": "<data name=\"Discover\" xml:space=\"preserve\"><value>Discover</value></data>"
+    },
+    {
+      "source": "src/GnazzosWorld.Core/Localization/Strings.es.resx",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "1f02ffe4dbef1add561fefebf1bd2a509ef132918ae5bc33b78e930c2a48498f",
+      "language": "xml",
+      "text": "<data name=\"Discover\" xml:space=\"preserve\"><value>Explorar</value></data>"
+    },
+    {
+      "source": "src/GnazzosWorld.Core/Localization/UiText.cs",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "fd57a2e5e72c73e17157be312e5c7a09849ea95f1478ddb5d98f63bceeeb4b0c",
+      "language": "csharp",
+      "text": "    public static string Discover => Get(nameof(Discover));"
+    },
+    {
+      "source": "tests/GnazzosWorld.Core.Tests/PresentationTests.cs",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "15b5f7971a2286fe6696f4fe43bf18425e6f7bd2aadcaf5260bad4fcb9bb17b9",
+      "language": "csharp",
+      "text": "    [Theory]\n    [InlineData(\"en\", \"1 result\")]\n    [InlineData(\"es\", \"1 resultado\")]\n    public void One_match_has_a_localized_singular_summary(\n        string culture, string expected)\n    {\n        var previous = CultureInfo.CurrentUICulture;\n        try\n        {\n            CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo(culture);\n            var vm = new CatalogBrowserViewModel(\n            CatalogLoader.LoadBundled(), new Navigation());\n            vm.Query = \"Kai\";\n            Assert.Equal(expected, vm.ResultSummary);\n        }\n        finally { CultureInfo.CurrentUICulture = previous; }\n    }"
+    },
+    {
+      "source": "tests/GnazzosWorld.Core.Tests/PresentationTests.cs",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "9bc420219aa73be0343fa1d9bbdfe66007b870260c6a439c1681f812264e88d9",
+      "language": "csharp",
+      "text": "    [Theory]\n    [InlineData(899.9, false)] [InlineData(900, true)]\n    [InlineData(1200, true)] [InlineData(-1, false)]\n    public void Adaptive_layout_uses_available_width(double width, bool wide)\n        => Assert.Equal(wide, AdaptiveLayout.IsWide(width));"
+    },
+    {
+      "source": "src/GnazzosWorld.App/Pages/CatalogPage.xaml.cs",
+      "source_ref": "9497b0d7e8acb74c07c50be8cb56f26453664fbb",
+      "sha256": "d6f8610c78ec8d4f7fa397334cf01f716880790521af293058702250ad605e03",
+      "language": "csharp",
+      "text": "using GnazzosWorld.Core.Presentation;\nnamespace GnazzosWorld.App.Pages;\npublic partial class CatalogPage : ContentPage\n{\n    public CatalogPage(CatalogBrowserViewModel viewModel)\n    {\n        InitializeComponent();\n        BindingContext = viewModel;\n    }\n    private void OnSizeChanged(object? sender, EventArgs e)\n    {\n        if (ContentGrid is null || DetailPane is null) return;\n        var wide = AdaptiveLayout.IsWide(Width);\n        ContentGrid.ColumnDefinitions[0].Width =\n            new GridLength(wide ? 2 : 1, GridUnitType.Star);\n        ContentGrid.ColumnDefinitions[1].Width =\n            new GridLength(wide ? 3 : 0, GridUnitType.Star);\n        ContentGrid.ColumnSpacing = wide ? 20 : 0;\n        DetailPane.IsVisible = wide;\n    }\n}"
+    }
+  ]
+}

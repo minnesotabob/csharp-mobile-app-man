@@ -1,6 +1,6 @@
 # Finishing the complete forty-chapter manuscript
 
-November 17, 2026 (Central). This is the current editorial checklist, rather than
+November 18, 2026 (Central). This is the current editorial checklist, rather than
 an older chapter-writing forecast. Preserve the full forty-chapter plan and the
 existing sophistication. Publication readiness is not established by a page total.
 
@@ -12,7 +12,7 @@ existing sophistication. Publication readiness is not established by a page tota
 - Four substantive appendices, glossary and 111-entry linked subject index.
 - Draft publication notice, acknowledgments, reader guide, errata/resources,
   materials notices and author biography.
-- Current saved proof: 466-page 8 × 10 PDF, 61 bookmarks; matching reflowable EPUB.
+- Current Draft V2 proof: 484-page 8 × 10 PDF, 61 bookmarks; matching reflowable EPUB.
 
 ## Follow-through on the editor's review
 
@@ -68,3 +68,9 @@ Historical planning/progress records remain below their dated headings. Entries
 that say Chapters 21–40 or Part art are unwritten describe their earlier checkpoint,
 not the current manuscript. This checklist and the newest progress entry give the
 current finishing scope.
+
+## Draft V2 editorial batch
+
+Chapters 6–11 have expanded code-led instruction and a consistent practical
+structure. See draft-v2-editorial-revision.md for scope, verification and open work.
+The full editorial pass is ongoing; native screenshots have not been added.

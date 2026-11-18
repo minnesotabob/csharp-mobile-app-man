@@ -9,30 +9,15 @@ Our current scope is public in-app navigation. We introduce named Shell routes a
 
 By the end of this chapter, you will be able to identify the Shell composition root and named routes; pass stable IDs rather than serialized catalog objects; validate missing or malformed route parameters; distinguish top-level navigation from pushed detail destinations; and design interrupted navigation without claiming full restoration is implemented.
 
-**Prerequisites:** Complete the preceding chapters and use the matching Part II source revision from `docs/milestones.md`. **Deliverable:** A testable improvement or diagnostic exercise in the Gnazzo's World application, without assuming native-device verification.
+**Prerequisites:** Chapters 1–7 and the Part II interface checkpoint linked in the companion repository’s `docs/milestones.md`. All application paths below are relative to `src/GnazzosWorld.App`; core paths are relative to `src/GnazzosWorld.Core`.
 
-### Guided lab: follow a route and reject an invalid destination
-
-1. Open `AppShell`, the detail route registration, the navigation adapter and detail view model in the Part II source milestone.
-2. From a catalog selection, trace the stable item ID into the route payload and back through the destination's validation path. Note which component owns lookup versus screen presentation.
-3. Compare a top-level tab switch with opening a pushed detail screen. Draw the expected back stack for each; a route name is not a user-facing translated tab label.
-4. Supply an unknown ID in a route test, then follow it with a valid ID. Confirm that the unknown destination produces an unavailable state rather than displaying stale data from the previous item.
-5. Reverse the sequence: open a valid item, then an unknown ID. Verify stale detail fields are cleared.
-6. Draft a restoration record containing only the stable route identifier and any small permitted view state. Explain what should happen if that catalog item has been removed before restart.
-
-**Expected result:** The destination can reject malformed or unavailable identities without leaking a previous selection. The draft restoration rule is a design exercise, not a completed platform feature.
-
-### Troubleshooting the walkthrough
-
-Unexpected back behavior usually belongs to the Shell route stack, not to catalog searching. Empty details can originate in parameter parsing, ID lookup or state reset. If a second activation opens duplicate pages, check the navigation guard as well as platform tap handling. Test actual hardware back and lifecycle transitions separately.
+**Deliverable:** A complete Home-to-Discover-to-details route with validated IDs and predictable unavailable-content handling.
 
 ## 8.1 Preserve earlier examples through milestones
 
-The Part I application used NavigationPage around MainPage. Part II moves startup to AppShell and different pages. Both designs remain understandable only if a reader knows which source revision belongs to which explanation.
+Use the Part II interface checkpoint linked from `docs/milestones.md`. Its startup creates `AppShell`, with Home and Discover tabs. The Part I `MainPage` and `NavigationPage` remain available in the earlier checkpoint for the first-application exercises.
 
-`docs/milestones.md` identifies the Part I commit `0b8973660cc21269ff79eb54733edaf428fb5dac` and the verified Part II source `9497b0d7e8acb74c07c50be8cb56f26453664fbb`. **Use the pinned Part II revision to reproduce this chapter's implementation.** Later chapters continue on the `work/chapter16-pricing` review branch, which can differ from the repository's default `main` branch. Neither the current default branch nor an unspecified latest checkout is a reliable substitute for the chapter milestone. Use recorded source history rather than maintaining several unversioned divergent applications.
-
-The old MainPage files remain as an educational starter in the source tree, but Part II startup does not resolve them. The current composition root registers HomePage, CatalogPage, DetailsPage, and AppShell.
+In this chapter, work in `AppShell.cs`, `Navigation/ShellCatalogNavigation.cs` and `Pages/DetailsPage.xaml.cs`. The portable contract and parser live in the core project’s `Presentation` folder. Keep the checkpoint fixed while following the walkthrough so later application features do not obscure this smaller navigation path.
 
 ## 8.2 Define routes intentionally
 
@@ -51,6 +36,46 @@ await Shell.Current.GoToAsync("//main/discover/catalog");
 Named routes are more dependable teaching material than unspecified generated names. Changing a route is a navigation-contract change, even if the visible tab title remains identical.
 
 The route title can be localized without changing its identity. Translating Discover to Explorar should not invalidate internal navigation or saved references.
+
+### Read the whole Shell hierarchy
+
+`AppShell.cs` builds its hierarchy in C# so constructor injection can supply the pages:
+
+```csharp
+using GnazzosWorld.App.Pages;
+using GnazzosWorld.Core.Localization;
+namespace GnazzosWorld.App;
+public sealed class AppShell : Shell
+{
+    public AppShell(HomePage home, CatalogPage catalog)
+    {
+        FlyoutBehavior = FlyoutBehavior.Disabled;
+        Routing.RegisterRoute("details", typeof(DetailsPage));
+        var tabs = new TabBar { Route = "main" };
+        var homeTab = new Tab { Route = "home", Title = UiText.Home };
+        homeTab.Items.Add(new ShellContent
+            { Route = "welcome", Title = UiText.Home, Content = home });
+        var discoverTab = new Tab
+            { Route = "discover", Title = UiText.Discover };
+        discoverTab.Items.Add(new ShellContent
+            { Route = "catalog", Title = UiText.Discover, Content = catalog });
+        tabs.Items.Add(homeTab);
+        tabs.Items.Add(discoverTab);
+        Items.Add(tabs);
+    }
+}
+```
+
+Follow `Items.Add(tabs)` outward: Shell owns a TabBar; it owns two tabs; each tab owns ShellContent. This yields the absolute path `//main/discover/catalog`. The registered `details` route is separate: it is a destination pushed above the active browsing context.
+
+| Name | Location | Purpose |
+|---|---|---|
+| `main` | TabBar | Root tab hierarchy |
+| `home` / `welcome` | Tab / ShellContent | Home destination |
+| `discover` / `catalog` | Tab / ShellContent | Catalog destination |
+| `details` | Registered route | Detail page above the active tab |
+
+Change a visible title through `UiText`; preserve these route identifiers unless you deliberately change the callers too.
 
 ## 8.3 Distinguish top-level and pushed destinations
 
@@ -73,6 +98,29 @@ Passing an ID keeps the destination independent of the source view's object inst
 
 Public metadata is appropriate here. Tokens, personal request stories, and private files should not be casually placed into route strings or retained navigation dictionaries. Later secure links must also validate authorization on the server.
 
+### Send the selected ID through the adapter
+
+The complete `Navigation/ShellCatalogNavigation.cs` file is small enough to inspect as one unit:
+
+```csharp
+using GnazzosWorld.Core.Presentation;
+namespace GnazzosWorld.App.Navigation;
+public sealed class ShellCatalogNavigation : ICatalogNavigation
+{
+    public Task OpenItemAsync(string id)
+    {
+        if (!RoutePayload.IsValidId(id))
+            throw new ArgumentException("Invalid catalog ID.", nameof(id));
+        var shell = Shell.Current
+            ?? throw new InvalidOperationException("The shell is not ready.");
+        return shell.GoToAsync("details",
+            new ShellNavigationQueryParameters { ["id"] = id });
+    }
+}
+```
+
+`OpenItemAsync` receives the snapshot ID chosen by the browser command. It validates the ID, obtains the active Shell, and passes a single-use parameter dictionary. It leaves catalog lookup to the destination. Setting a breakpoint on each side of `GoToAsync` lets you follow one record without serializing the whole object.
+
 ## 8.5 Validate the incoming payload
 
 DetailsPage implements IQueryAttributable and delegates parsing to a portable helper:
@@ -89,6 +137,48 @@ This is shape validation for public catalog identifiers. It does not prove owner
 
 Because these parameters are passed directly as objects, we do not repeatedly URL-decode them. Other entry mechanisms have their own parsing rules. Double decoding can turn an apparently harmless value into a different string.
 
+### Receive and validate the parameter
+
+In `Pages/DetailsPage.xaml.cs`, retain the constructor as well as the query callback:
+
+```csharp
+using GnazzosWorld.Core.Presentation;
+namespace GnazzosWorld.App.Pages;
+public partial class DetailsPage : ContentPage, IQueryAttributable
+{
+    private readonly DetailViewModel viewModel;
+    public DetailsPage(DetailViewModel viewModel)
+    {
+        InitializeComponent();
+        this.viewModel = viewModel;
+        BindingContext = viewModel;
+    }
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
+        => viewModel.Load(RoutePayload.ReadItemId(query));
+}
+```
+
+The constructor stores the injected view model and uses it as the page’s binding context. Shell then supplies query attributes. `Presentation/RoutePayload.cs` performs the portable parsing:
+
+```csharp
+namespace GnazzosWorld.Core.Presentation;
+public static class RoutePayload
+{
+    public static string? ReadItemId(IDictionary<string, object> query)
+    {
+        ArgumentNullException.ThrowIfNull(query);
+        if (!query.TryGetValue("id", out var value) || value is not string id)
+            return null;
+        return IsValidId(id) ? id : null;
+    }
+    public static bool IsValidId(string? id)
+        => !string.IsNullOrEmpty(id) && id.Length <= 128
+        && id.All(c => char.IsAsciiLetterOrDigit(c) || c is '-' or '_' or '.');
+}
+```
+
+A missing key, a number instead of a string, or a path-like value produces `null`. A well-formed ID may still refer to no catalog item; `DetailViewModel.Load` handles that next. Format validation and record lookup are two separate steps with useful separate tests.
+
 ## 8.6 Handle missing content as a normal state
 
 A validly shaped ID may be absent from the current catalog. DetailViewModel.Load then clears the prior Item and displays an unavailable message. It must not leave the previous record's creator or description visible.
@@ -104,6 +194,25 @@ ICatalogNavigation exposes OpenItemAsync. The view model does not know about She
 The MAUI adapter obtains the current Shell when called. In this milestone, navigation is designed around the application's active single browsing window. Full simultaneous multiwindow navigation would need a window-scoped service rather than relying on a global current Shell.
 
 This is an important limit to document. Making AppShell transient at window creation avoids reusing the same root page instance, but does not by itself complete multiwindow coordination.
+
+### Register the dependencies at startup
+
+In `MauiProgram.cs`, the catalog and navigation service have application-wide lifetimes; page and view-model registrations are transient:
+
+```csharp
+        builder.Services.AddSingleton<IReadOnlyList<CatalogItem>>(
+            _ => CatalogLoader.LoadBundled());
+        builder.Services.AddSingleton<
+            ICatalogNavigation, ShellCatalogNavigation>();
+        builder.Services.AddTransient<CatalogBrowserViewModel>();
+        builder.Services.AddTransient<DetailViewModel>();
+        builder.Services.AddTransient<HomePage>();
+        builder.Services.AddTransient<CatalogPage>();
+        builder.Services.AddTransient<DetailsPage>();
+        builder.Services.AddTransient<AppShell>();
+```
+
+These lines belong inside the existing `CreateMauiApp` method. Keep its `using` directives for pages, navigation, catalog, presentation and dependency injection. Registration tells the container how to construct a detail page and its model when the route needs one. A constructor parameter alone does not register that service.
 
 ## 8.8 Prevent repeated activations
 
@@ -129,7 +238,37 @@ Our current application has no sign-in modal or checkout return. Describe those 
 
 Back behavior, application interruption, and a canceled asynchronous task are related but distinct. A navigation test can cover coordination rules, while actual OS transitions still need device checks.
 
-## Checkpoint and exercises
+## Guided Lab
+
+1. Trace the four route levels in `AppShell.cs`, then compare them with Home’s browse handler. Activate Browse from Home.
+2. Select Kai and choose Open selection. Inspect the ID entering `ShellCatalogNavigation.OpenItemAsync` and the dictionary arriving at `ApplyQueryAttributes`.
+3. Return to Discover using the platform’s Back action. Compare query and selection with their state before opening details.
+4. Run the route-parser tests with a missing `id`, a numeric value and `../private`. Each should return no accepted ID.
+5. In `Unknown_detail_clears_previous_content`, follow a valid ID with an unknown ID. Inspect the creator, description and unavailable message.
+6. Change a tab’s visible resource label in a temporary copy while keeping its route. Browse should still reach the same destination. Restore the label.
+
+**Expected result:** a selected public item reaches its detail screen by stable ID; malformed or missing items show an unavailable state instead of old content.
+
+## Worked Example
+
+A reader opens Kai, returns to Discover and then opens a link to an item removed from the bundled catalog. The second destination must clear Kai’s title, creator and description. The parser may accept the new ID’s shape, but lookup determines availability.
+
+To diagnose this case, first inspect the received `id`, then the parser’s output, then `DetailViewModel.Item`. If the item is null but the old description remains on screen, investigate clearing and notifications rather than changing route names. This keeps navigation, lookup and rendering failures distinguishable.
+
+## Troubleshooting
+
+| Symptom | First correction |
+|---|---|
+| Browse reaches no destination | Compare the absolute path with the named Shell hierarchy. |
+| The detail page cannot be constructed | Check page and view-model registrations and their constructor dependencies. |
+| The incoming record ID is rejected | Inspect the dictionary key, value type and allowed ID characters. |
+| Old details remain after an unavailable ID | Inspect model clearing and notifications before changing routes. |
+
+## Chapter Summary
+
+Navigation describes both where the user goes and what minimal identity the destination needs. This chapter moves from the earlier `NavigationPage` starter to named Shell routes, keeping the source milestones explicit. Stable IDs travel across route boundaries; full catalog objects and translated labels do not define destination identity. Parsing failures, removed records, repeated taps and stale details are normal cases rather than exceptions to hide. The guided lab traces an item through route registration and lookup, exercises invalid IDs, and designs a minimal restoration record. Portable routing tests support these rules, while hardware back behavior, process termination, multiwindow state and authenticated deep links require later implementation and device checks.
+
+## Exercises
 
 At the Chapter 8 checkpoint, the app has named top-level destinations, a public detail route, a stable-ID payload, and tested parsing/unavailable states. External deep links and account-dependent routes arrive in later chapters; a complete restart-restoration journey still needs its own implementation and native verification.
 
@@ -138,10 +277,6 @@ At the Chapter 8 checkpoint, the app has named top-level destinations, a public 
 3. Explain why a translated tab title should not rename its route.
 4. Design a saved-route record that handles a removed catalog item.
 5. Describe what must change for two simultaneously active windows.
-
-## Chapter Summary
-
-Navigation describes both where the user goes and what minimal identity the destination needs. This chapter moves from the earlier `NavigationPage` starter to named Shell routes, keeping the source milestones explicit. Stable IDs travel across route boundaries; full catalog objects and translated labels do not define destination identity. Parsing failures, removed records, repeated taps and stale details are normal cases rather than exceptions to hide. The guided lab traces an item through route registration and lookup, exercises invalid IDs, and designs a minimal restoration record. Portable routing tests support these rules, while hardware back behavior, process termination, multiwindow state and authenticated deep links require later implementation and device checks.
 
 ## References and index terms
 

@@ -9,22 +9,9 @@ This chapter extracts CatalogCard and DetailsView, explains their binding bounda
 
 By the end of this chapter, you will be able to explain why CollectionView owns visual recycling but not search policy; give each DataTemplate the correct binding type; preserve stable item identity across filter changes; choose sensible placeholder and image sizing strategies; and distinguish bundled assets from remote-artwork features not yet implemented.
 
-**Prerequisites:** Complete the preceding chapters and use the matching Part II source revision from `docs/milestones.md`. **Deliverable:** A testable improvement or diagnostic exercise in the Gnazzo's World application, without assuming native-device verification.
+**Prerequisites:** Chapters 1–8 and the Part II interface checkpoint linked in the companion repository’s `docs/milestones.md`. All application paths below are relative to `src/GnazzosWorld.App`; core paths are relative to `src/GnazzosWorld.Core`.
 
-### Guided lab: inspect a reusable catalog row
-
-1. Open `CatalogCard`, `DetailsView`, the browser page and their view models at the Part II milestone.
-2. Follow one `CatalogItem` from the result collection into the row template. Record which view supplies `BindingContext` and which binding paths are compiled against a declared type.
-3. Add two synthetic test records with the same title and different IDs. Verify that selection and navigation rely on ID rather than the row index or visible text.
-4. Inspect the bundled placeholder asset and its build action. Identify what appears when actual artwork is absent. Do not assume remote images have already been downloaded.
-5. Sketch an asynchronous artwork adapter that receives an item ID and cancellation token. If a reused row now represents another ID when bytes arrive, the older image result must not be displayed there.
-6. Increase the catalog size in a disposable fixture. Compare a bounded `CollectionView` with an unbounded nested scrolling layout and note why measurement and virtualization matter.
-
-**Expected result:** The reader can state which reusable views own presentation, where state belongs, and how to prevent recycled visuals from implying the wrong catalog item.
-
-### Troubleshooting the walkthrough
-
-A correct list with incorrect row text often indicates template binding scope. A selected highlight attached to the wrong row suggests visual state has become detached from item identity. Missing artwork may be a missing packaged resource, not a network issue. Blank or sluggish large lists warrant checking their viewport and nested scroll containers before micro-optimizing the data model.
+**Deliverable:** A reusable catalog card and detail view with clear binding scope, selected appearance and a bundled image fallback.
 
 ## 9.1 Choose the collection's responsibility
 
@@ -52,6 +39,41 @@ Do not set the card's BindingContext to itself merely to reach its properties. T
 
 Our card is deliberately specific: it presents a CatalogItem. Reuse does not require turning it into a universal card with dozens of modes before a second requirement exists.
 
+### Connect the collection and row
+
+Inside the existing catalog page, the complete collection region is:
+
+```xml
+      <CollectionView Grid.Row="5" ItemsSource="{Binding Items}"
+                      SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                      SelectionMode="Single"
+                      EmptyView="{x:Static text:UiText.Empty}">
+        <CollectionView.ItemTemplate>
+          <DataTemplate x:DataType="catalog:CatalogItem">
+            <views:CatalogCard />
+          </DataTemplate>
+        </CollectionView.ItemTemplate>
+      </CollectionView>
+```
+
+`ItemsSource` comes from the browser. `SelectedItem` sends the selected object back through a two-way binding. The template changes the data type to one `CatalogItem`; a row’s `Title` therefore refers to that item rather than the browser model.
+
+Open `Views/CatalogCard.xaml`. Keep its `ContentView` declaration, `x:Class` and `x:DataType="catalog:CatalogItem"`; its visual content is:
+
+```xml
+  <Grid Padding="12" ColumnDefinitions="48,*" ColumnSpacing="12">
+    <Image Source="catalog_placeholder.png" WidthRequest="48"
+           HeightRequest="56" Aspect="AspectFit"
+           AutomationProperties.IsInAccessibleTree="False" />
+    <VerticalStackLayout Grid.Column="1" Spacing="4">
+      <Label Text="{Binding Title}" FontAttributes="Bold" />
+      <Label Text="{Binding Creator}" />
+    </VerticalStackLayout>
+  </Grid>
+```
+
+The fixed-width image column leaves the remaining width for text. Title and creator stack vertically without a fixed row height. You can change text spacing here once and see the result for every catalog row. The view inherits each item as its binding context; its constructor should call `InitializeComponent` without assigning `BindingContext = this`.
+
 ## 9.3 Keep item state out of recycled visuals
 
 A collection may reuse or recreate item visuals as its viewport changes. Store durable selection and feature state in the presentation model, identified by record ID, rather than in whichever row instance happens to be visible.
@@ -71,6 +93,35 @@ The state communicates appearance, not authorization or data identity. The selec
 Check selected contrast in both themes and with native accessibility selection announcements. Color alone should not be the only way a person can understand which item is active.
 
 A future row can use an additional indicator or accessible description if platform testing shows the default selection experience is inadequate. Avoid inventing a spoken message without listening to the resulting native announcement.
+
+### Express the two row appearances
+
+The following block belongs directly inside `CatalogCard`’s `ContentView`, before its Grid:
+
+```xml
+  <VisualStateManager.VisualStateGroups>
+    <VisualStateGroup Name="CommonStates">
+      <VisualState Name="Normal">
+        <VisualState.Setters>
+          <Setter Property="BackgroundColor" Value="Transparent" />
+        </VisualState.Setters>
+      </VisualState>
+      <VisualState Name="Selected">
+        <VisualState.Setters>
+          <Setter Property="BackgroundColor"
+
+        Value="{AppThemeBinding
+          Light={StaticResource SelectionLight},
+          Dark={StaticResource SelectionDark}}" />
+        </VisualState.Setters>
+      </VisualState>
+    </VisualStateGroup>
+  </VisualStateManager.VisualStateGroups>
+```
+
+Keep both states. A row returning to Normal must lose its selected background. The theme resource names come from `App.xaml`, so a missing key belongs in the resource dictionary investigation rather than the search code.
+
+**Try it:** select a row, select a different row, then filter away the selection. Check the previous row’s appearance each time. This sequence is more revealing than inspecting one selected screenshot.
 
 ## 9.5 Package the first image predictably
 
@@ -117,6 +168,34 @@ Do not share one visual instance between two parents. Reuse the view type and pr
 
 The model also clears stale content when a lookup fails. Reusing a view without clearing its old creator and description could present the previous record beneath an unavailable message.
 
+### Reuse the detail presentation
+
+`Views/DetailsView.xaml` supplies the same content hierarchy for a full screen and an inline pane:
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm=
+  "clr-namespace:GnazzosWorld.Core.Presentation;assembly=GnazzosWorld.Core"
+             x:Class="GnazzosWorld.App.Views.DetailsView"
+             x:DataType="vm:DetailViewModel">
+  <ScrollView>
+    <VerticalStackLayout Padding="16" Spacing="12">
+      <Label Text="{Binding Message}" />
+      <Label Text="{Binding Title}" FontSize="26"
+             SemanticProperties.HeadingLevel="Level1" />
+      <Label Text="{Binding Creator}" />
+      <Label Text="{Binding Description}" />
+    </VerticalStackLayout>
+  </ScrollView>
+</ContentView>
+```
+
+The full detail page supplies its injected model as the inherited context. The catalog’s inline placement sets `BindingContext="{Binding Detail}"` explicitly. That expression reads the browser model’s `Detail` property and makes it the child view’s context.
+
+`Message` tells the reader to choose an item or explains that content is unavailable. `Title`, `Creator` and `Description` then reflect the resolved record. With no matching record, the model returns empty creator/description values. The reusable visual tree can therefore render a cleared state without page-specific cleanup.
+
 ## 9.9 Grow the list without hiding tradeoffs
 
 Collection virtualization helps avoid constructing every native row at once, but does not eliminate costs in data preparation, image handling, or layout complexity. Keep templates modest and test real scrolling.
@@ -129,7 +208,7 @@ Keep list and detail scrolling independently bounded in the wide layout. Avoid w
 
 ## 9.10 Establish a performance baseline before optimizing
 
-Imagine a listener scrolling past Minnesota Bob to find a particular song. A correct result is useful only if the list remains practical to navigate. Begin with a reproducible observation rather than a claim that shared C# or a particular control guarantees speed. This optional measurement lab prepares for Chapter 37; it does not add a remote-artwork implementation or report a benchmark.
+Imagine a listener scrolling past Minnesota Bob to find a particular song. A correct result is useful only if the list remains practical to navigate. Begin with a reproducible observation rather than a claim that shared C# or a particular control guarantees speed. This optional measurement lab prepares for Chapter 37.
 
 1. Use a disposable fixture containing 500 valid records with distinct IDs. Keep its generation deterministic, preserve required relationships, and record the fixture revision. Retain the existing placeholder so the first comparison isolates list and layout work.
 2. Record the source commit, device, OS, build configuration, text size and profiler. Use a physical device for conclusions about shipping behavior. Label emulator observations separately. Keep the debugger attachment and profiler settings consistent between comparisons.
@@ -146,7 +225,37 @@ Imagine a listener scrolling past Minnesota Bob to find a particular song. A cor
 
 **Worked interpretation:** If search completes promptly but scrolling still stalls, the search timing does not explain native presentation. Inspect layout, binding and image work in the trace. If an apparent improvement disappears when large text is restored, it has not met the original conditions. Battery, startup and real image-loading measurements receive dedicated treatment in Chapter 37; this list exercise does not establish those results.
 
-## Checkpoint and exercises
+## Guided Lab
+
+1. Open `Pages/CatalogPage.xaml` and `Views/CatalogCard.xaml` side by side. Point to the place where the binding type changes from browser model to catalog item.
+2. Run Discover, select Kai, then select a song. Check title, creator and selected appearance. Search for a string that matches neither and inspect the empty-result message.
+3. Temporarily increase the card’s `Spacing` from 4 to 12. All row text groups should change together. Restore 4.
+4. Inspect `Resources/Images/catalog_placeholder.svg` and the project’s MauiImage inclusion. Trace the view’s `.png` reference back to that bundled asset.
+5. Follow one item into the full DetailsPage and, at a wide viewport, into the inline DetailsView. Compare the two view instances and their binding contexts.
+6. Run the selection tests. Then add two temporary fixture items with distinct IDs and identical titles; verify each opens its own detail record. Remove the temporary fixtures after the exercise.
+
+**Expected result:** each row shows its own data, selection follows the model, and both detail placements render the same record contract.
+
+## Worked Example
+
+Suppose a book and a song are both titled “Northern Lights.” Selecting the second row must use that row’s ID, even though the visible titles match. The collection gives the view model the selected `CatalogItem`; the command snapshots its ID; the destination resolves that ID.
+
+If both rows open the same record, search for a title-based lookup or an index saved before filtering. If the destination is correct but the highlighted row is wrong, inspect visual states and selection binding. If only the image is wrong, inspect its resource or asynchronous image ownership. These symptoms belong to different parts of the row contract.
+
+## Troubleshooting
+
+| Symptom | First correction |
+|---|---|
+| Every card displays the same data | Remove an unintended card BindingContext override and check template scope. |
+| Selection background sticks to an old row | Restore both Normal and Selected visual states and inspect selection binding. |
+| The placeholder is missing | Check the MauiImage resource and the generated .png reference. |
+| Full details work but the inline pane is blank | Check that the inline view receives the browser’s Detail model. |
+
+## Chapter Summary
+
+Reusable views help a catalog maintain consistent display and semantics, but they must not quietly become a second data layer. A `CollectionView` owns row presentation and selection interaction; search, identity and navigation are handled elsewhere. Explicit template binding types and stable IDs protect the relationship between data and visuals. Placeholder images and deterministic sizing give the current bundled sample predictable behavior. Future remote artwork needs lifetime, cancellation and stale-result policies because recycled views can represent different records over time. The guided lab examines template scope and identity, then separates actual bundled assets from planned network retrieval and pagination. Native scrolling performance and screen-reader behavior remain device-verification tasks.
+
+## Exercises
 
 CatalogCard and DetailsView now provide two purposeful reusable components. Their binding context, selected appearance, and image fallback are explicit. Remote artwork and native catalog pagination remain follow-up implementation work. Chapter 18 later adds service-side paging; that does not by itself implement a paged native collection.
 
@@ -155,10 +264,6 @@ CatalogCard and DetailsView now provide two purposeful reusable components. Thei
 3. Design an artwork response arriving after a row has been rebound to another record.
 4. Specify pagination behavior when a query changes during an in-flight request.
 5. Compare large-text and screen-reader behavior in narrow and wide layouts.
-
-## Chapter Summary
-
-Reusable views help a catalog maintain consistent display and semantics, but they must not quietly become a second data layer. A `CollectionView` owns row presentation and selection interaction; search, identity and navigation are handled elsewhere. Explicit template binding types and stable IDs protect the relationship between data and visuals. Placeholder images and deterministic sizing give the current bundled sample predictable behavior. Future remote artwork needs lifetime, cancellation and stale-result policies because recycled views can represent different records over time. The guided lab examines template scope and identity, then separates actual bundled assets from planned network retrieval and pagination. Native scrolling performance and screen-reader behavior remain device-verification tasks.
 
 ## References and index terms
 

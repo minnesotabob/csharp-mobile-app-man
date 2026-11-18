@@ -127,13 +127,19 @@ Early sample data avoids real customer information. This allows readers to clone
 
 ## 1.8 Distribution changes the meaning of complete
 
-A development build running from an IDE is an important milestone. It is not the same artifact or evidence as a signed release package that installs and upgrades through the intended distribution path. Release builds can differ in optimization, packaging, and available diagnostic information.
+Imagine the first customer installing Gnazzo's World from a store. They need the same catalog, saved drafts and account access you checked during development. Reaching that customer introduces a few distinct milestones:
 
-The book therefore covers application identifiers, signing, platform requirements, store metadata, privacy declarations, and testing tracks. We will verify current rules at implementation and before release rather than treating a printed screenshot as a permanent policy statement.
+| Milestone | What you check |
+|---|---|
+| Development build | The feature runs while you develop and debug it |
+| Signed release candidate | The packaged application installs and its key journeys work with release settings |
+| Test-track installation | A customer can install and upgrade through the intended distribution path |
+| Published application | Store details, privacy declarations and production services match the shipped build |
+| Maintenance update | Existing saved data and account journeys survive the upgrade |
 
-The development workflow remains Windows-centered. iOS build and signing work still requires access to a compatible Mac and Apple's tools. Explain this requirement at the planning stage, not after a reader has completed thirty chapters expecting a Windows machine alone to produce every final package.
+Chapters 35 and 38–40 take this path from service hosting to store release and maintenance. Signing, packaging and store requirements belong in the plan from the beginning. For iOS, that plan includes access to a compatible Mac and Apple's tools, even though your daily development is Windows-centered.
 
-Maintenance belongs in the same picture. If a database schema changes, an existing user's data must still be handled deliberately. If an identity provider changes a configuration requirement, the sign-in flow must be retested. The repository and book edition need a documented relationship so readers can retrieve an appropriate code milestone later.
+Use the release candidate for final journey checks: optimization and packaging can expose behavior that a debug build did not reveal. Recheck store requirements before submission, and keep the book edition linked to a retrievable repository milestone.
 
 ## 1.9 Build an evidence matrix
 
@@ -148,7 +154,7 @@ Before adding features, define the evidence you will accept. The following is a 
 | Audio playback | Queue/progress state transitions | Focus, interruptions, background controls |
 | Order submission | Validation and duplicate-operation handling | Sandbox payment reconciliation |
 
-An honest matrix has pending entries. The recorded Part I foundation passed 37 portable cases and Android compilation. Actual device execution and iOS compilation remain pending. Later source revisions have different test totals and must be assessed against their own verification record. Environment restrictions or a pending hardware check should appear in the verification record rather than disappear behind a broad statement that the application works.
+Keep results with the source milestone that produced them. The Part I foundation records 37 portable cases and Android compilation; device execution and iOS compilation are open checks at that milestone. Later chapters build on this record. Use the companion verification notes for detailed results so the matrix stays focused on what to check next.
 
 ## Guided Lab: turn an interruption into a requirement
 
@@ -174,7 +180,7 @@ Suppose the customer types “Anniversary at Long Lake,” saves it, changes the
 | Reopening restores the confirmed value | New editing model using the saved store | New native process reading the same storage |
 | The customer can complete recovery with a screen reader | Accessible journey definition | Real platform focus, labels and announcements |
 
-Notice how a successful fake-store test leaves other cells unresolved. That is useful information. The fake isolates the logic of what should be saved; it cannot establish that the device's storage adapter or screen reader behaved correctly.
+The fake-store test isolates the save rule. Complete the journey by checking the actual storage adapter and screen-reader interaction on the target device.
 
 Now apply the same reasoning to a public catalog refresh. Keeping a known valid catalog after a refresh failure protects a different kind of value. An empty successful response, a malformed response and a canceled refresh need distinct outcomes. In Chapter 17, those distinctions become an executable transport boundary. Here you are defining the promises that make its tests meaningful.
 

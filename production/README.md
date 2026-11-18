@@ -100,3 +100,13 @@ bookmarks, eight Parts, four appendices and a distinct existing original illustr
 for every Part. These checks protect content completeness; they do not complete
 editorial, native, accessibility or store acceptance. Current finishing status is
 maintained in planning/finishing-checklist.md.
+
+## Draft V2 Part II excerpt audit
+
+Run `python production/audit_part02_excerpts.py --code-repo /path/to/companion-clone`.
+The clone must contain the Part II checkpoint recorded in
+`planning/part02-excerpt-provenance.json`. The audit checks 28 added excerpts against
+that source, the complete XAML documents for well-formedness, six practical chapter
+templates and printed code-line limits. This is source validation, not fresh app
+compilation or runtime verification. Longer PDF listings may split at line boundaries;
+short examples remain together, at the existing 9.5-point code size.

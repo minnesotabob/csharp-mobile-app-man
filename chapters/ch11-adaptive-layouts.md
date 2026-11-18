@@ -9,22 +9,9 @@ Our first adaptive rule is modest: at a measured width of 900 device-independent
 
 By the end of this chapter, you will be able to use available viewport width rather than device labels; explain the 900-unit teaching breakpoint; preserve selection while switching between compact and wide presentations; distinguish resize behavior from multiwindow state; and plan device checks for keyboards, safe areas and foldable postures.
 
-**Prerequisites:** Complete the preceding chapters and use the matching Part II source revision from `docs/milestones.md`. **Deliverable:** A testable improvement or diagnostic exercise in the Gnazzo's World application, without assuming native-device verification.
+**Prerequisites:** Chapters 1–10 and the Part II interface checkpoint linked in the companion repository’s `docs/milestones.md`. All application paths below are relative to `src/GnazzosWorld.App`; core paths are relative to `src/GnazzosWorld.Core`.
 
-### Guided lab: preserve a selection during resize
-
-1. Open the portable width-policy implementation and its tests. Locate the decision boundary at 900 device-independent units.
-2. Write expected outputs for widths immediately below, exactly at, and immediately above the breakpoint; run the boundary tests to confirm your prediction.
-3. Select a known catalog item in the wide list/detail presentation. Reduce the available width below the threshold in a resizable host where supported, then restore it. The selected ID should belong to view-model state, not to a disappearing detail control.
-4. Apply a filter that removes the selected item. Verify the presentation clears or changes detail state consistently before and after layout changes.
-5. Sketch a short-height and keyboard-open case. Decide which region should scroll rather than reducing font size or hiding accessible controls.
-6. Record a native test matrix for phone portrait, phone landscape, tablet split window and a foldable configuration if hardware exists. Do not label foldable posture or hinge behavior verified from width tests alone.
-
-**Expected result:** The portable width policy is deterministic and selected identity survives presentation changes where appropriate. Actual safe-area, hinge, keyboard and window-lifecycle behavior remains an independent device investigation.
-
-### Troubleshooting the walkthrough
-
-A breakpoint that works on a full-screen tablet may fail in a split window; inspect measured available width. If selection disappears during resizing, confirm that the data owner is outside the recreated visual subtree. If the keyboard obscures controls, review vertical constraints and scroll behavior, not just width. A foldable hinge is a physical obstruction and may require more than one width number.
+**Deliverable:** A compact/wide catalog layout that changes presentation while preserving the selected record and query.
 
 ## 11.1 Adapt to the viewport
 
@@ -40,7 +27,6 @@ AdaptiveLayout centralizes the threshold and rejects nonfinite values:
 
 ```csharp
 public const double WideBreakpoint = 900;
-
 public static bool IsWide(double width)
     => double.IsFinite(width) && width >= WideBreakpoint;
 ```
@@ -50,6 +36,20 @@ Tests exercise just below the threshold, exactly at it, above it, negative input
 They do not establish that 900 is the right usability threshold. That requires observing the content at realistic widths, text settings, and languages.
 
 Keeping the policy portable lets us change a decision deliberately and identify affected expectations. It does not require every layout calculation to be extracted into a general-purpose geometry library.
+
+### Read and run the boundary test
+
+The existing test makes the policy concrete:
+
+```csharp
+    [Theory]
+    [InlineData(899.9, false)] [InlineData(900, true)]
+    [InlineData(1200, true)] [InlineData(-1, false)]
+    public void Adaptive_layout_uses_available_width(double width, bool wide)
+        => Assert.Equal(wide, AdaptiveLayout.IsWide(width));
+```
+
+At 899.9 the layout is compact; at 900 it is wide. Change the breakpoint in `Presentation/AdaptiveLayout.cs` only after deciding how much room the real list and detail content need. Update the cases to match that decision and retain tests immediately on both sides of the boundary.
 
 ## 11.3 Keep the measured layout update small
 
@@ -70,6 +70,47 @@ The initial grid has a zero-width second column. In wide mode, the list receives
 A SizeChanged event can occur during initialization, so the handler checks that named views exist. Avoid starting network retrieval or navigation from every size notification.
 
 Visual State Manager and adaptive triggers offer another way to express layout states. The measured code here keeps the exact policy shared with tests. For a more complex design, choose one clear owner for adaptive changes rather than mixing triggers and handlers that set the same property unpredictably.
+
+### Put the handler in the page that owns the regions
+
+The complete `Pages/CatalogPage.xaml.cs` adapter connects the portable decision to named XAML controls:
+
+```csharp
+using GnazzosWorld.Core.Presentation;
+namespace GnazzosWorld.App.Pages;
+public partial class CatalogPage : ContentPage
+{
+    public CatalogPage(CatalogBrowserViewModel viewModel)
+    {
+        InitializeComponent();
+        BindingContext = viewModel;
+    }
+    private void OnSizeChanged(object? sender, EventArgs e)
+    {
+        if (ContentGrid is null || DetailPane is null) return;
+        var wide = AdaptiveLayout.IsWide(Width);
+        ContentGrid.ColumnDefinitions[0].Width =
+            new GridLength(wide ? 2 : 1, GridUnitType.Star);
+        ContentGrid.ColumnDefinitions[1].Width =
+            new GridLength(wide ? 3 : 0, GridUnitType.Star);
+        ContentGrid.ColumnSpacing = wide ? 20 : 0;
+        DetailPane.IsVisible = wide;
+    }
+}
+```
+
+The XAML root supplies `SizeChanged="OnSizeChanged"`. Its outer grid supplies `x:Name="ContentGrid"` and `ColumnDefinitions="*,0"`; the second child supplies `x:Name="DetailPane"` and `Grid.Column="1"`. Keep these names aligned with the fields used by the handler.
+
+In wide mode the columns receive two and three shares of the available space after spacing and padding. In compact mode the first column receives the available space and the second receives zero. Hiding the detail pane removes an unnecessary presentation region while the browser’s `Detail` model stays alive.
+
+| Change | Browser model | Page layout |
+|---|---|---|
+| Narrow to wide | Keep query and selection | Allocate a visible second column |
+| Wide to narrow | Keep query and selection | Hide inline details; retain Open selection |
+| Filter removes selected item | Clear incompatible selection | Render the cleared model in either layout |
+| Open selection | Snapshot selected ID | Navigate to full details |
+
+The handler makes no network request and does not navigate. That keeps a resize from turning into a surprise action.
 
 ## 11.4 Preserve selection across a presentation change
 
@@ -144,11 +185,41 @@ Choose cases that stress different assumptions rather than many near-identical s
 
 Attach build revision, OS, dimensions, language, text setting, and result. A unit test at width 900 proves a branch decision; a device journey proves a different set of behaviors.
 
-## Checkpoint and exercises
+## Guided Lab
+
+1. Open `Presentation/AdaptiveLayout.cs`, its test and `Pages/CatalogPage.xaml.cs`. Predict the policy for 899.9, 900 and 1200 before running the test.
+2. In a resizable host or suitable emulator configuration, open Discover and select Kai. Record its ID and current query in the debugger.
+3. Cross below the 900-unit threshold. The inline pane should disappear while selection remains. Use Open selection to reach the full detail screen and return.
+4. Cross back above the threshold. Inline details should again show the same selected record. A size change should add no page to the navigation stack.
+5. Choose a filter that removes the record and repeat the resize. The previous details should remain cleared at both widths.
+6. With enlarged text, inspect a short landscape viewport and the open search keyboard. Separate a width decision from a height problem. Use the review matrix for safe areas and foldable hardware where available.
+
+**Expected result:** layout changes affect columns and visibility; query and selected identity remain owned by the browser model.
+
+## Worked Example
+
+A reader selects Kai on a tablet, then enters split-screen mode. The available width falls from 1100 to 760 units. `IsWide` returns false, the second column collapses, and the same selection remains in the browser. Open selection still reaches Kai’s full detail screen.
+
+Now filter to Songs before restoring full width. Kai no longer belongs in the result set, so the selection and inline detail clear. Expanding the window must not bring the book back. The distinction is practical: resizing preserves a valid selection; filtering can invalidate it.
+
+## Troubleshooting
+
+| Symptom | First correction |
+|---|---|
+| The detail pane never appears | Check measured page Width, the SizeChanged connection and named controls. |
+| The pane disappears but leaves a gap | Collapse both its column width and its visibility. |
+| Resizing loses the selected record | Keep selection in the browser model; do not reset it in the size handler. |
+| A wide screen still hides results behind the keyboard | Inspect available height and toolbar rows rather than lowering the width breakpoint. |
+
+## Chapter Summary
+
+Adaptive layout decisions should respond to actual space, not to labels such as phone or tablet. The chapter's 900-unit teaching breakpoint separates a compact browsing flow from a wide list/detail view, while portable policy tests establish exact boundary behavior. The selected catalog record belongs to persistent view-model state rather than a particular visual tree, allowing changes in presentation without changing identity. Height, keyboard pressure, system insets, fold hinges and multiple windows introduce constraints that a width test cannot fully capture. The guided lab checks the breakpoint and selection continuity, then specifies native verification scenarios. The complete resize adapter and boundary test connect the layout policy to code you can inspect and exercise.
+
+## Exercises
 
 The implementation now has a tested width policy and a reusable list/detail presentation. It preserves presentation state when the layout changes and handles filtered-out selections explicitly.
 
-Emulator/hardware launch, safe-area behavior, keyboard pressure, native accessibility, and fold-specific features remain pending verification.
+Use the native review matrix above for safe areas, keyboard pressure, accessibility and fold-specific behavior.
 
 1. Change the breakpoint locally and update its boundary tests.
 2. Resize while an item is selected; verify no unexpected navigation occurs.
@@ -161,10 +232,6 @@ Emulator/hardware launch, safe-area behavior, keyboard pressure, native accessib
 ![Part II visual recap. The view owns rendering and input, the view model owns presentation state, and platform adapters perform native actions.](../assets/figures/recap-11-ownership.png)
 
 Before continuing, trace Kai the Ninja from a selected ID to a phone detail page and a tablet inline detail. The layout changes; the selected identity and ownership rules do not. Bindings must notify derived values, commands must recover after failure, and the device must still support large text, focus and navigation. Those are the anchors to remember when the catalog becomes richer.
-
-## Chapter Summary
-
-Adaptive layout decisions should respond to actual space, not to labels such as phone or tablet. The chapter's 900-unit teaching breakpoint separates a compact browsing flow from a wide list/detail view, while portable policy tests establish exact boundary behavior. The selected catalog record belongs to persistent view-model state rather than a particular visual tree, allowing changes in presentation without changing identity. Height, keyboard pressure, system insets, fold hinges and multiple windows introduce constraints that a width test cannot fully capture. The guided lab checks the breakpoint and selection continuity, then specifies native verification scenarios. This keeps the implementation honest: responsive width behavior exists, but complete device and foldable validation remains pending.
 
 ## References and index terms
 

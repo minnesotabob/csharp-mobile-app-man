@@ -9,22 +9,9 @@ CatalogBrowserViewModel owns the presentation decisions. The view renders its va
 
 By the end of this chapter, you will be able to trace a binding from XAML to its view model; choose an appropriate binding mode; explain property-change notifications; separate selection state from list state; and test asynchronous commands and navigation errors without instantiating a page.
 
-**Prerequisites:** Complete the preceding chapters and use the matching Part II source revision from `docs/milestones.md`. **Deliverable:** A testable improvement or diagnostic exercise in the Gnazzo's World application, without assuming native-device verification.
+**Prerequisites:** Chapters 1–6 and the Part II interface checkpoint linked in the companion repository’s `docs/milestones.md`. All application paths below are relative to `src/GnazzosWorld.App`; core paths are relative to `src/GnazzosWorld.Core`.
 
-### Guided lab: trace one state change
-
-1. At the Part II milestone, locate `CatalogBrowserViewModel`, the catalog page XAML, and the view-model tests.
-2. Starting with `Query`, follow the user input through filtering to `Items`, `ResultSummary`, and `SelectedItem`. Make a dependency diagram showing which displayed values must be notified when the query changes.
-3. In a temporary working copy, remove the notification for a derived value such as `ResultSummary`. Run its relevant notification test and inspect the failure. Restore the notification and rerun.
-4. Select a book, then apply a songs-only filter. Predict the selected ID and detail state before reading the assertion. The previous selection cannot remain active if it is no longer in the result set.
-5. Use the fake navigation dependency to leave an `OpenDetails` operation unfinished. Attempt a second activation and verify that command state prevents an unintended duplicate.
-6. Inject a navigation failure and inspect the reported error and command recovery. Do not treat this portable test as proof of native button focus or accessibility announcements.
-
-**Expected result:** Derived properties refresh correctly, incompatible selection is cleared, an in-flight command respects its guard, and failures do not leave the command permanently disabled.
-
-### Troubleshooting the walkthrough
-
-If a value changes internally but not on screen, inspect `BindingContext`, the XAML path, its mode, compiled binding type and property-change notifications. If a command never runs, inspect its guard and whether the page uses the intended command instance. If a command runs twice, locate where the in-flight ownership state is set and reset.
+**Deliverable:** A traced and testable search/filter/selection flow with explicit notifications and an asynchronous detail command.
 
 ## 7.1 Define the view model's responsibility
 
@@ -36,7 +23,7 @@ Keeping that last point explicit prevents invented states. We can discuss how a 
 
 ![Figure 7.1. The view sends input and commands to its view model; notifications return to the view. Portable catalog rules and native navigation remain separate dependencies.](../assets/figures/fig-07-mvvm.png)
 
-A reader selects Kai the Ninja, then switches to a songs-only filter. The view model must clear the incompatible selection and notify the displayed detail state. Figure 7.1 names the owner of that decision. It does not insert an HTTP service into the bundled Part II milestone.
+A reader selects Kai the Ninja, then switches to a songs-only filter. The view model must clear the incompatible selection and notify the displayed detail state. Figure 7.1 names the owner of that decision. The bundled catalog supplies the data in this chapter.
 
 ## 7.2 Understand binding context and binding mode
 
@@ -52,9 +39,34 @@ public CatalogPage(CatalogBrowserViewModel viewModel)
 
 A OneWay binding reflects source changes in the target. A TwoWay binding also sends target edits back to the source. **At the Part II milestone used in this chapter**, SearchBar text and picker selection use TwoWay because the user changes those values. A result summary is computed by the view model and does not need to be edited.
 
-**Source progression:** Chapter 13 deliberately changes the SearchBar to `Text="{Binding Query, Mode=OneWay}"` and handles `TextChanged` in `CatalogPage.xaml.cs`. A page-owned `DebouncedQuery` delays nonempty typing updates while preserving the latest text when navigation interrupts the pending delay. Its filter pickers still use TwoWay selection. When reproducing the direct TwoWay example here, use the pinned Part II commit in `docs/milestones.md`, not the later review branch. Otherwise the reader may reasonably mistake an intentional evolution for a binding error.
-
 The binding source and x:DataType have separate roles. BindingContext supplies the runtime instance. x:DataType describes the expected type for compiled binding validation. Declaring a type does not create an instance of that type.
+
+### Wire input, output and an action in XAML
+
+In `Pages/CatalogPage.xaml`, these controls inherit `CatalogBrowserViewModel` from the page’s `BindingContext`. Retain the page declaration `x:DataType="vm:CatalogBrowserViewModel"` and its `vm` and `text` namespaces.
+
+```xml
+      <SearchBar Placeholder="{x:Static text:UiText.SearchHint}"
+                 Text="{Binding Query, Mode=TwoWay}" />
+      <Picker Grid.Row="1" Title="{x:Static text:UiText.Filter}"
+              ItemsSource="{Binding FilterLabels}"
+              SelectedIndex="{Binding FilterIndex, Mode=TwoWay}" />
+      <Label Grid.Row="2" Text="{Binding ResultSummary}" />
+      <Button Grid.Row="3" Text="{x:Static text:UiText.OpenSelected}"
+              Command="{Binding OpenDetails}" />
+      <Label Grid.Row="4" Text="{Binding NavigationError}" />
+```
+
+Follow one keystroke. SearchBar sends its edited text to `Query` through `TwoWay`. The setter rebuilds the results. `ResultSummary` then supplies the label’s new text. The button binds to the command object; it has no `Clicked` handler to duplicate that action.
+
+| Binding | Direction | Owner of the value |
+|---|---|---|
+| `Query` | View to model and model to view | Browser view model |
+| `FilterIndex` | View to model and model to view | Browser view model |
+| `ResultSummary` | Model to view | Computed from current results |
+| `OpenDetails` | Button invokes command | Command controls availability and execution |
+
+The later search chapter adds debounce. Follow the direct binding here first; retrieve the Part II checkpoint through the companion milestone guide when your latest checkout has already adopted debounce.
 
 ## 7.3 Notify all affected values
 
@@ -72,6 +84,58 @@ SelectedItem = selectedItem;
 The final assignment intentionally reconciles the old selection against the new result collection. If the selected item is filtered out, the setter clears it and its inline detail. If it still matches, the same record remains selected.
 
 A computed property is not automatically observable. The test suite listens for ResultSummary notifications after a query change, exercising the connection between input and derived presentation values.
+
+### Implement the notification chain
+
+Open `Presentation/ObservableObject.cs` in the core project. The complete base class supplies the event used by the bindings:
+
+```csharp
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+namespace GnazzosWorld.Core.Presentation;
+public abstract class ObservableObject : INotifyPropertyChanged
+{
+    public event PropertyChangedEventHandler? PropertyChanged;
+    protected void Notify([CallerMemberName] string? name = null)
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+}
+```
+
+`CallerMemberName` supplies the calling property name when `Notify()` has no argument. A computed property such as `ResultSummary` needs an explicit notification when one of its inputs changes.
+
+In `Presentation/CatalogBrowserViewModel.cs`, compare the query setter with the method it calls:
+
+```csharp
+    public string Query
+    {
+        get => query;
+        set
+        {
+            value ??= "";
+            if (query == value) return;
+            query = value;
+            Notify();
+            Rebuild();
+        }
+    }
+```
+
+```csharp
+    private void Rebuild()
+    {
+        ContentKind? kind = filterIndex == 0 ? null
+            : (ContentKind)(filterIndex - 1);
+        Items = CatalogSearch.Find(catalog, query, kind);
+        Notify(nameof(Items));
+        Notify(nameof(ResultSummary));
+        SelectedItem = selectedItem;
+        NavigationError = "";
+    }
+```
+
+The setter ignores an unchanged string. A changed query causes a new search, announces the result-list replacement and result summary, and reconciles selection. Assigning `SelectedItem = selectedItem` deliberately invokes its setter; the setter checks the old ID against the new list and clears it if needed.
+
+**Try it:** search for `Kai`, select the book, then choose Songs. The list should contain songs, the book selection should clear, and Open selection should become unavailable. Each visible change follows a notification or command refresh in this chain.
 
 ## 7.4 Choose collection notification deliberately
 
@@ -113,6 +177,38 @@ The command catches navigation failures, reports a localized message, and resets
 
 The ICommand entry point has an async void signature because of the interface. Testable work remains in ExecuteAsync, and the implementation handles the delegated operation's failure. Do not generalize that into approval for unobserved asynchronous work elsewhere.
 
+### Read the complete small command
+
+`Presentation/AsyncCommand.cs` has no MAUI dependency. Read it beside the browser’s `OpenDetails` initialization above:
+
+```csharp
+using System.Windows.Input;
+namespace GnazzosWorld.Core.Presentation;
+// A deliberately small teaching command; no platform dependency.
+public sealed class AsyncCommand(
+    Func<Task> action, Func<bool> enabled, Action<Exception> onError) : ICommand
+{
+    private bool running;
+    public event EventHandler? CanExecuteChanged;
+    public bool CanExecute(object? parameter) => !running && enabled();
+    public void Refresh() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+    public async Task ExecuteAsync()
+    {
+        if (!CanExecute(null)) return;
+        running = true;
+        Refresh();
+        try { await action(); }
+        catch (Exception ex) { onError(ex); }
+        finally { running = false; Refresh(); }
+    }
+    public async void Execute(object? parameter) => await ExecuteAsync();
+}
+```
+
+The sequence is important. `CanExecute` checks both selection and running state. `ExecuteAsync` sets `running` before its first await, then announces the change so a bound button can update. Its `finally` resets the state on success or failure. The callback receives an exception so the browser can expose its localized error message.
+
+Keep the supported usage narrow: this teaching command is called on the UI thread, and its error callback must complete normally. It does not provide cancellation or coordinate arbitrary worker-thread callers. Use `ExecuteAsync` in tests so the test can await completion rather than losing the operation through `async void`.
+
 ## 7.7 Use a maintained toolkit when it earns its place
 
 For this foundation we wrote the small observable and command mechanics explicitly to show their behavior without adding a package. This is a teaching choice, not a proposal to grow a private MVVM framework.
@@ -135,9 +231,74 @@ Presentation tests combine query and kind changes, verify selection survives mat
 
 Other tests hold a command pending, reject overlap, complete it, and observe re-enabling. A failing action verifies error reporting and recovery. Notification tests ensure derived labels can refresh.
 
-These tests leave XAML binding wiring, native disabled appearance, keyboard behavior, and spoken feedback unverified. Their value comes from identifying the boundary they actually exercise.
+After the tests, repeat the same query, filter and selection in the app to inspect the XAML wiring and button feedback.
 
-## Checkpoint and exercises
+### Exercise a real state transition in a portable test
+
+In the test project, the `Navigation` fake records calls without opening native pages:
+
+```csharp
+    private sealed class Navigation : ICatalogNavigation
+    {
+        public List<string> Opened { get; } = [];
+        public Task OpenItemAsync(string id)
+        {
+            Opened.Add(id);
+            return Task.CompletedTask;
+        }
+    }
+```
+
+```csharp
+    [Fact]
+    public void Query_and_filter_update_results_and_clear_hidden_selection()
+    {
+        var vm = new CatalogBrowserViewModel(
+            CatalogLoader.LoadBundled(), new Navigation());
+        vm.SelectedItem = vm.Items.First(x => x.Kind == ContentKind.Book);
+        vm.FilterIndex = 2; // Songs
+        Assert.Equal(2, vm.Items.Count);
+        Assert.Null(vm.SelectedItem);
+        Assert.False(vm.OpenDetails.CanExecute(null));
+        vm.Query = "BERET";
+        Assert.Equal("Béret violet", Assert.Single(vm.Items).Title);
+        Assert.False(vm.Detail.HasItem);
+    }
+```
+
+The test gives you observable outcomes: a songs-only list, no hidden book selection, a disabled detail command and one matching song after the query. Use these assertions as a map for the same interaction in the app.
+
+## Guided Lab
+
+1. Open `Pages/CatalogPage.xaml`, its constructor and `Presentation/CatalogBrowserViewModel.cs`. Identify the runtime instance, expected binding type and first user-editable property.
+2. Enter `Kai`, select the book and inspect `Items`, `SelectedItem`, `Detail` and `OpenDetails.CanExecute(null)` in the debugger.
+3. Choose Songs. Predict which four values change before stepping through `Rebuild` and the selection setter.
+4. Run `Query_and_filter_update_results_and_clear_hidden_selection` in the test project. Compare its assertions with the screen behavior.
+5. Remove only `Notify(nameof(ResultSummary))` temporarily. Run `Notifications_include_derived_results` and inspect the failure. Restore the line and rerun.
+6. Read `Command_prevents_overlap_and_reenables_after_completion`. Its controlled task keeps the operation open; the second execution must not call navigation again. Use the failure-recovery test to follow the `catch` and `finally` paths.
+
+**Expected result:** typing, filtering and selection each update the correct presentation values, and a navigation operation recovers its command availability after completion.
+
+## Worked Example
+
+Start with Kai selected, then switch to Songs. The filter setter updates its field and calls `Rebuild`. Search returns only songs. The new list invalidates Kai’s selected ID, so the selection setter clears details and refreshes the command. The summary label reads the new count.
+
+If the list changes but the count does not, inspect the summary notification. If the count and list change but the book remains in inline details, inspect selection reconciliation. If Open selection remains enabled with no selected item, inspect `OpenDetails.Refresh`. One interaction now gives you three targeted debugging routes.
+
+## Troubleshooting
+
+| Symptom | First correction |
+|---|---|
+| The result list changes but the count stays old | Notify ResultSummary when rebuilding results. |
+| A label is blank from first launch | Check BindingContext, the binding path and the declared binding type. |
+| A hidden book remains selected after filtering | Reconcile the selected ID against the newly computed Items list. |
+| Open selection stays disabled after an error | Inspect command recovery and the final CanExecuteChanged notification. |
+
+## Chapter Summary
+
+MVVM is useful when it gives presentation decisions a testable owner. The view model controls query, filter, results, selection, derived labels, and navigation intent; the view renders them, while a navigation dependency owns platform behavior. Bindings connect these parts, but property notifications must cover every derived state that changed. Asynchronous commands require guarded execution, visible failure handling and recovery. The guided lab introduces a deliberate notification defect, an invalidated selection, and a controlled pending navigation task. Passing portable tests establish view-model behavior; they do not replace inspection of actual XAML wiring, disabled visuals, keyboard interactions or spoken accessibility feedback.
+
+## Exercises
 
 The browser's state and action rules now live outside the page. Binding expresses their relationship to controls; platform navigation remains behind an interface.
 
@@ -145,10 +306,6 @@ The browser's state and action rules now live outside the page. Binding expresse
 2. Select a book, filter to songs, and specify the expected selection and detail state.
 3. Hold the fake navigation Task open and attempt a second execution.
 4. Design the states for a future refresh that fails while cached data remains visible.
-
-## Chapter Summary
-
-MVVM is useful when it gives presentation decisions a testable owner. The view model controls query, filter, results, selection, derived labels, and navigation intent; the view renders them, while a navigation dependency owns platform behavior. Bindings connect these parts, but property notifications must cover every derived state that changed. Asynchronous commands require guarded execution, visible failure handling and recovery. The guided lab introduces a deliberate notification defect, an invalidated selection, and a controlled pending navigation task. Passing portable tests establish view-model behavior; they do not replace inspection of actual XAML wiring, disabled visuals, keyboard interactions or spoken accessibility feedback.
 
 ## References and index terms
 

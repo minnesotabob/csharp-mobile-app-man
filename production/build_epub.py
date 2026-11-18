@@ -101,7 +101,7 @@ meta={
  'subtitle':{'t':'MetaString','c':'.NET 11 and .NET MAUI 11: A Windows Developer’s Guide to Android, iPhone, and Tablets'},
  'author':{'t':'MetaList','c':[{'t':'MetaString','c':'John F. Gnazzo'}]},
  'lang':{'t':'MetaString','c':'en-US'},
- 'date':{'t':'MetaString','c':'2026-11-17'},
+ 'date':{'t':'MetaString','c':'2026-11-18'},
  'rights':{'t':'MetaString','c':'Copyright 2026 John F. Gnazzo. All rights reserved. Editorial proof.'},
  'description':{'t':'MetaString','c':'Editorial reflowable proof. Native/platform/provider acceptance and final publication review remain incomplete.'},
  'identifier':{'t':'MetaString','c':'urn:uuid:'+str(uuid.uuid5(uuid.NAMESPACE_URL,'https://johngnazzo.com/books/building-mobile-apps-csharp15/editorial-proof'))}

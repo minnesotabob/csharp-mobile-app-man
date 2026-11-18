@@ -9,22 +9,9 @@ This chapter explains the XAML structure behind the new home and catalog pages. 
 
 By the end of this chapter, you will be able to read a XAML page as an object graph; predict Grid measurement behavior; distinguish static resources from theme-aware bindings; diagnose a missing control versus a missing binding value; and verify that larger text remains readable.
 
-**Prerequisites:** Complete the preceding chapters and use the matching Part II source revision from `docs/milestones.md`. **Deliverable:** A testable improvement or diagnostic exercise in the Gnazzo's World application, without assuming native-device verification.
+**Prerequisites:** Chapters 1–5 and the Part II interface checkpoint linked in the companion repository’s `docs/milestones.md`. All application paths below are relative to `src/GnazzosWorld.App`; core paths are relative to `src/GnazzosWorld.Core`.
 
-### Guided lab: make a page respond to constraints
-
-1. Check out the Part II source milestone described in `docs/milestones.md`, then open the home page XAML and the shared resources in `App.xaml`.
-2. Trace the page's root layout, its immediate children, and the location of its bounded collection. Write a one-sentence explanation of why the list needs a finite viewport.
-3. In a disposable working copy, change a `Grid` row allocated with `*` sizing into an `Auto` row. Predict how a growing list or keyboard appearance could affect the measured content. Restore the original setting after inspecting it.
-4. Find one color or spacing value supplied through a shared resource. Follow that resource to its declaration; compare it with a theme-aware resource and explain which should change in dark mode.
-5. Temporarily break an XAML namespace and build to see a markup/type-resolution error. Restore it, then deliberately misspell a binding path. Distinguish build diagnostics from a view that exists but displays no data.
-6. Record narrow-screen, large-text, and dark-theme results on an emulator or device when available. A code review alone cannot verify those interactions.
-
-**Expected result:** The reader can identify the layout and binding ownership of each visible region, and can explain why compilation and runtime presentation failures require different investigations.
-
-### Troubleshooting the walkthrough
-
-A page that will not compile suggests a type, resource key, or XAML syntax issue. A page that compiles but has blank text suggests a binding context, property name, or missing notification. Content that disappears when the keyboard opens suggests a viewport and measurement problem. Tackle these separately rather than scattering fixed heights through the layout.
+**Deliverable:** A Home page you can read and modify, a mapped catalog grid, and theme-aware shared label styling.
 
 ## 6.1 Read XAML as an object graph
 
@@ -34,6 +21,44 @@ InitializeComponent constructs the declared tree and assigns its settings. It do
 
 The home page uses a heading, introductory text, and a browse action. Static branding remains ordinary text; localized interface labels come from UiText. This makes a small useful distinction between a product's proper name and translatable instructions.
 
+### Build the Home page from a complete file
+
+Open `Pages/HomePage.xaml`. This is the complete Home page at this checkpoint. Keep its existing class name and code-behind; replacing only the inner layout in an unrelated page would leave `OnBrowse` without its handler.
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:text=
+  "clr-namespace:GnazzosWorld.Core.Localization;assembly=GnazzosWorld.Core"
+             x:Class="GnazzosWorld.App.Pages.HomePage"
+             Title="{x:Static text:UiText.Home}">
+  <ScrollView>
+    <VerticalStackLayout Padding="24" Spacing="20">
+      <Label Text="Gnazzo's World" FontSize="32"
+             SemanticProperties.HeadingLevel="Level1" />
+      <Label Text="{x:Static text:UiText.Welcome}" FontSize="24" />
+      <Label Text="{x:Static text:UiText.Intro}" />
+      <Button Text="{x:Static text:UiText.Browse}" Clicked="OnBrowse" />
+    </VerticalStackLayout>
+  </ScrollView>
+</ContentPage>
+```
+
+Read from the outside inward. `ContentPage` provides a screen. Its `Title` supplies the navigation label. The single `ScrollView` contains one `VerticalStackLayout`, whose children appear in order. The heading and introductory labels grow with their text; the browse button follows them.
+
+The `x` prefix identifies XAML language features such as `x:Class` and `x:Static`. The `text` prefix maps to the core assembly’s localization namespace. `{x:Static text:UiText.Browse}` reads a static C# property; Chapter 10 follows that property into its language resource. It is separate from the view-model bindings introduced in Chapter 7.
+
+| XAML setting | Effect on this page |
+|---|---|
+| `x:Class` | Connects this file to `GnazzosWorld.App.Pages.HomePage` |
+| `Padding="24"` | Leaves space inside the stack’s edges |
+| `Spacing="20"` | Separates each pair of neighboring children |
+| `HeadingLevel="Level1"` | Identifies the main heading to assistive technology |
+| `Clicked="OnBrowse"` | Connects the button event to the page’s C# method |
+
+**Try it:** change the welcome label’s text temporarily to a sentence twice as long. The following controls should move down rather than overlap. Restore the resource reference after the experiment.
+
 ## 6.2 Respect the content property
 
 A page usually exposes one content value. To arrange several children, place them inside an appropriate layout. A VerticalStackLayout suits a short sequence whose natural heights should follow content. A Grid suits regions that must share or divide available space.
@@ -41,6 +66,32 @@ A page usually exposes one content value. To arrange several children, place the
 Do not solve a “more than one content” error by deleting an arbitrary label. Understand the parent object's contract. The same rule applies when a reusable ContentView contains several controls: give it a layout as its content.
 
 A resource dictionary is another kind of collection. Its keyed values are looked up by resource keys; they are not extra visible children added to the page. Distinguish appearance configuration from the visual tree.
+
+### Connect the browse button
+
+`Pages/HomePage.xaml.cs` contains the corresponding partial class:
+
+```csharp
+using GnazzosWorld.Core.Localization;
+namespace GnazzosWorld.App.Pages;
+public partial class HomePage : ContentPage
+{
+    public HomePage() => InitializeComponent();
+    private async void OnBrowse(object? sender, EventArgs e)
+    {
+        try { await Shell.Current.GoToAsync("//main/discover/catalog"); }
+        catch (Exception)
+        {
+            await DisplayAlertAsync(
+                UiText.Error, UiText.NavigationError, UiText.Ok);
+        }
+    }
+}
+```
+
+`InitializeComponent` constructs the XAML controls and wires the named event. The handler awaits navigation to Discover. Its `try`/`catch` turns a navigation failure into a localized alert. This small, page-specific event is a useful first connection between markup and C#; the reusable catalog action becomes a command in Chapter 7.
+
+Keep the two filenames together when navigating your editor. If the handler is renamed in C# but not in XAML, the markup still refers to the old method. Fix the connection instead of adding a second button with different behavior.
 
 ## 6.3 Learn measurement before adding fixed sizes
 
@@ -58,6 +109,36 @@ The catalog browser uses automatic rows for search, filter, result summary, comm
 A CollectionView placed in an unconstrained vertical scrolling region can undermine the finite viewport it needs. Avoid wrapping a scrolling list inside another vertical ScrollView merely to make every control move together. Decide which region owns scrolling.
 
 The home page is different: a short content sequence in a ScrollView remains useful when text grows. That choice follows the content and interaction, not a rule that every page must use the same outer layout.
+
+### Allocate the catalog’s available height
+
+Open `Pages/CatalogPage.xaml`. Its inner grid divides the browser into six regions. This excerpt belongs inside the existing typed page; retain that page’s namespace declarations and outer `ContentGrid`.
+
+```xml
+<Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*" RowSpacing="10">
+      <SearchBar Placeholder="{x:Static text:UiText.SearchHint}"
+                 Text="{Binding Query, Mode=TwoWay}" />
+      <Picker Grid.Row="1" Title="{x:Static text:UiText.Filter}"
+              ItemsSource="{Binding FilterLabels}"
+              SelectedIndex="{Binding FilterIndex, Mode=TwoWay}" />
+      <Label Grid.Row="2" Text="{Binding ResultSummary}" />
+      <Button Grid.Row="3" Text="{x:Static text:UiText.OpenSelected}"
+              Command="{Binding OpenDetails}" />
+      <Label Grid.Row="4" Text="{Binding NavigationError}" />
+```
+
+The collection is the next child and sets `Grid.Row="5"`. Rows are zero-based: a child without `Grid.Row` occupies row zero. `Auto` asks for the content’s desired height; the final `*` gives the list the remaining height. The list’s own scrolling handles rows that exceed that region.
+
+| Row | Content | Sizing reason |
+|---|---|---|
+| 0 | Search entry | Its native control determines a suitable height |
+| 1 | Content-type picker | Its text and native chrome need their natural height |
+| 2 | Result summary | May grow with language or text settings |
+| 3 | Open selection | Keeps the primary action outside the scrolling list |
+| 4 | Navigation feedback | Allows a message to wrap |
+| 5 | Catalog collection | Uses remaining height and owns list scrolling |
+
+**Try it:** put the collection in row four in a temporary copy. It now shares a cell with feedback because Grid permits overlapping children. The mistake is a row assignment, not a search failure. Restore row five before continuing.
 
 ## 6.4 Use spacing as a system
 
@@ -88,6 +169,36 @@ StaticResource resolves a keyed resource. DynamicResource is useful when the res
 
 The implementation supplies theme-aware text and backgrounds. It still needs real-device contrast and native-control inspection. A chosen palette is a design input, not a completed accessibility result.
 
+### Put the shared label appearance in App.xaml
+
+These entries are inside `Application.Resources`. Keep the palette entries before the style that references them:
+
+```xml
+    <Color x:Key="PaperLight">#FAFAF7</Color>
+    <Color x:Key="PaperDark">#15212A</Color>
+    <Color x:Key="TextLight">#15212A</Color>
+    <Color x:Key="TextDark">#F5F5F0</Color>
+    <Color x:Key="Accent">#22566B</Color>
+    <Color x:Key="SelectionLight">#DCEBF0</Color>
+    <Color x:Key="SelectionDark">#244A5B</Color>
+```
+
+```xml
+    <Style TargetType="Label">
+      <Setter Property="FontSize" Value="16" />
+      <Setter Property="FontAutoScalingEnabled" Value="True" />
+      <Setter Property="TextColor"
+
+        Value="{AppThemeBinding
+          Light={StaticResource TextLight},
+          Dark={StaticResource TextDark}}" />
+    </Style>
+```
+
+The implicit style applies to labels without an explicit style. A heading can override its base `FontSize` locally while still receiving the shared text color and scaling behavior. `TextLight` is the dark foreground used on the light background; `TextDark` is the light foreground used on the dark background. The names identify the active theme, not the brightness of the color itself.
+
+Change the appearance at its owner. To adjust all body text, edit this style. To change only the Home heading’s hierarchy, edit its label. To change the translated instruction, edit the string resource rather than the color dictionary.
+
 ## 6.6 Use styles at the appropriate scope
 
 An implicit Label style supplies body size, text color, and automatic text scaling. A Button style supplies an understandable minimum height, padding, foreground, and background. Pages use shared background styling.
@@ -106,7 +217,7 @@ Text scaling is a user preference that can expose assumptions in the layout. Lea
 
 Test long titles and translations at large text settings. Check the result action, filter picker, list, and any inline detail pane with the keyboard visible. If vertical space is scarce, reconsider which controls remain outside the scrolling region.
 
-The first implementation intentionally exposes that tradeoff: several automatic toolbar rows precede the list. A compact screen with very large text needs runtime review, and may need a more concise toolbar. We do not claim that compilation has answered the design question.
+The first implementation intentionally exposes that tradeoff: several automatic toolbar rows precede the list. A compact screen with very large text needs runtime review, and may need a more concise toolbar. Use the keyboard-open exercise below to decide whether to simplify that toolbar.
 
 ## 6.8 Add semantics without duplicating information
 
@@ -126,7 +237,44 @@ Inspect the earliest relevant failure. For layout, outline regions temporarily o
 
 The complete Part II application replaces the original startup with Shell. Use the Part I milestone when following the earlier startup code. Source history is a teaching aid when changes are explicit.
 
-## Checkpoint and exercises
+## Guided Lab
+
+1. Open the Part II interface checkpoint and locate `Pages/HomePage.xaml`, its `.xaml.cs` file, `Pages/CatalogPage.xaml` and `App.xaml`. Keep an unchanged copy or use version control so you can restore each experiment.
+2. Run the app on your configured Android emulator or device. Home should show the product heading, introductory text and browse button. Activate Browse; Discover should show the search/filter controls and catalog.
+3. Change Home’s stack spacing from 20 to 8. Observe the relationship between controls, then restore 20. Change padding separately so you can distinguish outer space from gaps between children.
+4. Switch the system between light and dark appearance. Inspect the shared label color and page background. Temporarily change `TextDark` to an unmistakable color to trace the resource, then restore it.
+5. In the catalog grid, identify rows zero through five. Increase system text size and open the search keyboard. Check whether results remain reachable and whether the feedback label can wrap.
+6. Temporarily change the collection’s row from five to four, reproduce the overlap, then restore it. Finally rename `OnBrowse` in only one file, inspect the build diagnostic and restore the matching names.
+
+**Expected result:** you can explain each visible region, the file that owns it, and how a resource or layout change affects it. Keep the original application behavior after the experiments.
+
+## Worked Example
+
+A customer enlarges text before browsing Minnesota Bob’s songs. Home becomes taller, but its short content sequence can scroll. Discover must keep a bounded list beneath its search controls.
+
+| Symptom | First inspection | Appropriate change |
+|---|---|---|
+| Home’s browse action is below the fold | ScrollView and child content | Preserve scrolling rather than fixing the heading height |
+| Discover results overlap feedback | `Grid.Row` values | Give feedback and collection distinct rows |
+| Body text is unreadable in dark mode | Label style and theme color keys | Correct the foreground/background pairing |
+| Browse does not compile after a rename | `Clicked` and method name | Restore the XAML/C# event connection |
+
+This is the basic debugging order: identify the region, find its owner, change one setting, and repeat the same action. It is faster than adding fixed heights until one screenshot looks right.
+
+## Troubleshooting
+
+| Symptom | First correction |
+|---|---|
+| A XAML type cannot be resolved | Inspect the namespace prefix, CLR namespace and assembly; restore the original declaration. |
+| Browse fails to compile | Match the XAML Clicked handler name to the method in HomePage.xaml.cs. |
+| The collection overlaps feedback | Check zero-based Grid.Row assignments and restore the list to row five. |
+| Dark text disappears into its background | Follow the label style’s light/dark resource keys before changing individual labels. |
+
+## Chapter Summary
+
+This chapter turns a declarative XAML file into an understandable object graph and measurement system. Rows, columns, scroll containers, resource lookup, and styles each solve different responsibilities. Star-sized regions and bounded collections matter because mobile screens do not provide unlimited height. Theme resources and typography choices must remain responsive to system appearance and text scaling. The guided lab traces actual source files, changes a measurement rule temporarily, and compares XAML compilation faults with data-binding symptoms. The complete Home page, browse handler and shared label style give you concrete files to change, run and inspect.
+
+## Exercises
 
 The application now has a home introduction, search/filter browser, shared theme settings, and layout regions ready for selection/detail behavior. The following checks still need emulator or device evidence: narrow width, large text, keyboard occlusion, light/dark controls, and screen-reader structure.
 
@@ -134,10 +282,6 @@ The application now has a home introduction, search/filter browser, shared theme
 2. Increase text size and record which automatic rows consume the available height.
 3. Move a repeated color into a resource and verify light/dark behavior.
 4. Deliberately break a namespace and a binding separately; compare their diagnostics.
-
-## Chapter Summary
-
-This chapter turns a declarative XAML file into an understandable object graph and measurement system. Rows, columns, scroll containers, resource lookup, and styles each solve different responsibilities. Star-sized regions and bounded collections matter because mobile screens do not provide unlimited height. Theme resources and typography choices must remain responsive to system appearance and text scaling. The guided lab traces actual source files, changes a measurement rule temporarily, and compares XAML compilation faults with data-binding symptoms. It closes by separating what source inspection proves from what only a device can show: keyboard occlusion, large-text behavior, native appearance, and assistive-technology reading order.
 
 ## References and index terms
 
