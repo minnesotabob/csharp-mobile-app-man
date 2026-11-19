@@ -15,21 +15,6 @@ At the end of this chapter, you will be able to combine text, content kind, crea
 
 **Prerequisites:** The validated Chapter 12 catalog and companion portable test runner. **Deliverable:** A predictable local discovery experience with a bounded, device-local favorites store.
 
-### Guided lab: prove that filters compose
-
-1. Open the companion catalog search implementation and its discovery tests. Start with the unfiltered five-item sample rather than data from a live provider.
-2. Apply a content-kind filter, then add a creator ID. Before running the test, predict whether the second constraint should *replace* or *intersect* the first.
-3. Enable favorites-only using an empty set. Verify that the result is empty, not the complete catalog. Then supply one known item's ID and confirm that only eligible favorites remain.
-4. Sort two fixture records with the same visible title. Check that their stable IDs break the tie in a repeatable order.
-5. In the debounce tests, arrange for an older text update to complete after a newer one. Confirm that the earlier completion cannot overwrite the latest results.
-6. Simulate a failed preferences save. Check both the error state and the visible favorites list: the failed operation must not be shown as successfully saved.
-
-**Expected result:** Criteria intersect, ties are deterministic, stale input cannot win, and failed saves preserve visible state. These portable tests do not establish native persistence across an actual app restart.
-
-### Worked reasoning: three different notions of equality
-
-Human text search may ignore case and accents, but creator IDs use ordinal equality. Sort-order ties also depend on IDs, while the favorites store persists IDs rather than labels. If these rules are collapsed into one comparer, a convenient search behavior can accidentally become an identity bug. Write down which comparison a particular operation requires before choosing the API.
-
 ## 13.1 Separate search policy from controls
 
 CatalogSearch remains a portable function. It receives the data and criteria and returns a new ordered result array. It does not read a SearchBar, navigate, save preferences, or change selection.
@@ -124,7 +109,7 @@ if (!own.IsCancellationRequested && current == revision)
 
 The checks express ownership: only the newest still-active input can change the applied query. Cancellation is cooperative, so the test delay deliberately ignores its token and completes the older operation last. The old text must still be ignored.
 
-The class accepts an injectable delay function. Tests use manually completed tasks to control ordering without sleeping or relying on a fast CI machine.
+The class accepts an injectable delay function. Tests use manually completed tasks to control ordering without sleeping or depending on machine speed.
 
 A current failure reports a localized search error. An older failure is ignored after newer input supersedes it. Retrying by entering text starts a new operation.
 
@@ -133,6 +118,50 @@ The controller is used from one serialized context, the page's UI thread. Its aw
 When the page disappears, it cancels pending input and applies the last typed text synchronously to preserve browsing state before navigation. The pending operation cannot later apply its old text. This preserves state within the living page/view model; it does not save the query across process termination.
 
 A future remote search flow will need the same ownership principle around returned results, plus separate loading, timeout, cancellation, and error states. This chapter does not implement that remote contract.
+
+### Follow the delayed input implementation
+
+Open `src/GnazzosWorld.Core/Presentation/DebouncedQuery.cs`. Its constructor accepts an optional delay and defaults to 250 milliseconds. The method below owns each typing update:
+
+```csharp
+public async Task UpdateAsync(
+    string? text, Action<string> apply, Action reportError)
+{
+    ArgumentNullException.ThrowIfNull(apply);
+    ArgumentNullException.ThrowIfNull(reportError);
+    var current = ++revision;
+    active?.Cancel();
+    using var own = new CancellationTokenSource();
+    active = own;
+    try
+    {
+        // Clearing is immediate and still invalidates older pending input.
+        if (!string.IsNullOrEmpty(text))
+            await delay(interval, own.Token);
+        if (!own.IsCancellationRequested && current == revision)
+            apply(text ?? "");
+    }
+    catch (OperationCanceledException) when (own.IsCancellationRequested) { }
+    catch (Exception)
+    {
+        if (!own.IsCancellationRequested && current == revision) reportError();
+    }
+    finally
+    {
+        if (ReferenceEquals(active, own)) active = null;
+    }
+}
+```
+
+Read the two checks before `apply` together. Canceling the earlier token requests that its work stop; comparing the revision prevents an old completion from publishing even if a delay implementation finishes late. Clearing the text skips the wait but still changes the revision.
+
+| Typing sequence | Current update | Result allowed to publish |
+|---|---|---|
+| `K`, then `Kai` | `Kai` | Only the newest text |
+| `Kai`, then clear | Empty string | The clear action immediately |
+| Type, then leave page | Page cancels and preserves latest text | No late update into the departed view |
+
+Use the injected-delay tests to complete the earlier wait after the newer wait. No wall-clock sleep is needed to reproduce the race.
 
 ## 13.7 Store IDs rather than catalog copies
 
@@ -175,7 +204,29 @@ Reload also validates a candidate before replacing the old set. A failed reload 
 
 The browser remains usable when favorites cannot load. An error explains the problem, and Reload favorites provides an explicit retry. Corrupt saved JSON is not silently treated as an empty collection.
 
-The current app offers no automatic repair or destructive reset for corrupted preferences. During development, inspect the fixture and preserve the failing synthetic data before changing it. Chapter 19 introduces a separate SQLite persistence/recovery boundary; it does not silently migrate or repair this preferences example. Clearing owned disposable test-app data is a deliberate reset, not evidence of recovery or a data-preserving upgrade.
+Preserve a failing preferences file while diagnosing corruption. The sample has no automatic repair. Chapter 19 introduces a separate SQLite store; migrating existing preferences needs its own data-preserving procedure.
+
+### Save the proposed favorite set before publishing it
+
+In `src/GnazzosWorld.Core/Catalog/Favorites.cs`, `FavoriteCatalog.Toggle` makes the ordering visible:
+
+```csharp
+public void Toggle(string id)
+{
+    if (!IsLoaded) throw new
+        InvalidOperationException("Load favorites before editing.");
+    FavoriteIdCodec.Validate([id]);
+    var next = new HashSet<string>(ids, StringComparer.Ordinal);
+    if (!next.Remove(id)) next.Add(id);
+    var ordered = FavoriteIdCodec.Validate(next);
+    store.Save(ordered);
+    ids = new HashSet<string>(ordered, StringComparer.Ordinal);
+}
+```
+
+The method computes `next` without mutating the current set. It validates the proposed IDs, saves them, then replaces the visible set. If saving throws, execution never reaches the final assignment. The previous selection remains the last confirmed saved state.
+
+This order is useful even with a tiny preferences store. A filled favorite icon is a promise to the reader; publish it only after the corresponding write succeeds.
 
 ## 13.9 Use preferences for a bounded local example
 
@@ -199,7 +250,7 @@ Keeping the additional controls collapsible leaves room for the collection in th
 
 Save favorite and Remove favorite describe the action on the selected record. Their command is disabled when nothing is selected or an initial favorites load has failed.
 
-All new labels and error messages have neutral English and Spanish resources. Their presence in resources does not prove that translated controls fit or that a screen reader announces every state change clearly.
+The labels and errors have English and Spanish resources. Include both languages, large text and spoken result feedback in the native browsing exercise.
 
 Device checks must cover expanded and collapsed filters, keyboard visibility, landscape height, large text, focus order, and the meaning of the selected favorite action. Particular attention is needed where two actions share a row.
 
@@ -213,7 +264,40 @@ The portable store-recreation test demonstrates the contract for loading saved I
 
 Run the complete portable suite using the README commands. The Android build checks XAML and native adapter compilation separately. Neither check supplies an iPhone build or a successful app-launch observation.
 
-## 13.12 Hands-on exercise: keep a favorite through change
+## Guided Lab
+
+Prove that filters compose.
+
+1. Open the companion catalog search implementation and its discovery tests. Start with the unfiltered five-item sample rather than data from a live provider.
+2. Apply a content-kind filter, then add a creator ID. Before running the test, predict whether the second constraint should *replace* or *intersect* the first.
+3. Enable favorites-only using an empty set. Verify that the result is empty, not the complete catalog. Then supply one known item's ID and confirm that only eligible favorites remain.
+4. Sort two fixture records with the same visible title. Check that their stable IDs break the tie in a repeatable order.
+5. In the debounce tests, arrange for an older text update to complete after a newer one. Confirm that the earlier completion cannot overwrite the latest results.
+6. Simulate a failed preferences save. Check both the error state and the visible favorites list: the failed operation must not be shown as successfully saved.
+
+**Expected result:** Criteria intersect, ties sort consistently, stale input is ignored, and failed saves preserve the confirmed favorite state. The restart exercise checks the preferences adapter separately.
+
+### Before you begin: three different notions of equality
+
+Human text search may ignore case and accents, but creator IDs use ordinal equality. Sort-order ties also depend on IDs, while the favorites store persists IDs rather than labels. If these rules are collapsed into one comparer, a convenient search behavior can accidentally become an identity bug. Write down which comparison a particular operation requires before choosing the API.
+
+## Worked Example
+
+A reader searches for Kai, saves it as a favorite, then switches to songs-only results. The book disappears from the current list but its saved ID remains. Returning to all content should reveal the same favorite. Renaming the book also leaves that ID intact.
+
+Now inject a write failure while removing the favorite. `store.Save` throws before `ids` changes, so the confirmed saved set still contains Kai. Show an actionable save error and allow retry. Do not clear the icon and silently hope the preferences write eventually succeeds.
+
+## Troubleshooting
+
+- **Favorites-only unexpectedly shows every item:** Check whether the code confused an empty ID set with the null filter meaning all records.
+- **Older typing overwrites newer results:** Trace the debounce revision/ownership check in addition to cancellation; cancellation requests alone do not prove an old continuation cannot run.
+- **A favorite fails to save:** Check the adapter's reported failure before replacing visible in-memory state. Native persistence across process restarts still requires device verification.
+
+## Chapter Summary
+
+Search is a coordinated policy, not a stack of unrelated UI filters. This chapter combines text, kind, creator identity, ordering, and optional favorites restrictions while preserving deterministic results. It treats human-readable text differently from stable IDs and gives empty favorites a precise meaning. Input debouncing improves the typing experience, but a revision check is still necessary to reject stale completion. Device-local preferences are a small teaching store, not synchronized account state, and failed writes must not alter the visible favorites set. The guided lab makes each distinction observable with portable tests and deliberate failures. Full native restart, accessibility, and keyboard behavior still require device verification.
+
+## Exercises
 
 Use fictitious data in a development checkout.
 
@@ -224,11 +308,11 @@ Use fictitious data in a development checkout.
 5. In the manual-delay test, complete the second input before the first. Confirm that only the second text is applied.
 6. Use the failing test store to reject Save. Confirm that visible favorites remain unchanged and the error appears.
 
-For the native exercise, launch a development build, save one item, close and restart the app, and open Favorites only. Record the source revision, platform, device, and result. Until that exercise is actually performed, leave its verification status pending.
+For the native exercise, launch a development build, save one item, close and restart the app, and open Favorites only. Record the source revision, platform, device, and result. Check the restarted application rather than relying on a still-alive view model.
 
 Also remove the selected favorite while Favorites only is active. Confirm that details and navigation no longer refer to the removed result. Repeat with expanded filters, the keyboard open, and increased text size.
 
-## 13.13 Review questions
+### Review questions
 
 - Why is an empty favorites set different from a null favorites filter?
 - Which search comparisons are intended for people, and which are intended for identity?
@@ -238,16 +322,6 @@ Also remove the selected favorite while Favorites only is active. Confirm that d
 - What does the portable restart test fail to prove about native persistence?
 
 Chapter 14 develops content details, reading samples, and external links. It will use these stable selections and identities while making the next boundary explicit: a catalog record is not the content itself.
-
-## Troubleshooting the guided lab
-
-- **Favorites-only unexpectedly shows every item:** Check whether the code confused an empty ID set with the null filter meaning all records.
-- **Older typing overwrites newer results:** Trace the debounce revision/ownership check in addition to cancellation; cancellation requests alone do not prove an old continuation cannot run.
-- **A favorite fails to save:** Check the adapter's reported failure before replacing visible in-memory state. Native persistence across process restarts still requires device verification.
-
-## Chapter Summary
-
-Search is a coordinated policy, not a stack of unrelated UI filters. This chapter combines text, kind, creator identity, ordering, and optional favorites restrictions while preserving deterministic results. It treats human-readable text differently from stable IDs and gives empty favorites a precise meaning. Input debouncing improves the typing experience, but a revision check is still necessary to reject stale completion. Device-local preferences are a small teaching store, not synchronized account state, and failed writes must not alter the visible favorites set. The guided lab makes each distinction observable with portable tests and deliberate failures. Full native restart, accessibility, and keyboard behavior still require device verification.
 
 ## Official references
 

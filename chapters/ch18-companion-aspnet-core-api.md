@@ -5,42 +5,11 @@ The Chapter 17 client knows how to ask for a catalog and reject an unusable resp
 
 We will build a small ASP.NET Core Minimal API over the same public teaching fixtures already bundled with the application. It returns a versioned catalog document, retains the earlier items-array contract, demonstrates bounded pagination, and describes its development endpoints through OpenAPI. It has no customer order or request-writing endpoints. Keeping that boundary small lets us establish service behavior before adding identity, storage and transactions.
 
-**Prerequisites:** the catalog validation rules from Chapter 12 and bounded HTTP client from Chapter 17; the pinned SDK and basic dependency injection. **Learning goals:** assemble a reproducible web host, define a wire contract, validate paging inputs, return predictable errors, test the real request pipeline, and distinguish workstation networking from phone networking. **Delivered capability:** a runnable public-fixture API, executable integration tests, a local Kestrel startup check, and a command-line HTTPS catalog probe.
-
 ## What You'll Learn
 
 You will learn to expose a versioned public catalog through ASP.NET Core Minimal APIs; keep transport documents distinct from internal models; use explicit pagination and validation errors; run an API locally; and distinguish in-memory pipeline tests from real-socket and device tests.
 
 **Prerequisites:** Chapters 12 and 17, an SDK matching the companion repository, and a Windows terminal. **Deliverable:** A development catalog API with documented contracts and reproducible integration checks.
-
-### Guided lab: validate the service boundary
-
-1. Find the companion API project and read the local run instructions and exact test commands in `docs/local-api.md`. Start with a verified checkout rather than assuming every branch has the same endpoints.
-2. Run the API's integration suite. Compare a successful catalog response with its published wire-contract fixture and version field.
-3. Request a malformed query or out-of-range page. Inspect the structured problem response and verify that it does not leak stack traces or sensitive internals.
-4. Request two pages from one catalog revision. Confirm the continuation logic and the behavior when a revision changes between requests.
-5. Run the temporary-loopback HTTP smoke check to distinguish actual socket startup from an in-memory `TestServer` test.
-6. For native-device integration, determine whether the service can be reached from the emulator or phone and whether development HTTPS trust is configured. Record these checks as pending until a device actually succeeds.
-
-**Expected result:** Portable integration tests prove the middleware and endpoints' contract; loopback proves a limited real-socket path; neither proves that a phone can reach or trust the host.
-
-### Worked reasoning: three levels of confidence
-
-A handler test can exercise application logic without sockets. An in-memory API host runs routing, middleware and serialization but does not prove machine networking. A Kestrel loopback request adds real TCP behavior while still omitting a physical device, local-network routing and certificate trust. Report each result at its own level instead of treating one green test as complete mobile verification.
-
-![Figure 18.1. Planned Part V boundary: a native public client signs in through a provider, presents an access token to an API, and reaches customer data only after API policy and ownership checks.](../assets/figures/fig-18-security-preview.png)
-
-### Preview: from public catalog to protected customer data
-
-A reader browsing Kai the Ninja needs no account merely to see a public description. A customer returning to an anniversary-song request needs access to that customer's own records. These journeys follow different paths. Figure 18.1 previews the second path; the endpoints built in this chapter remain public-fixture reads.
-
-The native app is a public client. Its compiled package cannot keep a private client secret from everyone who installs it. Part V will use a supported browser-based native sign-in flow and maintained client library. The identity provider authenticates the person and applies its account/MFA policy. The client uses an access token for the intended API; an identity token is not a general API credential.
-
-At the API boundary, token validation checks the issuer, audience, signature and applicable lifetime through supported middleware. Authorization then evaluates policies and the ownership of the requested record. A valid sign-in is not permission to retrieve any order ID. The service uses its own controlled data-access configuration; the phone does not connect directly to the customer database or receive backend secrets.
-
-A later customer switching accounts must not see another account's cached stories or files. Sign-out, local cleanup, token expiration and recovery need explicit journeys and rejection tests. Local biometric unlocking and provider-enforced MFA serve different boundaries. Chapters 22-26 implement and verify these pieces; the local test context in Chapter 21 will not be presented as real authentication.
-
-The useful question to carry forward is: **which component is authorized to make this decision?** The view can hide an action, but the API must still reject an unauthorized request. The preview helps you locate that future responsibility without treating it as an implemented security system.
 
 ## Introduce the service project
 
@@ -117,6 +86,41 @@ There are no quote, order or request POST handlers. A POST to the existing catal
 
 Health returns only an ok status. It does not expose configuration, contact data or dependency details. It also does not verify a future database, provider or payment service that this fixture never contacts. Broaden readiness checks only when those dependencies are part of the actual runtime design.
 
+### Map the document and compatibility routes
+
+Inside the service’s `Program.cs`, these routes follow registration of `IPublicCatalog` and the error pipeline:
+
+```csharp
+app.MapGet("/api/v1/catalog", (IPublicCatalog catalog) =>
+    TypedResults.Ok(catalog.Document))
+    .WithName("GetCatalog").ProducesProblem(500);
+```
+
+The compatibility endpoint returns the earlier items-only array:
+
+```csharp
+app.MapGet("/api/v1/catalog/items", (IPublicCatalog catalog) =>
+    TypedResults.Ok(catalog.Document.Items))
+    .WithName("GetCatalogItems").ProducesProblem(500);
+```
+
+Choose the endpoint to match the client contract. `/api/v1/catalog` returns the envelope containing schema, revision, items and creators. `/api/v1/catalog/items` retains Chapter 17’s array-shaped response for the earlier client. A successful response from the wrong route can still fail deserialization.
+
+The document adapter in `src/GnazzosWorld.Core/Contracts/CatalogDocument.cs` makes the new parser explicit:
+
+```csharp
+public sealed class HttpCatalogDocumentSource(HttpClient client, Uri
+    endpoint, TimeProvider clock)
+{
+    private readonly BoundedJsonClient transport = new(client, endpoint, clock);
+    public Task<CatalogDocument> LoadAsync(CancellationToken
+        cancellationToken = default)
+        => transport.GetAsync(CatalogDocument.Read, cancellationToken);
+}
+```
+
+Use an absolute trusted HTTPS endpoint and the reusable client configuration described earlier. `BoundedJsonClient` performs the bounded HTTP read; `CatalogDocument.Read` validates the envelope and creator relationships. Swapping only the URL without changing the expected shape is not a complete client migration.
+
 ## Page one snapshot at a time
 
 The pages endpoint accepts offset, limit and revision. Defaults are offset zero and limit twenty. Limit must be between one and one hundred. Numeric input must be one nonnegative integer; duplicate values, unexpected query names, malformed digits, negative values and overflow are rejected as validation problems.
@@ -149,7 +153,7 @@ This is a machine-readable description, not an installed interactive documentati
 
 The integration suite requests the document and checks that the catalog routes, paging parameters and selected 400/409 responses are present. It also verifies that the document endpoint is absent in Production. Those checks keep the description connected to the executable API rather than allowing a manually maintained example to drift unnoticed.
 
-OpenAPI does not establish that a response follows every business rule. The revision agreement, duplicate-query rejection and creator relationships still need tests and prose. Document generation is another useful view of the contract, not a replacement for it.
+Use OpenAPI to inspect the published route shapes. Keep explicit tests for revision changes, duplicate query values and creator relationships.
 
 ## Run the service on Windows
 
@@ -177,7 +181,7 @@ dotnet run --project tools/GnazzosWorld.CatalogProbe -- `
 
 It constructs an HttpClient with redirects and cookies disabled, retains certificate validation, uses the shared bounded document source, and prints the schema, revision and counts. Ctrl+C cancels the operation. It does not print complete response bodies or reconfigure the MAUI application.
 
-The loopback HTTP listener supports a host-side startup check and optional reader-selected development tooling. The mobile client remains HTTPS-only. A working HTTP health response on Windows does not establish that the HTTPS probe trusts the certificate, or that a phone can reach either listener.
+The HTTP loopback listener supports a host-side startup check. For the HTTPS-only mobile client, continue with certificate trust and device addressing rather than substituting the HTTP health URL.
 
 Configuration follows the service's ordinary application configuration sources. Catalog:Revision has a fixed public-fixture value in appsettings.json and can be overridden with Catalog__Revision or a deliberate command-line setting. Revision identifiers contain one to eighty ASCII letters, digits, dots, underscores or hyphens. They are public content identifiers, never secrets.
 
@@ -204,19 +208,67 @@ Before a native integration, prove the selected endpoint works from the device b
 
 ## Verify three different boundaries
 
-The Chapter 18 checks add layers to the existing portable suite. CatalogDocumentTests verify format version, revision syntax, collection limits, creator references, round-trip content and copied collection ownership. The earlier transport tests continue to establish deadlines, retries and byte limits after the transport refactoring.
+Run the same public-read journey at three progressively wider boundaries:
 
-CatalogApiTests uses WebApplicationFactory with the real service entry point. Its client passes through routing, dependency injection, JSON serialization, the public catalog, paging validation and error middleware. The document-source test then consumes that response with the actual bounded client and validates the complete snapshot. A compatibility test does the same through the earlier array adapter.
+| Check | How to exercise it | What to inspect |
+|---|---|---|
+| Route integration | Run `CatalogApiTests` with the in-process host | Status, content type, envelope and paging validation |
+| Real local HTTP | Start Kestrel and request its bound address | Listener address, route and actual response document |
+| App-to-service connection | Use the emulator/device’s correct host address and trusted HTTPS setup | Routing, TLS trust, cancellation and the displayed result |
 
-TestServer is an in-process server transport. It does not prove that a socket listener starts, a certificate is trusted, or a device can reach Windows. The separate eng/Smoke-Api.ps1 script starts the actual Kestrel host on a temporary loopback HTTP port, polls readiness within a limit, checks health/catalog/paging and stops the process in a finally block. This verifies host startup and local HTTP behavior, while still making no HTTPS or phone claim.
+Start with the smallest failing check. If route tests pass but the phone cannot connect, changing the catalog’s JSON fields is unlikely to repair addressing or trust. Keep customer write routes out of this public fixture API.
 
-The Companion API checks workflow builds the service, executable integration tests and catalog probe, runs the suite, then runs the Kestrel check. Portable tests and Android compilation retain their separate workflows. Record the exact revision and output for each; an API integration pass cannot become an iOS build result by association.
+## Guided Lab
+
+Validate the service boundary.
+
+1. Find the companion API project and read the local run instructions and exact test commands in `docs/local-api.md`. Start with a verified checkout rather than assuming every branch has the same endpoints.
+2. Run the API's integration suite. Compare a successful catalog response with its published wire-contract fixture and version field.
+3. Request a malformed query or out-of-range page. Inspect the structured problem response and verify that it does not leak stack traces or sensitive internals.
+4. Request two pages from one catalog revision. Confirm the continuation logic and the behavior when a revision changes between requests.
+5. Run the temporary-loopback HTTP smoke check to distinguish actual socket startup from an in-memory `TestServer` test.
+6. For native-device integration, determine whether the service can be reached from the emulator or phone and whether development HTTPS trust is configured. Check the actual device connection before diagnosing the document.
+
+**Expected result:** The route tests validate the response contract, a local request reaches the running listener, and the device exercise checks its own addressing and HTTPS trust.
+
+### Before you begin: three levels of confidence
+
+Follow the sequence in the verification table near the end of this chapter: route tests, local listener, then the actual app-to-service connection. Each step narrows the next troubleshooting question.
+
+![Figure 18.1. Planned Part V boundary: a native public client signs in through a provider, presents an access token to an API, and reaches customer data only after API policy and ownership checks.](../assets/figures/fig-18-security-preview.png)
+
+### Preview: from public catalog to protected customer data
+
+A reader browsing Kai the Ninja needs no account merely to see a public description. A customer returning to an anniversary-song request needs access to that customer's own records. These journeys follow different paths. Figure 18.1 previews the second path; the endpoints built in this chapter remain public-fixture reads.
+
+The native app is a public client. Its compiled package cannot keep a private client secret from everyone who installs it. Part V will use a supported browser-based native sign-in flow and maintained client library. The identity provider authenticates the person and applies its account/MFA policy. The client uses an access token for the intended API; an identity token is not a general API credential.
+
+At the API boundary, token validation checks the issuer, audience, signature and applicable lifetime through supported middleware. Authorization then evaluates policies and the ownership of the requested record. A valid sign-in is not permission to retrieve any order ID. The service uses its own controlled data-access configuration; the phone does not connect directly to the customer database or receive backend secrets.
+
+A later customer switching accounts must not see another account's cached stories or files. Sign-out, local cleanup, token expiration and recovery need explicit journeys and rejection tests. Local biometric unlocking and provider-enforced MFA serve different boundaries. Chapters 22–26 develop these account journeys and their server checks.
+
+The useful question to carry forward is: **which component is authorized to make this decision?** The view can hide an action, but the API must still reject an unauthorized request. The preview helps you locate that future responsibility without treating it as an implemented security system.
+
+## Worked Example
+
+The document client receives an array from `/api/v1/catalog/items` and rejects it. The server is reachable and the HTTP response can be valid for its route, yet the envelope parser has nothing to read as `SchemaVersion` and `Revision`.
+
+Select `/api/v1/catalog` for the document adapter, then inspect one complete envelope. When paging, retain the first page’s revision for every continuation. If the service returns 409 because the revision changed, restart the page sequence rather than combine records from different snapshots.
+
+## Troubleshooting
+
+| Symptom | First check |
+|---|---|
+| Document parser rejects a successful response | Match the envelope client to `/api/v1/catalog`, not the items array route |
+| First page works but continuation returns 409 | Restart paging against the new revision |
+| PC request works but emulator fails | Use the emulator’s correct host address and inspect firewall/listener binding |
+| HTTPS fails while HTTP health succeeds | Configure the selected platform’s certificate trust; keep validation enabled |
 
 ## Chapter Summary
 
 The application now has a small executable service contract and a consumer that can validate it. The API makes format, content revision, paging and errors explicit; the client preserves its time, size and retry budgets. The verification separates portable rules, the ASP.NET Core pipeline and a real local listener before native networking is introduced.
 
-## Exercises and Review Questions
+## Exercises
 
 1. Start the API and inspect its first two-item page. Use the returned revision and nextOffset to retrieve every ID. Compare the sequence with the complete document and explain when nextOffset becomes null.
 2. Send limit=0, duplicate limit values and a stale revision. Identify which responses are 400 and which is 409. Explain why a changed revision needs a different recovery action from a malformed number.

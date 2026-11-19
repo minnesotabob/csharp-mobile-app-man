@@ -19,20 +19,6 @@ By the end of this chapter, you will be able to:
 
 **Prerequisites:** Complete Chapters 1–11 and have the companion portable test project available. **Deliverable:** A validated local catalog snapshot whose records and creator references remain stable as display metadata changes.
 
-### Guided lab: trace one catalog record
-
-1. Open the companion solution and locate the catalog model, bundled JSON files, loader, and metadata tests. Use the Chapter 12 source milestone documented in the companion repository rather than assuming a later checkout is identical.
-2. Choose the bundled song *Northern Lights*. Record its item ID, creator ID, content kind, and optional fields. Do not infer that missing metadata means a negative answer.
-3. Follow the creator ID into the bundled creator fixture. Confirm that the relationship is made by ID rather than the artist's display name.
-4. Run the portable test suite using the instructions in the companion README. Note the actual result before changing fixture data.
-5. Temporarily replace the song's creator ID with an unknown ID and run the relevant validation tests. Expect the snapshot to be rejected. Restore the original ID and run the tests again.
-
-**Expected result:** A correctly linked snapshot loads; an unknown creator reference causes validation failure. This is a reproducible contract exercise, not a claim that a native device has been tested.
-
-### Why the relationship matters
-
-Imagine changing the artist's display name on a promotional page. If the application used display text as a foreign key, every linked song would need to change at the same moment. By using an immutable creator ID, the content model can change presentation independently of identity. The same reasoning applies to book editions, revised titles, and external streaming-provider metadata.
-
 ## 12.1 Decide what one record represents
 
 Our ContentKind enum has three values: Book, Song, and Podcast. In this small catalog, a Podcast item represents an episode. A future show directory needs a separate show identity and an episode-to-show relationship. We do not overload one record with both meanings.
@@ -74,19 +60,33 @@ Identifiers are compared with StringComparer.Ordinal. That choice makes them cas
 
 ## 12.3 Add optional metadata without guessing
 
-The existing positional constructor remains usable. Its original required parameters are unchanged, and the additional parameters have defaults:
+Open `src/GnazzosWorld.Core/Catalog/CatalogItem.cs`. This complete Chapter 12 record keeps the original required fields and adds optional metadata with explicit defaults:
 
 ```csharp
-Uri? ExternalUrl = null,
-string? CreatorId = null,
-DateOnly? ReleaseDate = null,
-string? Edition = null,
-int? DurationSeconds = null,
-ContentAvailability Availability = ContentAvailability.Unknown,
-ContentAdvisory Advisory = ContentAdvisory.Unknown
+using System.Text.Json.Serialization;
+
+namespace GnazzosWorld.Core.Catalog;
+
+public enum ContentKind { Book, Song, Podcast }
+public enum ContentAvailability { Unknown, Listed, Unavailable }
+public enum ContentAdvisory { Unknown, Clean, Explicit }
+
+public sealed record CatalogItem(
+    [property: JsonRequired] string Id,
+    [property: JsonRequired] string Title,
+    [property: JsonRequired] string Creator,
+    [property: JsonRequired] ContentKind Kind,
+    [property: JsonRequired] string Description,
+    Uri? ExternalUrl = null,
+    string? CreatorId = null,
+    DateOnly? ReleaseDate = null,
+    string? Edition = null,
+    int? DurationSeconds = null,
+    ContentAvailability Availability = ContentAvailability.Unknown,
+    ContentAdvisory Advisory = ContentAdvisory.Unknown);
 ```
 
-These declarations are a **Chapter 12 milestone excerpt**, not a complete stand-alone record declaration. At the later Chapter 18 companion revision, `CatalogItem.cs` also ends with `ReadingSample? Sample = null`, added for Chapter 14's owned book sample. Readers using the evolving review branch should inspect the complete current constructor; the extra optional field does not invalidate this earlier lesson.
+The constructor’s first five fields describe every item. The optional values then distinguish a known value from an absent one. Later chapters extend this record with reading-sample metadata; use the Chapter 12 checkpoint when following this declaration.
 
 ReleaseDate uses DateOnly because an editorial release date is a calendar value. It is not a timestamp showing the instant an API response arrived. If a later provider offers territory-specific release times, preserve that distinct meaning in a separate field.
 
@@ -100,17 +100,17 @@ Unknown metadata remains absent or explicitly Unknown. We do not insert today's 
 
 ContentAvailability has Unknown, Listed, and Unavailable values. Listed means that this catalog includes a listing. It does not mean that an audio file is downloadable, an ebook is owned, a customer has purchased access, or an external provider will serve the content in every country.
 
-The four real-title sample records use Listed. The fictitious podcast episode uses Unavailable because the development fixture includes no media. Existing native detail views still show their original text; this commit does not add an availability badge or prevent an external launch.
+The four real-title sample records use Listed. The fictitious podcast episode uses Unavailable because the development fixture includes no media. Chapter 14 adds the detail labels and action rules that use this metadata.
 
-ContentAdvisory has Unknown, Clean, and Explicit values. Those labels describe editorial metadata, not permission to play content. All five bundled records retain Unknown because this exercise does not establish verified ratings.
+ContentAdvisory has Unknown, Clean, and Explicit values. All five bundled records use Unknown until an editorial source supplies a rating. Playback permission is a separate concern.
 
 These enums are independent. An unavailable item could have a known advisory, and a listed item could have an unknown advisory. A single boolean named IsAvailableAndSafe would lose both distinctions.
 
-In Chapter 14, the detail experience can translate these values into useful text and actions. For now, the importer and tests establish what the values mean before controls depend on them.
+Chapter 14 turns these metadata values into detail labels and action availability.
 
 ## 12.5 Validate syntax and meaning separately
 
-System.Text.Json reads JSON syntax and converts values into .NET types. Required-property annotations establish presence requirements. They do not establish that a present string contains useful text.
+System.Text.Json reads syntax and .NET types. JsonRequired checks presence; domain validation checks whether a supplied string contains useful text.
 
 For example, a record with a missing Title property fails deserialization because of JsonRequired. A record whose Title is a single space reaches our validation and fails with InvalidDataException. Both reject the input, but they fail at different boundaries.
 
@@ -162,6 +162,21 @@ CatalogLoader.LoadBundled now delegates to CatalogSnapshot.LoadBundled().Items. 
 
 The tests inspect CanRead after both successful loading and a failed creator-reference check. Resource ownership is observable behavior, and a later file or network adapter should not need to guess it.
 
+### Inspect the bundled stream lifetime
+
+In `CatalogSnapshot.cs`, the method opening embedded resources owns their lifetime:
+
+```csharp
+public static CatalogSnapshot LoadBundled()
+{
+    using var items = OpenResource("catalog.json");
+    using var creators = OpenResource("creators.json");
+    return Load(items, creators);
+}
+```
+
+Both streams stay open through `Load`, including relationship validation. The `using` declarations dispose them as the method exits on success or exception. By contrast, a caller supplying its own streams to `Load` remains responsible for those streams. Follow ownership at the method boundary instead of adding disposal in both places.
+
 ## 12.8 Treat imports as boundaries
 
 The local records currently serve two jobs: a small JSON input contract and the read-only data displayed by the app. That is acceptable for a controlled bundled fixture. It does not mean that a future external provider should deserialize straight into our application model.
@@ -176,13 +191,52 @@ Also separate imported text from instructions. A description is content to displ
 
 CatalogMetadataTests adds cases for valid optional values, malformed dates, unsupported enum values, inappropriate book/audio fields, duplicate creators, missing references, preserved stream ownership, and the current bundled relationships.
 
-These tests complement CatalogTests, which already covers missing kinds, malformed JSON, duplicate item IDs, empty catalogs, and search behavior. The entire suite runs through the existing portable Windows workflow.
+These tests complement CatalogTests, which already covers missing kinds, malformed JSON, duplicate item IDs, empty catalogs, and search behavior. Run these cases from the portable test project.
 
-A test that reads a three-minute duration proves the importer preserves 180 seconds. It does not prove the actual recording is three minutes long. A passing reference test proves the fixture has a related creator; it does not prove the attribution is commercially authoritative.
+Use invented durations and creators when testing import mechanics. Obtain real recording lengths and attribution from reviewed editorial sources before publishing them.
 
-No mobile APIs changed in this chapter. Portable tests establish import behavior. Device execution, native rendering of the new metadata, and iOS builds remain separate verification tasks.
+Use these import failures to diagnose the data before inspecting how Chapter 14 presents it.
 
-## 12.10 Hands-on exercise: break a relationship
+## Guided Lab
+
+Trace one catalog record.
+
+1. Open the companion solution and locate the catalog model, bundled JSON files, loader, and metadata tests. Use the Chapter 12 source milestone documented in the companion repository rather than assuming a later checkout is identical.
+2. Choose the bundled song *Northern Lights*. Record its item ID, creator ID, content kind, and optional fields. Do not infer that missing metadata means a negative answer.
+3. Follow the creator ID into the bundled creator fixture. Confirm that the relationship is made by ID rather than the artist's display name.
+4. Run the portable test suite using the instructions in the companion README. Note the actual result before changing fixture data.
+5. Temporarily replace the song's creator ID with an unknown ID and run the relevant validation tests. Expect the snapshot to be rejected. Restore the original ID and run the tests again.
+
+**Expected result:** A correctly linked snapshot loads; an unknown creator reference causes validation failure before the catalog is displayed.
+
+### Why the relationship matters
+
+Imagine changing the artist's display name on a promotional page. If the application used display text as a foreign key, every linked song would need to change at the same moment. By using an immutable creator ID, the content model can change presentation independently of identity. The same reasoning applies to book editions, revised titles, and external streaming-provider metadata.
+
+## Worked Example
+
+An editor changes Minnesota Bob’s display name while a reader has saved Northern Lights as a favorite.
+
+| Value | Before the edit | After the edit |
+|---|---|---|
+| Item ID | `song-northern-lights` | Same ID |
+| Creator ID | `artist-minnesota-bob` | Same ID |
+| Creator display name | Original name | New editorial display text |
+| Favorite relationship | Points to item ID | Still points to the same item |
+
+The catalog’s compatibility `Creator` field is a display copy. Refresh that copy deliberately if you change the creator’s name; the loader validates the relationship’s identity, not equality between the two display strings. Keep a rename test separate from the missing-reference test so an editorial change cannot accidentally rewrite identity.
+
+## Troubleshooting
+
+- **A snapshot fails to load:** Check required JSON fields and types first, then inspect duplicate IDs and creator references. An unknown creator is an import error; do not silently discard the relationship.
+- **An optional date fails parsing:** Distinguish an absent date from an invalid supplied date such as February 30. Keep unverifiable dates absent instead of fabricating a placeholder.
+- **A creator name change breaks navigation:** Verify the route and relationship use the stable ID rather than the display name. Restore fixture integrity and rerun the metadata tests.
+
+## Chapter Summary
+
+A useful mobile catalog starts with trustworthy identities and explicit meaning. This chapter separates content records from creators, keeps stable IDs independent of display names, and treats absent values as unknown rather than inventing dates or advisories. The bundled loader validates both individual records and relationships across files so broken references fail at the import boundary instead of surfacing later as confusing user-interface behavior. The guided lab demonstrates this contract by deliberately introducing an invalid creator reference, observing the expected failure, and restoring the fixture. These rules also prepare the application for provider imports, discovery, navigation and eventual synchronization. The result is intentionally a validated offline teaching snapshot, not a production content-ingestion service or a guarantee of native-device behavior.
+
+## Exercises
 
 Work in a local checkout and keep the original fixture available for restoration.
 
@@ -197,7 +251,7 @@ For a second exercise, provide a known release date only inside a test fixture. 
 
 Do not “fix” the failing relationship exercise by changing the loader to ignore unknown references. The purpose is to make broken import data visible before the browser renders it.
 
-## 12.11 Review questions
+### Review questions
 
 - Why does an artist need an identity separate from the songs credited to that artist?
 - What is the difference between a missing property and a present but blank string?
@@ -207,16 +261,6 @@ Do not “fix” the failing relationship exercise by changing the loader to ign
 - Why should future provider DTOs be translated before they reach the app?
 
 The next chapter builds on these identities to extend search and filtering, define sorting behavior, and introduce favorites. Stable IDs let those features survive renamed titles and reordered records.
-
-## Troubleshooting the guided lab
-
-- **A snapshot fails to load:** Check required JSON fields and types first, then inspect duplicate IDs and creator references. An unknown creator is an import error; do not silently discard the relationship.
-- **An optional date fails parsing:** Distinguish an absent date from an invalid supplied date such as February 30. Keep unverifiable dates absent instead of fabricating a placeholder.
-- **A creator name change breaks navigation:** Verify the route and relationship use the stable ID rather than the display name. Restore fixture integrity and rerun the metadata tests.
-
-## Chapter Summary
-
-A useful mobile catalog starts with trustworthy identities and explicit meaning. This chapter separates content records from creators, keeps stable IDs independent of display names, and treats absent values as unknown rather than inventing dates or advisories. The bundled loader validates both individual records and relationships across files so broken references fail at the import boundary instead of surfacing later as confusing user-interface behavior. The guided lab demonstrates this contract by deliberately introducing an invalid creator reference, observing the expected failure, and restoring the fixture. These rules also prepare the application for provider imports, discovery, navigation and eventual synchronization. The result is intentionally a validated offline teaching snapshot, not a production content-ingestion service or a guarantee of native-device behavior.
 
 ## Official references
 

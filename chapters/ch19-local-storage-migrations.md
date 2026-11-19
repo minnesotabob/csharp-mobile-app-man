@@ -5,7 +5,7 @@ A phone may lose its connection, close under memory pressure, or restart after a
 
 Chapters 12–14 developed a validated public catalog, discovery and a bounded favorites example. Chapter 15 saved an explicitly requested song draft as a local JSON envelope. Chapters 17–18 established a network reader and a small public API. Here we create a real SQLite-backed teaching store using **Microsoft.Data.Sqlite 11.0.0** with **C# 15 and .NET 11**. This store holds a complete validated public catalog document, a set of local favorites, and percentage reading progress. It introduces an upgrade from schema 1 to schema 2 without deleting existing favorites.
 
-We do **not** claim that this file is encrypted, tied to an authenticated account, or ready to persist confidential customer stories. The implementation is registered in the MAUI composition root but does not replace the existing catalog or saved-draft UI. Chapter 20 will decide when downloaded data becomes authoritative, how old a cached snapshot may be, and how pending work survives interrupted connectivity. Chapter 21 will consider synchronization and conflict resolution.
+This unencrypted store holds public metadata and anonymous local state. Its registration leaves the existing catalog and JSON draft UI unchanged. Chapter 20 adds local-first refresh and freshness; Chapter 21 handles two-device conflicts. Keep confidential customer stories out of this database.
 
 ## What You'll Learn
 
@@ -17,9 +17,9 @@ By the end of the chapter, you will be able to:
 4. Store and recover a whole catalog snapshot without exposing a partially replaced document.
 5. Test new-file initialization, data persistence, migrations, rejected writes and future-schema failures using disposable database files.
 
-**Prerequisites:** Chapters 12–18, an SDK matching `global.json`, and the companion source at `work/chapter16-pricing` after the Chapter 19 commits. For an exact comparison, use the code and tests at the same Git commit rather than reading whichever version happens to be on `main`.
+**Prerequisites:** Chapters 12–18, the SDK selected by `global.json`, and the Chapter 19 checkpoint linked from the companion milestone guide.
 
-**What you will build:** `LocalCatalogDatabase`, a small SQLite database with two schema migrations, and a portable integration suite that runs without an Android emulator. This is a **real local database exercise** with a **deliberately limited production contract**.
+**Deliverable:** `LocalCatalogDatabase`, a small SQLite database with two schema migrations, and a portable integration suite that runs without an Android emulator. This is a **real local database exercise** with a **deliberately limited production contract**.
 
 ## 19.1 Pick a storage mechanism before writing a repository
 
@@ -39,7 +39,7 @@ The Chapter 13 `IFavoriteStore` example uses Preferences so that its bounded set
 
 **Design decision:** In this chapter, the SQLite file is an *additional local store*. It is not a public API, a payment ledger, an encrypted vault, or a cross-device account database.
 
-### Worked reasoning: why not put the song request in this file now?
+### Before you begin: why not put the song request in this file now?
 
 An anonymous request may contain names, contact details and personal stories. Changing its storage mechanism does not establish encryption, data retention policy, logout cleanup, lawful access boundaries, or account ownership. It is safer to keep the Chapter 15 workflow explicit and explain that a later protected draft design needs encryption at rest where appropriate, authenticated ownership when synchronized, and a deliberate migration/consent policy. SQLite's file format alone supplies none of those guarantees.
 
@@ -199,6 +199,33 @@ The complete source also parameterizes every item ID, revision, catalog payload 
 
 The `scope` string is only a partition label for local exercise data. It is **not proof of authentication**. Later account-scoped storage must derive ownership from a trusted session and account lifecycle, not from any string a caller happens to supply.
 
+### Follow one favorite write from parameters to completion
+
+In `src/GnazzosWorld.Core/Storage/LocalCatalogDatabase.cs`, the actual favorite operation uses the same parameters for selection and removal:
+
+```csharp
+public Task SetFavoriteAsync(string scope, string itemId, bool selected,
+    CancellationToken ct = default)
+{
+    CheckIdentity(scope, nameof(scope));
+    CheckIdentity(itemId, nameof(itemId));
+    return InDatabaseAsync(async (db, token) =>
+    {
+        using var cmd = selected
+            ? Command(db,
+         "INSERT OR IGNORE INTO favorites(scope, item_id) VALUES($scope, $id);")
+            : Command(db,
+                "DELETE FROM favorites WHERE scope=$scope AND item_id=$id;");
+        cmd.Parameters.AddWithValue("$scope", scope);
+        cmd.Parameters.AddWithValue("$id", itemId);
+        await cmd.ExecuteNonQueryAsync(token);
+        return true;
+    }, ct);
+}
+```
+
+`scope` and `itemId` remain parameter values instead of SQL fragments. `selected` chooses between two fixed statements. Both statements identify the same scoped item; the delete cannot accidentally remove every favorite in that partition. The surrounding `InDatabaseAsync` helper opens the connection, applies migration when needed and releases its instance gate.
+
 ## 19.7 Replace a public catalog without half an update
 
 The Chapter 18 public API's contract is `CatalogDocument`. Before writing it, `ReplaceCatalogAsync` invokes `document.Validate()`, which checks document version, revision and catalog relationships. Only then does it serialize the complete document and enter the database transaction.
@@ -225,7 +252,7 @@ Reading reverses the process: fetch the serialized document, deserialize using t
 4. Read the stored document again. Its revision must still equal `sample-1`.
 5. Save a valid `sample-2` document and verify it is now the stored revision.
 
-The integration test named `Catalog_is_atomically_replaced_and_invalid_input_does_not_destroy_previous_snapshot` executes these steps. A future app must also decide whether `sample-2` is newer or fresher; the SQLite upsert alone cannot establish server authority.
+The test `Catalog_is_atomically_replaced_and_invalid_input_does_not_destroy_previous_snapshot` exercises this replacement. Chapter 20 adds retrieval-time freshness; keep that policy separate from the upsert.
 
 ## 19.8 Model favorites and progress as stable local state
 
@@ -267,7 +294,7 @@ Persistence failures matter because the application may still be running and sho
 | Future schema version 99 | Refuse unsupported downgrade | Real-file version test |
 | Process restarts after a successful write | Data remains in the file | Close/reopen test |
 
-A database write may fail because the filesystem is full, storage permissions changed, the process terminated, or another actor holds a lock. The test uses a database trigger to make a write fail predictably while retaining the old value. That test proves the failure path at the database boundary; it does not recreate every physical disk failure.
+Use a database trigger to fail a write predictably, then reopen the file and inspect the old value. Also plan native recovery for full storage, permission changes, process interruption and lock contention.
 
 A resilient UI must report that its newest operation was not saved. It should not update a "saved" indicator before the commit succeeds. This follows the same principle as Chapter 13's favorite store and Chapter 16's uncertain submission state.
 
@@ -277,7 +304,29 @@ Do not use the catch-all strategy "delete the database and start over." Public c
 
 On mobile, platform backup defaults also matter. A backing file can be restored onto a newer application version, or onto a device without the original secrets. Schema migration, account ownership, encryption keys and backup configuration must be evaluated together before public release.
 
-## 19.10 Run the complete source and tests
+## 19.10 What remains before this is a production data layer
+
+Use this checklist when moving from the public-metadata teaching store to a product:
+
+| Concern | Decision or check |
+|---|---|
+| Native responsiveness | Profile real reads, writes and imports; an async signature does not guarantee off-thread I/O |
+| Multiple writers | Define connection, locking and busy behavior beyond this instance’s semaphore |
+| Personal information | Add appropriate storage protection, retention, ownership and deletion policies |
+| Remote acceptance | Reconcile local intent with server state; a SQLite write is not an API receipt |
+| Migration | Test each supported prior schema and preserve data on failed upgrades |
+| Backup/recovery | Define integrity checks and a recoverable path for damaged or newer files |
+
+The Chapter 15 JSON request draft remains a separate store. Do not move private stories into this public-metadata database merely because a new table is easy to add.
+
+## Guided Lab
+
+1. Use a disposable database path and the Chapter 19 source checkpoint. Run the existing real-file storage tests before editing anything.
+2. Inspect the version-1 fixture: it has catalog and favorite tables but no reading-progress table.
+3. Open it through LocalCatalogDatabase. Check that schema version 2 is reported and the saved favorite remains.
+4. Repeat the failed-upgrade fixture, then reopen the file. Compare the schema and favorite with the pre-upgrade state.
+5. Follow the scoped-favorite test through SetFavoriteAsync. Use the same item ID in two scopes and confirm that removing one does not remove the other.
+6. Restore the original tests, then run the complete portable suite with the commands below.
 
 Open the companion repository at the Chapter 19 source revision and inspect:
 
@@ -303,11 +352,22 @@ $app = "src/GnazzosWorld.App/GnazzosWorld.App.csproj"
 dotnet build $app -f net11.0-android -c Debug
 ```
 
-**What a successful portable run establishes:** The compiled code exercises actual SQLite files and the listed migration, snapshot, progress and favorite behaviors on the CI operating system. The suite does not verify Android/iOS native SQLite loading, UI responsiveness, encryption, cloud backup configuration, an actual disk-full condition, or application restart UX on a phone. The Android build verifies compilation and packaging dependencies, not device execution.
+The real-file tests exercise migrations, snapshot replacement, progress and favorite isolation. After those pass, use a native host to check provider loading, app-data location, restart recovery and UI responsiveness on your target devices.
 
-**Verification record:** Inspect the newest CI runs for the Chapter 19 commit rather than relying on the historical Chapter 18 count of 245 portable tests. If the workflow has not yet finished, mark the new checks *pending*, not passed.
+## Worked Example
 
-### Troubleshooting
+A reader has a version-1 database containing Kai as a favorite. The new app needs the version-2 reading-progress table.
+
+| Step | Database state |
+|---|---|
+| Read `user_version` | Version 1; existing favorites remain |
+| Begin upgrade transaction | Add reading-progress table and set version 2 inside the transaction |
+| Fail before commit | Roll back; the version-1 schema and favorites remain |
+| Retry successfully | Commit the new table and version together |
+
+Start the upgrade test from an actual version-1 file, not a fresh version-2 database. Reopen after success and after an injected failure to check the stored schema and preserved favorite. A file from a newer unsupported version should be kept and refused, not destructively downgraded.
+
+## Troubleshooting
 
 | Symptom | Likely cause or boundary | Diagnostic action |
 |---|---|---|
@@ -320,27 +380,11 @@ dotnet build $app -f net11.0-android -c Debug
 | Old catalog disappears after invalid fetch | Replacement happened before complete validation | Validate first, transact the complete snapshot, preserve prior revision |
 | App loads but storage is unavailable | File permission, native provider, disk or migration error | Report specific failure; do not silently reset personal state |
 
-## 19.11 What remains before this is a production data layer
-
-A short, testable implementation is valuable, but a production architecture needs decisions this exercise intentionally postpones.
-
-**Native performance:** The current store serializes through one instance and opens a connection per operation. This makes ownership easy to teach but does not measure contention, startup cost, large catalog ingestion or UI responsiveness. Profile those on the target devices.
-
-**Cross-process coordination:** The gate serializes a single `LocalCatalogDatabase` instance, not every process or instance that may open the file. SQLite's locking and busy handling remain relevant if external writers exist.
-
-**Sensitive data:** The file is not an encrypted vault. The Chapter 15 JSON draft remains separate, and real customer stories need deliberate encryption, retention, ownership and deletion policies before any migration.
-
-**Atomicity across systems:** A local SQLite commit and a remote API acceptance are two distinct transactions. Chapter 20 will use persisted pending operations for offline work; it must not represent a local receipt as server-confirmed acceptance.
-
-**Migration discipline:** Each new schema version should carry forward all earlier supported versions, test both new installs and upgrade paths, and retain a recovery strategy. A version number alone does not make destructive changes safe.
-
-**Backup and maintenance:** Add integrity checks, explicit recovery, file growth management, and an app-update test matrix. The sample intentionally does not claim device backup or restore verification.
-
 ## Chapter Summary
 
 Local persistence is a contract about survival, ownership and change—not merely a call to write a file. This chapter selects SQLite for a versioned public catalog, local favorites and reading progress while retaining Preferences and an explicit JSON draft for their existing purposes. `LocalCatalogDatabase` validates complete catalog documents before atomic replacement, binds user values as SQL parameters and upgrades schema versions inside a transaction. Its real-file tests exercise persistence across reopen, upgrade from version 1, local scope separation, rejected writes, cancellation and refusal to downgrade an unknown future schema. The design remains intentionally small: local scope names are not identities, SQLite async APIs do not guarantee nonblocking device I/O, and no secret or live customer order belongs in this example. Chapter 20 builds on these guarantees to design offline freshness and a restart-safe work queue.
 
-## Exercises and Review Questions
+## Exercises
 
 1. **Guided, with a worked check:** Add a new field `last_opened_utc` for reading progress in a hypothetical version 3 migration. Predict the result of opening an existing version-1 file and a version-2 file. **Worked check:** Both must reach version 3 without losing existing favorites or progress; the upgrade must assign a safe default or permit NULL for older rows, run transactionally, and reject a future unsupported schema rather than trying to downgrade.
 2. **Failure exercise:** Temporarily remove validation before catalog replacement. Write a test proving why a malformed creator relationship must not replace the known-good document. Restore the original implementation and require the regression test to pass.

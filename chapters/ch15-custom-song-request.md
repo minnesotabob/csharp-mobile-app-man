@@ -5,34 +5,11 @@ A catalog asks a visitor to choose something that already exists. A custom-song 
 
 Our example begins on the home page and opens a three-step request builder. The first step describes the music. The second collects the story. The third collects contact details and produces a review. This chapter stops at review: it does not create an order, calculate a final quote, send email, or charge a customer. Chapter 16 establishes the submission contract and pricing rules; later chapters connect that contract to an authenticated service.
 
-**Prerequisites:** The application through Chapter 14, the portable test project, and the dependency-injection registration in MauiProgram. **Outcome:** A navigable request builder with conditional fields, meaningful validation, explicit local draft saving, and a review that becomes invalid when input changes.
-
-**Verification status:** The Chapter 14–16 portable suite has run on Windows CI with 198 passing tests. The companion verification log records the exact tested revision and native build results. Actual Android/iOS device behavior remains unverified.
-
 ## What You'll Learn
 
 You will learn to break a complex customer request into manageable steps; keep draft state independent of controls; use conditional inputs without losing information; validate at the moment a decision requires it; invalidate an outdated review; and distinguish an explicit saved draft from unsaved in-process edits.
 
 **Prerequisites:** The Chapter 14 navigation patterns, portable test project, and a development build of the sample app. **Deliverable:** A three-step request builder whose progress can be tested independently of the native keyboard.
-
-### Guided lab: save, edit and recover
-
-1. Start a new request with an instrumental choice. Observe which vocal fields are hidden and whether their stored values are intentionally retained or cleared.
-2. Enter the story and contact details, advance to review, then edit the story. Verify that the earlier review is invalidated rather than displayed as current.
-3. Save a draft explicitly. Change the story again without saving and navigate away and back during the same process. Observe the in-memory state.
-4. Restart the app and reload the draft. The expected persisted result is the last *saved* version, not an uncommitted edit.
-5. Inject a draft-store failure. Confirm that the interface does not report success and does not discard the editable request.
-6. Repeat the journey with a large font and screen reader on a real device; record it as pending if no device run is available.
-
-**Expected result:** Review reflects the most recently validated input, explicit save controls persistence, and a failed save cannot masquerade as success. No part of this exercise submits a real customer order.
-
-### Worked reasoning: saved and editable are separate states
-
-Users reasonably expect an unfinished composition to survive moving between form steps. That does not automatically mean every keystroke should be written to permanent storage, particularly when the story contains personal details. Separate the live editing model from the saved snapshot, make the save action explicit, and explain which data survives process termination.
-
-### Running journey: an anniversary at Long Lake
-
-Use an invented customer throughout this lab: someone requesting a clean folk song for an anniversary at Long Lake. They choose vocals, add a family memory, then decide an instrumental may suit the occasion better. Preserve their written story while the relevant fields change. Use fictitious contact details and avoid putting a real family story into a shared fixture or screenshot.
 
 ## Begin with the customer's decisions
 
@@ -70,7 +47,32 @@ var review = draft.ForReview();
 // The editable draft still retains those notes.
 ```
 
-The record is a local editing model, not a server-side authorization or order contract. Treat future server input as untrusted and run authoritative validation there too. A mobile user interface cannot establish ownership, determine that a payment succeeded, or make an expired price current.
+The record owns local editing state. A customer API must separately validate submitted values, ownership, current quote terms and payment state.
+
+### Trace edit and review in the view model
+
+Open `src/GnazzosWorld.Core/Presentation/SongRequestViewModel.cs`. These methods connect an edit to the review step:
+
+```csharp
+public void Edit(SongRequest value)
+{
+    Draft = value; Review = null; IsDirty = true;
+    Status = "Unsaved changes."; Errors = ""; Changed();
+}
+public bool Next()
+{
+    var errors = SongRequestRules.Validate(Draft, Step);
+    Errors = string.Join("\n", errors.Select(e => e.Message));
+    if (errors.Count != 0) { Changed(); return false; }
+    if (Step < 2) Step++;
+    else Review = Draft.ForReview();
+    Changed(); return true;
+}
+```
+
+`Edit` changes the draft, clears the old review and announces unsaved changes. `Next` checks every rule applicable to the current step. A failed check keeps the customer at that step; the final successful check produces `ForReview()` rather than advancing to a nonexistent fourth step.
+
+Use a breakpoint in each method while changing only the email address after review. The story remains in `Draft`, but the old review must disappear immediately.
 
 ## Validate at meaningful boundaries
 
@@ -101,7 +103,31 @@ The Field helper adds a visible label before each input and sets a semantic hint
 
 The page uses a heading for the step indicator and an announcement when validation fails. Review content appears as a single text summary, including story and contact details, so it can be read in order. Editing after review hides that summary immediately. The current implementation has a summary-level error experience; field-specific focus routing and translated strings are explicit follow-up work.
 
-No layout setting proves keyboard usability. On devices, check that the story remains reachable with the keyboard open, that the final contact fields can scroll into view, and that Back is not mistaken for a keyboard-dismiss action. Also test large text and narrow landscape windows. Never record these checks as passed based solely on XML parsing or portable tests.
+With the keyboard open, scroll to the story and final contact fields. Repeat with large text and narrow landscape. Check Back and keyboard dismissal using the same invented inputs on each target device.
+
+### Build one field and connect its edit callback
+
+`src/GnazzosWorld.App/Pages/SongRequestPage.cs` uses this helper for short entries and the multiline story:
+
+```csharp
+private void Field(string label, string value, int limit,
+    Action<string> update, bool multiline = false, bool email = false)
+{
+    panel.Children.Add(new Label { Text = label });
+    InputView input = multiline
+        ? new Editor { AutoSize = EditorAutoSizeOption.TextChanges,
+            MinimumHeightRequest = 120 }
+        : new Entry { Keyboard = email ? Keyboard.Email : Keyboard.Default };
+    input.MaxLength = limit; input.Text = value;
+    SemanticProperties.SetHint(input, label);
+    input.TextChanged += (_, args) => update(args.NewTextValue ?? "");
+    panel.Children.Add(input);
+}
+```
+
+This helper belongs inside the existing page, where `panel` is the step’s vertical layout. It creates the label first, chooses an `Editor` or `Entry`, assigns the current text, then attaches the change callback. Initial text is assigned before subscription, so constructing a field does not itself mark the draft edited.
+
+The caller supplies the field-specific update. Story uses `multiline: true`; email uses `email: true`. Those settings change the control or keyboard while the portable rules still decide whether the entered value is acceptable.
 
 ## Distinguish open edits from saved drafts
 
@@ -123,6 +149,28 @@ The envelope includes schema version 1. Load rejects an unknown version, a missi
 
 Save may accept an incomplete draft. Requiring a complete contact step before saving would defeat the purpose of saving unfinished work. A failed save keeps the open draft dirty and displays a retry message. A failed discard keeps the open values as well. Status text says “saved” only after the storage operation returns successfully.
 
+### Confirm saving before changing the status
+
+The view model’s save boundary is:
+
+```csharp
+public bool Save()
+{
+    try
+    {
+        store.Save(Draft); IsDirty = false;
+        Status = "Draft saved on this device."; Changed(); return true;
+    }
+    catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+    {
+        Status = "Could not save. Your edits are still open; try again.";
+        Changed(); return false;
+    }
+}
+```
+
+A successful write clears `IsDirty`. The handled file errors leave the editable draft intact and keep the status specific about what failed. `Restore` separately protects current unsaved edits from being overwritten when a page reappears.
+
 ## Handle personal information deliberately
 
 The story and contact fields can contain personal information. The demonstration uses a local, anonymous JSON draft; it provides no application-level encryption, account isolation, cloud synchronization, or backup exclusion configuration. Do not describe the app-data directory as encrypted storage merely because it is application-specific. Operating-system sandboxing and application encryption solve different problems.
@@ -139,7 +187,42 @@ A particularly useful test saves one draft, changes the story, then makes the ne
 
 The test double does not prove file replacement, native navigation, screen-reader output, or restart behavior on Android or iOS. Run the portable suite first, compile the Android app, then complete the device scenarios in docs/device-checks.md. Record toolchain, source revision, platform, and actual result. See the current verification log for the recorded portable run and native compilation results; device behavior must still be observed independently.
 
-## Troubleshooting the guided lab
+## Guided Lab
+
+Save, edit and recover.
+
+1. Start a new request with an instrumental choice. Observe which vocal fields are hidden and whether their stored values are intentionally retained or cleared.
+2. Enter the story and contact details, advance to review, then edit the story. Verify that the earlier review is invalidated rather than displayed as current.
+3. Save a draft explicitly. Change the story again without saving and navigate away and back during the same process. Observe the in-memory state.
+4. Restart the app and reload the draft. The expected persisted result is the last *saved* version, not an uncommitted edit.
+5. Inject a draft-store failure. Confirm that the interface does not report success and does not discard the editable request.
+6. Repeat the journey with a large font and screen reader on a real device; record the observed result.
+
+**Expected result:** Review reflects the most recently validated input, explicit save controls persistence, and a failed save cannot masquerade as success. No part of this exercise submits a real customer order.
+
+### Before you begin: saved and editable are separate states
+
+Users reasonably expect an unfinished composition to survive moving between form steps. That does not automatically mean every keystroke should be written to permanent storage, particularly when the story contains personal details. Separate the live editing model from the saved snapshot, make the save action explicit, and explain which data survives process termination.
+
+### Running journey: an anniversary at Long Lake
+
+Use an invented customer throughout this lab: someone requesting a clean folk song for an anniversary at Long Lake. They choose vocals, add a family memory, then decide an instrumental may suit the occasion better. Preserve their written story while the relevant fields change. Use fictitious contact details and avoid putting a real family story into a shared fixture or screenshot.
+
+## Worked Example
+
+Use the anniversary request at Long Lake. Save the story as “An evening by the lake,” then edit it to “Our anniversary at the cabin” without saving.
+
+| Action | Current editor | Last confirmed saved draft |
+|---|---|---|
+| Save the lake version | Lake story | Lake story |
+| Edit to the cabin version | Cabin story | Lake story |
+| Move to another step in the same process | Cabin story | Lake story |
+| Restart and load | Lake story | Lake story |
+| Save cabin version successfully | Cabin story | Cabin story |
+
+If saving the cabin version fails, keep it visible as unsaved text. Recovery should not claim that the last confirmed disk value changed.
+
+## Troubleshooting
 
 - **A customer loses edits while changing steps:** Check whether the form controls write to shared editable state and whether any page recreates the view model unexpectedly.
 - **An old review stays visible after editing:** Verify that changing validated input invalidates the review snapshot rather than presenting it as approved.
@@ -149,7 +232,7 @@ The test double does not prove file replacement, native navigation, screen-reade
 
 The request builder separates editing, validation, persistence, and review. Customers can change musical direction, navigate between steps, and save an incomplete draft. Failures preserve their work. A review is a validated snapshot that becomes invalid when input changes; it is not an order confirmation.
 
-## Exercises and Review Questions
+## Exercises
 
 1. Save a draft, edit its story without saving, leave the form, and return. Confirm that the unsaved story remains during the same process. Then restart the app and distinguish the last saved story from unsaved edits.
 2. Add field-level focus routing for validation errors. Verify the first invalid field with TalkBack and VoiceOver, including the announcement and the next navigation gesture.

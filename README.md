@@ -20,12 +20,14 @@ the [finishing checklist](planning/finishing-checklist.md).
 - [Recover original cited source checkpoints](source-history/README.md)
 - [Build and validate PDF/EPUB proofs](production/README.md)
 
-## Draft V2 revision
+## Draft V3 revision
 
-The current 484-page PDF proof expands Chapters 6–11 with 28 additional
-source-grounded listings, guided labs, worked examples and troubleshooting.
-All forty chapters remain included. The full editorial pass and native screenshot
-work are still in progress. See the [revision record](planning/draft-v2-editorial-revision.md).
+The current 497-page PDF proof continues the practical revision through Chapter 21.
+Chapters 12–21 now include source-grounded walkthroughs, worked examples and
+consistent practical sections; Draft V2's expanded UI chapters remain included.
+All forty chapters are preserved. The editorial pass, C# 15 feature review and
+native screenshot work remain in progress. See the
+[revision record](planning/draft-v3-editorial-revision.md).
 
 ## Read the manuscript
 

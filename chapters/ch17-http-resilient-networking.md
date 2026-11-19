@@ -5,28 +5,11 @@ Your application has just displayed five catalog entries. The customer pulls int
 
 A network request has several separate questions to answer: did the connection work, did the service accept the request, did the response match the contract, and is this result still relevant to the screen? This chapter establishes the first three boundaries for public catalog reads. The UI continues to use its bundled catalog while a separate networking lab exercises the new client through an in-process HTTP handler. Chapter 18 will supply a real companion API.
 
-**Prerequisites:** the validated catalog model from Chapter 12, asynchronous state ownership from Chapters 13–14, and the distinction between retries and new operations from Chapter 16. **Learning goals:** define a small HTTP boundary; reuse a client; apply one cancellation/deadline policy to headers, bodies and waits; validate bounded JSON; and retry only selected failures. **Delivered capability:** a GET-only catalog adapter, deterministic transport tests, and a labeled native demo screen without a deployed dependency.
-
 ## What You'll Learn
 
 You will learn to isolate HTTP access behind a narrow catalog interface; enforce response size and schema constraints; apply one total request deadline; choose bounded retry behavior for safe reads; classify failures without exposing private data; and verify behavior with an injected HTTP handler.
 
 **Prerequisites:** Chapter 12's catalog contract and the companion HTTP lab. **Deliverable:** A portable networking boundary whose failure handling can be tested without running a public service.
-
-### Guided lab: challenge a successful status code
-
-1. Execute the companion HTTP client tests against an in-process handler that returns a valid catalog document. Record the expected number of items.
-2. Return HTTP 200 with an HTML captive-portal page instead of JSON. Confirm that the client rejects its content type rather than treating the catalog as empty.
-3. Return an oversized response. Verify that the configured body limit stops ingestion before unbounded allocation.
-4. Arrange a transient read failure followed by a valid response. Observe which failures the bounded retry policy permits; do not generalize this policy to unsafe writes.
-5. Cancel the operation or exhaust its overall deadline. Check that later retries do not extend the logical request indefinitely.
-6. On failure, check that the existing bundled catalog remains available and logs do not contain response bodies or secrets.
-
-**Expected result:** HTTP status, media type, byte limits, schema, and operation ownership are evaluated separately. Handler tests do not establish TLS, routing or mobile-device connectivity.
-
-### Worked reasoning: 200 OK does not mean useful data
-
-HTTP success means the transport protocol received a response classified as successful. It does not prove that the response is the application's expected document. A hotel portal, proxy error or unexpectedly shaped JSON can all violate the contract. Verify the bytes and the domain model before replacing useful on-screen content.
 
 ## Begin with the contract
 
@@ -103,6 +86,30 @@ After a complete bounded read, CatalogLoader validates the list. The adapter tra
 
 All request, response, stream and buffer lifetimes are explicit. In particular, an unsuccessful response is disposed before the retry delay. Holding a response open while sleeping can retain network resources that the next attempt needs. Tests verify the disposal boundary rather than merely counting retry calls.
 
+### Count the bytes actually read
+
+In `src/GnazzosWorld.Core/Networking/HttpCatalogSource.cs`, the response is opened with `ResponseHeadersRead`. After checking status, media type and any declared length, the adapter reads this bounded body:
+
+```csharp
+await using var stream = await
+    response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
+using var buffer = new MemoryStream();
+var block = new byte[8192];
+while (true)
+{
+    var read = await stream.ReadAsync(block.AsMemory(),
+        ct).ConfigureAwait(false);
+    if (read == 0) break;
+    if (buffer.Length + read > MaximumBytes)
+        throw new CatalogFetchException(CatalogFetchProblem.TooLarge);
+    buffer.Write(block, 0, read);
+}
+```
+
+The declared content length is an early check, not the only check. This loop counts real bytes before writing each block to the buffer. The same cancellation token reaches the stream read. After the loop, the adapter rewinds the buffer and asks `CatalogLoader` to validate the document.
+
+With the one-megabyte limit, a response crossing the boundary fails even if its header omitted or understated the size. The adapter never publishes a partly read catalog.
+
 ## Retry a narrow set of read failures
 
 The adapter sends GET only. That restriction is useful: retrying a public catalog read does not ask the service to create a new customer order. Do not reuse this loop around the submission operation from Chapter 16. Writes need their own operation identity, server reconciliation and authorization rules.
@@ -151,7 +158,7 @@ Imagine a listener reporting that Northern Lights disappeared after Refresh. A u
 | Elapsed time and attempt number | Find slow or repeated operations | Define units and the logical operation scope |
 | App/API version and platform | Relate an incident to a release | Collect only the detail needed for diagnosis |
 
-This table is a design contract for later instrumentation, not a claim that the current adapter emits these events. The implementation already provides classified fetch failures and controlled tests. Chapter 35 adds systematic structured logging with `ILogger`, correlation, telemetry and crash-reporting choices within its isolated operations lab; Chapter 37 uses diagnostic evidence to investigate performance. Those later facilities are not automatically emitted by this Chapter 17 adapter.
+The adapter returns classified failures. The table plans additional events to add when instrumenting a service integration. Chapter 35 covers `ILogger`, correlation and telemetry; Chapter 37 uses traces to investigate performance.
 
 Use message templates with named properties rather than concatenating arbitrary values into log text. Do not log tokens, authentication headers, a request story, email addresses or full payloads. A custom-song request can contain sensitive personal details even when an engineer considers its description harmless. Define retention and access to diagnostics as deliberately as access to the underlying records.
 
@@ -181,13 +188,43 @@ Run the executable portable tests using the pinned SDK and record their source r
 
 ## Prepare for the companion API
 
-The networking lab is a deliberate bridge between bundled data and a real service. Its fixture does not use HttpClient's socket transport, so it needs no listener, certificate bypass or internet permission experiment to run. Replacing the handler later is an integration change with new checks, not evidence that a backend already exists.
+The networking lab uses an in-process handler, so it runs without a listener or internet access. Chapter 18 supplies the locally hosted service and its connection setup.
 
 Chapter 18 will define the companion API's route, response schema, validation, errors and local development address. It will also explain why localhost inside an emulator or phone is not automatically the Windows workstation. Keep development endpoint and certificate configuration explicit. Never solve a test connection problem by disabling certificate checks globally or shipping a development exception in a public release.
 
 The client already gives us the contract boundary on which to build: one operation, typed outcomes, bounded memory, one total time budget, and controlled retries for a public GET. The next chapter can focus on what the service promises because the application is no longer assuming that every response is immediate, trustworthy or complete.
 
-## Troubleshooting the guided lab
+## Guided Lab
+
+Challenge a successful status code.
+
+1. Execute the companion HTTP client tests against an in-process handler that returns a valid catalog document. Record the expected number of items.
+2. Return HTTP 200 with an HTML captive-portal page instead of JSON. Confirm that the client rejects its content type rather than treating the catalog as empty.
+3. Return an oversized response. Verify that the configured body limit stops ingestion before unbounded allocation.
+4. Arrange a transient read failure followed by a valid response. Observe which failures the bounded retry policy permits; do not generalize this policy to unsafe writes.
+5. Cancel the operation or exhaust its overall deadline. Check that later retries do not extend the logical request indefinitely.
+6. On failure, check that the existing bundled catalog remains available and logs do not contain response bodies or secrets.
+
+**Expected result:** HTTP status, media type, byte limits, schema, and operation ownership are evaluated separately. Handler tests do not establish TLS, routing or mobile-device connectivity.
+
+### Before you begin: 200 OK does not mean useful data
+
+HTTP success means the transport protocol received a response classified as successful. It does not prove that the response is the application's expected document. A hotel portal, proxy error or unexpectedly shaped JSON can all violate the contract. Verify the bytes and the domain model before replacing useful on-screen content.
+
+## Worked Example
+
+A hotel portal returns HTTP 200 with HTML while the reader refreshes the catalog.
+
+| Check | Portal response | App response |
+|---|---|---|
+| HTTP status | 200 | Continue checking the contract |
+| Media type | HTML | Classify invalid payload |
+| Catalog publication | No valid catalog read | Keep the existing catalog |
+| Retry | Payload is not a selected transient read failure | Offer an appropriate explanation and later retry |
+
+For JSON, the byte limit and model validation still apply. A valid empty array is an empty result; an HTML page or malformed JSON is a failed refresh. Keeping those outcomes separate prevents a connection problem from erasing useful content.
+
+## Troubleshooting
 
 - **HTTP 200 produces invalid catalog data:** Inspect content type, response byte bounds, JSON schema and domain validation separately; success status alone is not a usable document.
 - **Retries continue beyond the expected deadline:** Check the shared cancellation token for header and body reads and the total operation time budget. Do not substitute repeated fresh per-attempt timeouts.
@@ -197,7 +234,7 @@ The client already gives us the contract boundary on which to build: one operati
 
 HTTP success, valid data and current UI ownership are separate conditions. The catalog adapter validates each response before returning a complete list, stops within explicit time and memory budgets, and retries a narrow set of read failures. The native demo makes that path inspectable while preserving bundled browsing and clearly identifying the simulated transport.
 
-## Exercises and Review Questions
+## Exercises
 
 1. Configure a fake response with status 200 and text/html. Confirm that it produces InvalidPayload, does not retry, and leaves the main catalog available. Explain why converting this outcome to an empty array would mislead a customer.
 2. Compare a Retry-After duration of two seconds with sixty seconds. Predict attempts and waits before running the corresponding tests. Explain why the client must not shorten the longer instruction into an early retry.

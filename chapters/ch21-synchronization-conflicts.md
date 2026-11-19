@@ -3,7 +3,7 @@
 
 A reader saves Northern Lights as a favorite on a phone, then removes it on a tablet. A second reader pauses a Kai the Ninja sample at a particular location. A customer starts a fictitious anniversary-song idea on two devices, editing the verse on one and the chorus on the other. Each device can preserve its own state perfectly and still disagree with the other device.
 
-Chapter 20 replaced public catalog metadata after validating a downloaded snapshot. User synchronization has a different responsibility: preserve intentions while deciding which changes can safely become shared state. A successful request does not establish that an edit was accepted. An accepted edit does not establish that its reply reached the device. A missing favorite does not establish whether the user deleted it or the device has never seen it.
+Chapter 20 replaced public catalog snapshots. Now two devices can edit the same anniversary draft or favorite while disconnected. The app must preserve each intention, detect conflicting versions and recover when an acceptance reply is lost.
 
 This chapter develops a small protocol that makes those distinctions executable. Two real SQLite files represent two devices. An explicitly simulated user context selects an in-memory server partition. We use expected versions, durable operation IDs, versioned deletions, bounded change pages and explicit conflict decisions. We do not add an unauthenticated customer-data endpoint to the Chapter 18 API.
 
@@ -17,9 +17,9 @@ By the end of this chapter, you will be able to:
 4. Carry deletions to another device without automatically resurrecting older state.
 5. Run two-replica and failure-injection exercises while keeping simulated account isolation separate from real authentication.
 
-**Prerequisites:** Chapters 17–20, SQLite transactions, cancellation and the .NET 11 SDK selected by `global.json`. Start from the Chapter 20 companion revision `02fb4b385dd0ed14193d97e7df67c9a46a4d7f9c`. The complete Chapter 21 implementation and lab are in companion revision `84a3278e5d00b64699ccf8cee963a657da9fdec8`; later verification corrections, if required, are recorded in `docs/verification.md`. Use matching source and tests, rather than assuming `main` contains the newest teaching milestone.
+**Prerequisites:** Chapters 17–20, SQLite transactions, cancellation and the SDK selected by `global.json`. Use the Chapter 21 checkpoint and console lab linked from the companion milestone guide.
 
-**What you will build:** `UserSyncReplica`, an account-bound SQLite teaching replica with a durable outbox; `SimulatedSyncServer`, an in-memory protocol fixture; and a portable console lab that demonstrates a draft conflict and a favorite deletion. These components do not migrate the app's existing favorites or request drafts. Native integration, HTTP synchronization, durable server hosting and real identity remain separate work.
+**Deliverable:** `UserSyncReplica`, an account-bound SQLite teaching replica with a durable outbox; `SimulatedSyncServer`, an in-memory protocol fixture; and a portable console lab that demonstrates a draft conflict and a favorite deletion. These components do not migrate the app's existing favorites or request drafts. Native integration, HTTP synchronization, durable server hosting and real identity remain separate work.
 
 ## 21.1 Begin with the user's intention
 
@@ -58,6 +58,20 @@ An operation ID is created when the edit is written to the local outbox. Retryin
 
 **Worked trace:** The phone sends operation A at expected version 0. The server accepts it as version 1, but the reply is lost. A different operation based on version 1 later creates version 2. Replaying A must return A's version-1 receipt, not create version 3 or reinterpret A as a new conflict. Downloading the change feed subsequently brings the replica to version 2.
 
+### Match the protocol records to their jobs
+
+In `src/GnazzosWorld.Core/Sync/SyncProtocol.cs`, record identity, server state and proposed edits have different shapes:
+
+```csharp
+public enum UserDataKind { Favorite, Bookmark, Progress, Draft }
+public sealed record UserDataKey(UserDataKind Kind, string ItemId);
+public sealed record UserDataRow(UserDataKey Key, long Version, string? Value);
+public sealed record UserEdit(Guid OperationId, UserDataKey Key, long
+    ExpectedVersion, string? Value);
+```
+
+`UserDataKey` identifies the logical row. `UserDataRow.Version` identifies the server’s accepted generation for that key. `UserEdit.OperationId` identifies one proposed action, while `ExpectedVersion` records which accepted generation the editor had seen. A nullable value carries a deletion through the same conflict rules.
+
 ## 21.3 Trace the two-device conflict
 
 ![Figure 21.1. Two device replicas edit the same simulated user's draft from version 0. The first edit is accepted as version 1. The second receives a conflict, preserves both texts and needs an explicit choice before any new operation is sent.](../assets/figures/fig-21-sync-conflict.png)
@@ -67,6 +81,19 @@ Imagine the anniversary-song draft begins with no server row. The phone saves "P
 The tablet retains its own text in the outbox and stores the current server row separately. `View` exposes `Value`, `ServerValue`, `ServerVersion`, `Pending` and `Conflict`. This is enough for a future native screen to show both alternatives instead of presenting an unexplained save failure. The diagram is a protocol illustration, not a runtime screenshot.
 
 The fixture does not attempt to combine words into a new song request. A generic text merge can make a grammatical result while changing the customer's intention. Choosing the remote value discards only the conflicting local operation. Choosing the local value creates a **new** operation ID based on the latest locally known server version. That operation can conflict again if another device changes the row first. An explicit choice authorizes a new attempt; it does not lock the remote record indefinitely.
+
+### Reproduce the two-device edit
+
+In `samples/GnazzosWorld.SyncLab/Program.cs`, `phone` and `tablet` are two replicas with separate SQLite files and the same simulated transport. Their draft operations begin:
+
+```csharp
+var draft = new UserDataKey(UserDataKind.Draft, "anniversary-demo");
+phone.Queue(draft, "Phone verse"); tablet.Queue(draft, "Tablet chorus");
+await phone.SyncAsync(transport);
+await tablet.SyncAsync(transport);
+```
+
+Both edits start from the same unseen server version. The phone syncs first, so its verse becomes the accepted value. The tablet’s stale expected version then produces a conflict rather than replacing the verse silently. The subsequent `ResolveAsync(draft, keepLocal: true)` creates a deliberate new attempt based on the current server version.
 
 ## 21.4 Preserve pending edits in a durable outbox
 
@@ -126,7 +153,15 @@ Choosing the remote value removes the stale local operation. Choosing the local 
 
 Tombstones cannot remain forever without cost, but removing them safely requires knowledge about clients that may have been offline. A production service can introduce a retention horizon and force old cursors through an explicit bootstrap procedure. Removing tombstones merely because the current phone has synchronized is insufficient: the other device may not have connected for months.
 
-## 21.8 Guided lab: resolve a draft and preserve a deletion
+## 21.8 Prepare the transition to real identity
+
+Partition tests use identical keys and operation IDs under different simulated accounts to catch data mixing. A real API must derive account identity from validated credentials rather than trust a caller-selected partition.
+
+The next Part adds managed identity, native sign-in, secure token handling, MFA and server-side authorization. A real API must derive the subject from validated credentials and enforce resource ownership independently of any client account selection. It also needs durable server transactions that commit accepted rows, change events and replay receipts together. The in-memory lock explains the atomic decision but is not a substitute for that database design.
+
+The native conflict screen is another explicit deliverable. It should make the two alternatives understandable, preserve local input, label retry and cancellation, and remain usable with large text and a screen reader. Capture screenshots only after that interface exists and is run on a recorded platform. Figure 21.1 must not stand in for an observed phone result.
+
+## Guided Lab
 
 The complete console project is `samples/GnazzosWorld.SyncLab`. Its project file references the existing portable core and adds no authentication or networking package. Run the following from the companion repository root:
 
@@ -146,19 +181,31 @@ The first commands compile and execute the portable suite. The last creates uniq
 5. Change the draft's `keepLocal: true` to `false`. Predict which text the phone will retain, run the lab, then restore the original scenario.
 6. Run the suite and inspect the lost-reply, cancellation, failed-cursor-commit, pagination and second-worker cases. Explain what each one exercises that the happy console transcript cannot establish.
 
-Expected output from the unchanged console scenario is:
+The key output lines from the unchanged scenario are:
 
 ```text
 Conflict: True; local=Tablet chorus; remote=Phone verse
 Resolved draft on phone: Tablet chorus
 Stale favorite conflicts with deletion: True
 Favorite remains deleted: True
-Local protocol fixture only; native and authenticated synchronization remain pending.
 ```
 
-At companion revision `84a3278e5d00b64699ccf8cee963a657da9fdec8`, Windows CI executed this transcript and passed all 284 portable cases, including 18 new synchronization cases. The existing 26 API cases and Android compilation also passed. See `docs/verification.md` for the linked runs and toolchain details. A passing portable run establishes protocol and real-file behavior on its recorded host; it does not establish phone storage performance, native conflict presentation, TLS or provider authorization.
+Use the console output to follow the two-device protocol and the tests to explore lost replies, pagination, cursor commits and worker overlap. The source checkpoint and historical run records are in the companion documentation.
 
-## 21.9 Diagnose the boundary that failed
+## Worked Example
+
+Follow one anniversary draft and one Northern Lights favorite through two replicas:
+
+| Situation | Automatic result | Reader’s decision |
+|---|---|---|
+| Phone verse accepted; tablet chorus is stale | Preserve both values as a conflict | Keep local chorus or accept remote verse |
+| Reader keeps local chorus | Create a new operation against current version | Confirm this deliberate replacement |
+| Phone deletes a favorite; tablet still has an old saved value | Report conflict with the deletion | Accept the deletion or deliberately save again |
+| An acceptance reply is lost | Retain the same operation ID for replay | Reconcile rather than invent another action |
+
+The server’s accepted version and the client’s pending intention remain distinct throughout. Choosing the remote value clears the stale intention; choosing local creates a new intention. This is how the app preserves agency without silently resurrecting deleted content.
+
+## Troubleshooting
 
 | Symptom | Diagnostic check | Corrective action |
 |---|---|---|
@@ -172,14 +219,6 @@ At companion revision `84a3278e5d00b64699ccf8cee963a657da9fdec8`, Windows CI exe
 | Scrolling stalls during a future integration | Profile the native database and UI path | Add an owned scheduling adapter; do not infer responsiveness from `Async` |
 
 Diagnostics should record a bounded operation name, outcome category and approved correlation identifier. Avoid logging draft text, tokens or contact details. The sample console prints fictitious teaching text so readers can follow the conflict; a production telemetry stream should not copy that pattern for customer content.
-
-## 21.10 Prepare the transition to real identity
-
-The fixture demonstrates separation by simulated account, including identical keys and operation IDs in different partitions. Those tests can catch accidental dictionary or file-scope mixing. They cannot prove that a caller is entitled to select a partition.
-
-The next Part adds managed identity, native sign-in, secure token handling, MFA and server-side authorization. A real API must derive the subject from validated credentials and enforce resource ownership independently of any client account selection. It also needs durable server transactions that commit accepted rows, change events and replay receipts together. The in-memory lock explains the atomic decision but is not a substitute for that database design.
-
-The native conflict screen is another explicit deliverable. It should make the two alternatives understandable, preserve local input, label retry and cancellation, and remain usable with large text and a screen reader. Capture screenshots only after that interface exists and is run on a recorded platform. Figure 21.1 must not stand in for an observed phone result.
 
 ## Chapter Summary
 
@@ -205,7 +244,7 @@ Design a real bootstrap and retention protocol. Introduce a server epoch, a cons
 
 ## Native acceptance and screenshot worksheet
 
-The following checks become actionable after a native adapter and conflict screen exist. They remain pending at this checkpoint. Record the source revision, platform, device, OS, text size and simulated or real-provider context with every observation.
+The following checks become actionable after a native adapter and conflict screen exist. Run them when integrating the native adapter. Record the source revision, platform, device, OS, text size and simulated or real-provider context with every observation.
 
 1. Show the anniversary draft conflict on a phone. Confirm that both versions remain available, each choice has a clear consequence, and Back does not silently discard the local text. Capture this actual state for the chapter after it is verified.
 2. Repeat with large text and a screen reader. Read both alternatives and reach both decision controls without relying on color. Verify focus after resolution and after another conflict arrives.
@@ -213,7 +252,7 @@ The following checks become actionable after a native adapter and conflict scree
 4. Display a stale favorite that conflicts with a newer deletion. Confirm that accepting the remote deletion removes the favorite, while saving it again requires an explicit choice. Capture the explanation shown to the reader.
 5. Change accounts while work is pending. Stop the previous account's worker and preserve or remove local state according to the declared account policy. Verify that no old draft or conflict appears under the new account. A fixture partition test alone does not satisfy this check.
 
-Do not use Figure 21.1 or console output as a substitute for these screenshots. Network, identity-provider and native scheduler integration each need their own recorded evidence.
+Do not use Figure 21.1 or console output as a substitute for these screenshots. Check network, identity-provider and scheduler integration in their corresponding native journeys.
 
 ## Official references
 

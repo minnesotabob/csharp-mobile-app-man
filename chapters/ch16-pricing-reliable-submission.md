@@ -5,28 +5,11 @@ A customer reviews a request for three songs and taps Submit. The phone pauses, 
 
 Chapter 15 preserved a customer's writing and produced a reviewed request. This chapter adds a versioned example price, a short-lived quote, and a simulated acceptance boundary. The service is an in-process fixture: it never contacts a customer, sends an email, creates a live order, or takes payment. That makes uncertain outcomes inexpensive to investigate before a real transaction is involved.
 
-**Prerequisites:** the request model, validation rules, explicit draft storage, and review screen from Chapter 15; familiarity with async methods, records, interfaces, and portable tests. **Learning goals:** calculate archived prices with decimal arithmetic, bind a quote to an immutable request, distinguish rejection from uncertainty, and reuse an operation identity safely. **Delivered capability:** the reviewed form can display a demo quote and simulate submission, including controlled duplicate and lost-response scenarios.
-
 ## What You'll Learn
 
 You will learn to calculate versioned sample prices with decimal arithmetic; distinguish an estimate from an expiring server-authoritative quote; model stable operation IDs; prevent duplicate submissions; and explain why a timeout is not evidence of either acceptance or rejection.
 
 **Prerequisites:** Chapter 15's validated request snapshot and the companion portable tests. **Deliverable:** A fully local simulated quote-and-submit flow with testable duplicate and uncertain-result behavior.
-
-### Guided lab: reproduce a lost response
-
-1. Choose one validated request and record its content and operation ID. Obtain an example quote and identify its price-table version and expiry.
-2. Compute a multi-song total by hand before inspecting the pricing tests. Verify each discount rule on decimal values, then check the displayed currency formatting separately.
-3. Submit through the simulated service's lost-response fixture. The service accepts the operation but the first caller receives an exception.
-4. Repeat the same logical operation with its original ID. Verify that the simulator returns the existing receipt rather than accepting another request.
-5. Change the request after review. Confirm that the previous quote and reviewed snapshot are no longer valid for the changed input.
-6. Try an expired quote with controlled time. Confirm rejection at the service boundary rather than trusting the phone clock.
-
-**Expected result:** The service fixture recognizes a replay of one operation, while a changed request requires a new review and quote. The simulator's state disappears on restart; no live payment, order or customer transmission occurs.
-
-### Worked reasoning: cancellation is not reversal
-
-The caller can cancel waiting for a response after a server has already accepted an operation. Retrying with a new ID may therefore create a duplicate, even when the original request appeared to fail. Idempotency works only when the same logical operation retains its identity and the service stores acceptance durably enough for the real deployment's recovery requirements.
 
 ## Give the price a source and a version
 
@@ -73,6 +56,41 @@ Rounding to two decimal places with AwayFromZero is this fixture's explicit poli
 
 The demo total covers only the archived song service amount and its illustrated discounts. Tax, fees, refund policy, delivery promises, and commercial rights are outside this pricing implementation. The native quote labels that limitation. Later checkout work must present the authoritative amount and its components under the actual service rules.
 
+### Read the complete price calculation
+
+`src/GnazzosWorld.Core/Orders/SongPricing.cs` contains the complete example price table and marginal quantity factors:
+
+```csharp
+namespace GnazzosWorld.Core.Orders;
+
+// Snapshot of the uploaded website, not a live price or checkout contract.
+public static class SongPricing
+{
+    public const string Version = "website-snapshot-2026-11-14";
+
+    public static decimal Calculate(int minutes, bool withVoice, int quantity)
+    {
+        if (quantity is < 1 or > 3)
+            throw new ArgumentOutOfRangeException(nameof(quantity));
+        decimal unit = (minutes, withVoice) switch
+        {
+            (1, false) => 49m, (1, true) => 79m,
+            (2, false) => 79m, (2, true) => 129m,
+            (3, false) => 109m, (3, true) => 179m,
+            (4, false) => 139m, (4, true) => 229m,
+            (6, false) => 199m, (6, true) => 319m,
+            (8, false) => 259m, (8, true) => 399m,
+            _ => throw new ArgumentOutOfRangeException(nameof(minutes))
+        };
+        // All songs have the same length/style; discounts apply per song.
+        decimal factor = quantity switch { 1 => 1m, 2 => 1.9m, _ => 2.7m };
+        return decimal.Round(unit * factor, 2, MidpointRounding.AwayFromZero);
+    }
+}
+```
+
+The tuple switch selects a supported product. The quantity switch sums the per-song factors: 1.0 for the first, 0.9 for the second and 0.8 for the third. Two songs therefore use 1.9 and three use 2.7. The `m` suffix keeps the amounts in `decimal`, and rounding occurs after multiplying the unit amount by the selected factor.
+
 ## Separate the estimate from the quote
 
 A local estimate answers what the installed example schedule would calculate. A quote answers what a particular service is willing to accept for a particular reviewed request within a defined interval. The records live in src/GnazzosWorld.Core/Orders/SongSubmission.cs:
@@ -92,6 +110,24 @@ The quote carries the canonical request, pricing version, currency, amount, and 
 DemoSongSubmissionService validates every field through the final form step, then calls ForReview to trim outer whitespace and remove hidden vocal notes from an instrumental request. It calculates the amount and stores that exact snapshot. The client uses the returned canonical request for its submission attempt. This avoids quoting a trimmed request and later comparing it with a different, untrimmed payload.
 
 An immutable record is useful here because value equality lets the fixture compare the expected and submitted request. It is also a shallow immutability mechanism: introducing mutable lists inside a record would require deliberate copying and equality rules. The current SongRequest contains scalar values and strings. Preserve that assumption or revise the comparison when the model expands.
+
+### Match the three message shapes
+
+At the top of `Orders/SongSubmission.cs`, the quote, attempt and receipt are separate records:
+
+```csharp
+public sealed record SongQuote(
+    Guid Id, SongRequest Request, string PricingVersion,
+    string Currency, decimal Total, DateTimeOffset ExpiresAt);
+
+// The caller supplies no trusted price, status, owner, or payment fields.
+public sealed record SubmissionAttempt(Guid Key, Guid QuoteId, SongRequest
+    Request);
+public sealed record DemoReceipt(Guid Id, Guid QuoteId, string Currency,
+    decimal Total);
+```
+
+The quote describes service-owned terms. The attempt supplies the same operation key, quote ID and request for retries. The receipt reports the simulator’s accepted result. The attempt deliberately carries no caller-chosen total or payment status.
 
 ## Let service time decide expiration
 
@@ -146,7 +182,7 @@ The page listens for Review becoming null while it is visible. That notification
 
 Register the process-shared demo service and submission model in MauiProgram. The form model, submission model, and service must retain compatible lifetimes. Recreating the service on every page appearance would discard accepted keys and quotes while the client still believes they exist. The current singleton registration supports the book's single-window teaching flow; it is not a general account or multiwindow design.
 
-The simulator normally completes immediately. A fast demo does not prove the disabled state is visible or that native accessibility announcements are sufficient. The portable delayed-service test holds a completion source open so a second SubmitAsync call arrives during the first. It verifies only one service call. Device work must separately inspect reachability, focus, large text, keyboard dismissal, navigation, and announcements.
+Hold the delayed-service test open and attempt a second SubmitAsync; only one call should reach the service. In the app, use a delayed development fixture to inspect the disabled control, focus and status announcement before completion.
 
 ## Exercise failure deliberately
 
@@ -166,21 +202,21 @@ Assert.Equal(adapter.Calls[0], adapter.Calls[1]);
 
 The full test also attempts to change the pending quote after uncertainty, verifies that it is preserved, and checks that a third SubmitAsync call does not reach the service after acceptance. A test that throws before the inner service runs cannot establish this behavior: it exercises failure before acceptance, which is a different boundary.
 
-Run the executable portable suite using the repository's pinned SDK and instructions in docs/verification.md. Record the source revision with the actual output. Compilation, test execution, Android compilation, and native runtime observations remain separate evidence. A passing simulation cannot prove real transport or database behavior.
+Run the submission tests with the matching chapter checkpoint. The lost-response case should accept first, lose the reply, then reconcile the same operation.
 
 ## Understand the simulator's limits
 
-The lock makes acceptance atomic only inside one service instance in one running process. All dictionaries and the client's pending operation disappear on restart. The fixture has no account identity, durable journal, retention policy, rate limit, transaction recovery, or cross-server coordination. It retains quote/request content in process memory for the demo lifetime; use fictitious inputs. Do not expose this service as a public customer API.
+Use fictitious inputs: this is an in-process submission simulator, not checkout. Its lock coordinates one service instance; its dictionaries and the client’s unsolved operation disappear when the process stops.
 
-A production service needs a unique constraint scoped to the authenticated customer and operation key, with request comparison and order creation inside a database transaction. It needs persisted quote terms, authoritative expiration, and a defined retention/reconciliation policy. A process lock cannot coordinate several API instances. Chapters 18–21 introduce connected and stored data; Chapters 22–26 establish identity and authorization; Chapter 32 returns to quotes and customer ownership with those prerequisites in place.
+| Teaching mechanism | Requirement before a real customer service |
+|---|---|
+| In-memory accepted-operation dictionary | Durable, customer-scoped unique operation key |
+| Process lock | Database transaction coordinating acceptance and replay receipt |
+| Local quote dictionary | Persisted terms with authoritative expiration |
+| In-memory unresolved attempt | Durable reconciliation record and authenticated status lookup |
+| Demo receipt | Separate payment status derived from verified payment events |
 
-The demo receipt is also not proof of payment. Payment state will depend on the later service's verified payment events, not a browser return, a button press, or this receipt. Keeping that boundary explicit allows the teaching application to grow without treating an early simulation as a finished checkout.
-
-## Troubleshooting the guided lab
-
-- **Displayed totals differ from tests:** Check the archived price-table version, decimal arithmetic and whether discounts are applied marginally rather than as a flat basket rate.
-- **A timeout appears to create a second order:** Reuse the original operation ID when reconciling an uncertain outcome. The process-local simulator is not proof of durable deduplication across restarts.
-- **An old quote remains after changes:** Compare the request snapshot and quote expiry using the service's controlled clock; invalidate stale terms before accepting.
+Chapters 18–21 introduce connected and stored data; Chapters 22–26 add identity and authorization; Chapter 32 returns to customer-owned orders. Preserve the exact-operation retry rule through that progression.
 
 ## Visual pause: what to carry forward
 
@@ -188,11 +224,47 @@ The demo receipt is also not proof of payment. Payment state will depend on the 
 
 An anniversary-song customer can revise a story without losing the draft, but that edit invalidates the old review and terms. A missing submission response leaves uncertainty about one operation, so recovery retains its identity. The teaching receipt remains simulated. Keep draft persistence, accepted requests and verified payment as separate promises when the next Part introduces networking.
 
+## Guided Lab
+
+Reproduce a lost response.
+
+1. Choose one validated request and record its content and operation ID. Obtain an example quote and identify its price-table version and expiry.
+2. Compute a multi-song total by hand before inspecting the pricing tests. Verify each discount rule on decimal values, then check the displayed currency formatting separately.
+3. Submit through the simulated service's lost-response fixture. The service accepts the operation but the first caller receives an exception.
+4. Repeat the same logical operation with its original ID. Verify that the simulator returns the existing receipt rather than accepting another request.
+5. Change the request after review. Confirm that the previous quote and reviewed snapshot are no longer valid for the changed input.
+6. Try an expired quote with controlled time. Confirm rejection at the service boundary rather than trusting the phone clock.
+
+**Expected result:** The service fixture recognizes a replay of one operation, while a changed request requires a new review and quote. The simulator's state disappears on restart; no live payment, order or customer transmission occurs.
+
+### Before you begin: cancellation is not reversal
+
+The caller can cancel waiting for a response after a server has already accepted an operation. Retrying with a new ID may therefore create a duplicate, even when the original request appeared to fail. Idempotency works only when the same logical operation retains its identity and the service stores acceptance durably enough for the real deployment's recovery requirements.
+
+## Worked Example
+
+For three two-minute instrumental songs, the unit amount is USD 79.00. Calculate each song’s contribution before formatting:
+
+| Song | Factor | Contribution |
+|---|---|---|
+| First | 1.0 | USD 79.00 |
+| Second | 0.9 | USD 71.10 |
+| Third | 0.8 | USD 63.20 |
+| Total | 2.7 | USD 213.30 |
+
+A flat 20 percent discount on all three songs would be a different pricing rule. Now lose the reply after simulated acceptance. The customer retries the same attempt; the simulator returns its stored receipt, even if the quote has since expired. Expiration prevents new acceptance, not retrieval of a result already accepted.
+
+## Troubleshooting
+
+- **Displayed totals differ from tests:** Check the archived price-table version, decimal arithmetic and whether discounts are applied marginally rather than as a flat basket rate.
+- **A timeout appears to create a second order:** Reuse the original operation ID when reconciling an uncertain outcome. The process-local simulator is not proof of durable deduplication across restarts.
+- **An old quote remains after changes:** Compare the request snapshot and quote expiry using the service's controlled clock; invalidate stale terms before accepting.
+
 ## Chapter Summary
 
 The application now turns a reviewed draft into versioned example terms and one identifiable simulated acceptance. Pricing stays separate from display, service-owned quote state determines the accepted amount, and repeated delivery can return the same result. A missing response leaves a question to resolve rather than permission to create another request.
 
-## Exercises and Review Questions
+## Exercises
 
 1. For a two-minute instrumental request, calculate one, two, and three songs by hand. Verify the expected amounts are USD 79.00, USD 150.10, and USD 213.30. Explain why a flat twenty-percent basket discount gives a different third result.
 2. Change quantity after obtaining a quote. Confirm that the reviewed snapshot and quote controls disappear, while the written story remains. Repeat with only the email field changed.

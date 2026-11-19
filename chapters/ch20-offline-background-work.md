@@ -15,9 +15,9 @@ By the end of this chapter, you will be able to:
 4. Commit a snapshot and its acknowledgment atomically without losing a newer request.
 5. Separate portable background-work logic from operating-system scheduling and native verification.
 
-**Prerequisites:** Chapters 17–19, the SDK in `global.json`, and the Chapter 19 companion checkpoint `12c9ad41d761a34619a404f803833daa44931448`. The Chapter 20 implementation is commit `74d2df5ade5b1d69b306bdb1a406722d08057ed1` on `work/chapter16-pricing`. Use the same revision for the source and tests.
+**Prerequisites:** Chapters 17–19, the SDK in `global.json`, and the Chapter 20 checkpoint linked from the companion milestone guide.
 
-**What you will build:** A portable `OfflineCatalogService`, a schema-3 upgrade, a one-row durable public-refresh queue, and real-file regression tests. These are complete companion components and a runnable portable lab. The main MAUI browser still uses its earlier bundled source; native screen integration and OS job registration require their own verification.
+**Deliverable:** A portable `OfflineCatalogService`, a schema-3 upgrade, a one-row durable public-refresh queue, and real-file regression tests. These are complete companion components and a runnable portable lab. The main MAUI browser still uses its earlier bundled source; native screen integration and OS job registration require their own verification.
 
 ## 20.1 Define the offline promise
 
@@ -127,7 +127,26 @@ These are suggested presentation strings, not observed native screenshots. A scr
 
 ![Figure 20.1. Local reading returns a saved or bundled catalog without HTTP. A separate pending worker fetches, then saves the snapshot and matching acknowledgment in one transaction; failure retains intent.](../assets/figures/fig-20-offline.png)
 
-The listener looking for Northern Lights on an airplane follows the local path. The worker path becomes relevant when that listener requests an update. This is the portable Chapter 20 design, with native browser integration still pending; the arrows are not a claim that the current MAUI screen already uses it.
+The listener looking for Northern Lights on an airplane follows the local path. The worker path becomes relevant when that listener requests an update. The portable lab exercises these two paths; wire a native screen to the service when integrating this behavior into the browser.
+
+### Read without triggering a request
+
+`src/GnazzosWorld.Core/Offline/OfflineCatalogService.cs` implements the local path directly:
+
+```csharp
+public async Task<OfflineCatalogResult> ReadLocalAsync(CancellationToken ct
+    = default)
+{
+    var saved = await database.ReadCachedCatalogAsync(ct);
+    if (saved is not null) return Result(saved, CatalogOrigin.Saved);
+    var bundled = CatalogSnapshot.LoadBundled();
+    return new(new CatalogDocument(1, "bundled", bundled.Items,
+        bundled.Creators),
+        CatalogOrigin.Bundled, null, true);
+}
+```
+
+The saved catalog wins when present. Otherwise, the service builds a document from the bundled snapshot and labels its origin. Neither branch calls `fetch`. This gives the UI something readable before a user requests an update.
 
 ## 20.5 Persist intent before starting work
 
@@ -173,7 +192,7 @@ This avoids a dangerous split: a queue row must not disappear before the corresp
 
 A process can stop before the commit. On restart the pending row remains and the GET runs again. It can stop after the commit. On restart the saved snapshot and matching acknowledgment agree. Repeating the GET is acceptable here because it reads public data and does not charge a customer.
 
-The tests simulate a failure between save and acknowledgment with a SQLite trigger that rejects the delete. They establish transaction rollback on a real file. They are not a physical power-loss or filesystem durability certification.
+The rollback test uses a trigger that rejects the acknowledgment delete. Reopen the file and check that both the earlier snapshot and unfinished ticket remain.
 
 ## 20.7 Run one bounded attempt
 
@@ -196,13 +215,64 @@ The surrounding implementation owns the gate and its `finally` release. It catch
 
 A classified failure retains intent but does not start an infinite retry loop. The next attempt belongs to a later explicit refresh, foreground retry or deliberately registered scheduler opportunity. Do not immediately rerun a persistent invalid-payload or permanent-status failure because a row still exists. The presentation should offer an explanation and manual retry; a later scheduler policy must classify eligible failures and apply a persistent cooldown.
 
-The semaphore prevents overlapping workers through one coordinator. The application must own one coordinator per database and must not create independent workers in several windows or processes. A multiworker scheduler would need database-backed leasing or generation-aware write arbitration. We do not claim that the local semaphore provides distributed exclusion.
+Own one coordinator per database for this sample. Multiple processes or independent workers need database-backed leasing or generation-aware write arbitration; the instance semaphore coordinates only this worker.
 
-## 20.8 Work through the portable lab
+### Trace one worker pass in code
+
+The same service’s worker owns one attempt for already-persisted intent:
+
+```csharp
+public async Task<OfflineCatalogResult> RunPendingAsync(
+    CancellationToken ct = default)
+{
+    await worker.WaitAsync(ct);
+    try
+    {
+        var ticket = await database.ReadPendingRefreshAsync(ct);
+        if (ticket is null) return await ReadLocalAsync(ct);
+        CatalogDocument document;
+        try { document = await fetch(ct); }
+        catch (CatalogFetchException e)
+        {
+            ct.ThrowIfCancellationRequested();
+            return (await ReadLocalAsync(ct)) with
+            {
+                RefreshProblem = e.Problem
+            };
+        }
+        ct.ThrowIfCancellationRequested();
+        var fetched = clock.GetUtcNow();
+        await database.CommitCatalogRefreshAsync(ticket, document, fetched, ct);
+        return Result(new CachedCatalog(document, fetched),
+            CatalogOrigin.Refreshed);
+    }
+    finally { worker.Release(); }
+}
+```
+
+The ticket is read before fetching. A classified fetch failure returns local data with a problem attached. A successful fetch commits the document with the matching ticket acknowledgment. Cancellation and storage errors propagate to the caller; the `finally` still releases the worker gate.
+
+Use the database helper’s conditional delete to preserve a newer ticket requested during the fetch. A semaphore limits one coordinator’s overlap; a persisted ticket supplies restart recovery. They solve different parts of the workflow.
+
+## 20.8 Respect mobile execution and resource limits
+
+Background work has two meanings. A worker can run off the UI thread while the app is active. An operating-system scheduler can also grant a later execution opportunity. The second is subject to platform rules, battery conditions, quotas and user settings. Neither `Task.Run` nor a recurring timer registers an Android or iOS background job.
+
+Use foreground startup or resume as a recovery opportunity: read local content, inspect pending intent and, if policy permits, run one bounded worker. Persist the intent when the user requests it rather than depending on a shutdown callback. A terminated process may never receive a useful final callback.
+
+Microsoft.Data.Sqlite's async ADO.NET methods execute synchronously. An async method name therefore does not guarantee that SQLite cannot block a MAUI UI thread. A native adapter should move the bounded database/worker activity to an owned background execution path, await it, and marshal only presentation changes back to the main thread. Cancellation remains cooperative; it cannot guarantee interruption halfway through every native SQLite call.
+
+Connectivity information is a scheduling hint. Wi-Fi may lead to a captive portal, and reported internet access may disappear before the request. Keep HTTP failure handling even after a favorable hint. For metered connections, make Refresh explicit and explain the policy before adding automatic fetching. This implementation fetches bounded public metadata only; it does not silently download media.
+
+Low storage can make a commit fail after a successful download. Preserve the previous database and report the storage problem. Do not delete favorites or a private draft to make room for a catalog. A later media cache needs explicit byte quotas, eviction order and ownership checks; those are not supplied by this one-document store.
+
+No native OS job registration is included in this milestone. Before adding it, document its allowed triggers, time budget, cancellation, network constraints, retry cooldown and how it shares the single worker owner. Test stop/resume, process termination and device reboot on each target platform.
+
+## Guided Lab
 
 The complete lab is also recorded in `docs/labs/ch20-offline.md` in the companion repository.
 
-1. Start with the Chapter 19 source revision named in the opening and inspect the schema-2 migration. Compare it with the Chapter 20 revision to see the added column, queue and partial class.
+1. Start with the Chapter 19 checkpoint from the companion milestone guide and inspect the schema-2 migration. Compare it with the Chapter 20 checkpoint to see the added column, queue and partial class.
 2. Open the offline database extension and follow `RequestCatalogRefreshAsync`, `ReadPendingRefreshAsync`, `ReadCachedCatalogAsync` and `CommitCatalogRefreshAsync`. All SQL values use parameters.
 3. Open `OfflineCatalogService`. Follow local-first reading before tracing the worker. Identify which method persists intent; the worker does not create it implicitly.
 4. Open `tests/GnazzosWorld.Core.Tests/OfflineCatalogTests.cs`. Run the full portable suite from the repository root with the commands below.
@@ -215,7 +285,7 @@ dotnet build $p -c Release
 dotnet run --project $p -c Release --no-build
 ```
 
-The expected result is a passing executable xUnit run. The final verification log records the observed count and exact CI revision. Passing tests establish the portable policy and actual temporary-file SQLite operations on the runner. They do not show an Android screen, trusted TLS on a phone or a scheduled iOS background launch.
+The tests use temporary SQLite files and controlled fetch delegates. Follow the restart case by closing the first database instance and reopening the same path before running the worker.
 
 For an adapter composition, a portable host can use the following complete construction when `path`, `httpClient` and the trusted absolute HTTPS `endpoint` have already been selected:
 
@@ -233,21 +303,20 @@ var updated = await offline.RunPendingAsync(ct);
 
 This is an integration excerpt with explicit host-owned dependencies, not a standalone program. The surrounding test fixtures are runnable without a public endpoint. In a MAUI screen, observe the async command, provide page-lifetime cancellation and marshal visible property updates to the UI thread. Do not dispose the shared database when only one page disappears.
 
-## 20.9 Respect mobile execution and resource limits
+## Worked Example
 
-Background work has two meanings. A worker can run off the UI thread while the app is active. An operating-system scheduler can also grant a later execution opportunity. The second is subject to platform rules, battery conditions, quotas and user settings. Neither `Task.Run` nor a recurring timer registers an Android or iOS background job.
+The reader requests refresh A. While its fetch is running, the reader requests refresh B, replacing the stored ticket. A then receives a valid catalog.
 
-Use foreground startup or resume as a recovery opportunity: read local content, inspect pending intent and, if policy permits, run one bounded worker. Persist the intent when the user requests it rather than depending on a shutdown callback. A terminated process may never receive a useful final callback.
+| Event | Stored intent | Result |
+|---|---|---|
+| Request A | Ticket A | Work can begin |
+| Request B during A | Ticket B | Newer intent is durable |
+| Commit A’s document | Ticket B | Delete matching A affects no row |
+| Run the next eligible pass | Ticket B | Fetch and acknowledge B |
 
-Microsoft.Data.Sqlite's async ADO.NET methods execute synchronously. An async method name therefore does not guarantee that SQLite cannot block a MAUI UI thread. A native adapter should move the bounded database/worker activity to an owned background execution path, await it, and marshal only presentation changes back to the main thread. Cancellation remains cooperative; it cannot guarantee interruption halfway through every native SQLite call.
+For freshness, a saved document aged 1,439 minutes is fresh under the 24-hour policy. At 1,440 minutes it is stale but readable. A future or unknown timestamp also yields stale data. Freshness controls the label and refresh decision; it does not authorize deleting the cached content.
 
-Connectivity information is a scheduling hint. Wi-Fi may lead to a captive portal, and reported internet access may disappear before the request. Keep HTTP failure handling even after a favorable hint. For metered connections, make Refresh explicit and explain the policy before adding automatic fetching. This implementation fetches bounded public metadata only; it does not silently download media.
-
-Low storage can make a commit fail after a successful download. Preserve the previous database and report the storage problem. Do not delete favorites or a private draft to make room for a catalog. A later media cache needs explicit byte quotas, eviction order and ownership checks; those are not supplied by this one-document store.
-
-No native OS job registration is included in this milestone. Before adding it, document its allowed triggers, time budget, cancellation, network constraints, retry cooldown and how it shares the single worker owner. Test stop/resume, process termination and device reboot on each target platform.
-
-## 20.10 Troubleshooting
+## Troubleshooting
 
 | Symptom | Likely cause and diagnostic | Corrective action |
 |---|---|---|
@@ -268,7 +337,7 @@ Offline reliability begins with a precise promise about available data and unfin
 
 ![Part IV progress recap. Chapters 17 through 20 distinguish an accepted response, a defined public API contract, a committed local snapshot and recoverable refresh intent. User synchronization arrives in Chapter 21.](../assets/figures/recap-20-data-boundaries.png)
 
-A listener finding Northern Lights in a saved catalog has received a useful local result. That observation does not establish that a network request ran, a newer revision exists, or another device has the same favorites. Ask which of the four decisions the evidence establishes before describing the feature as complete. Chapter 21 adds a different problem: reconciling user changes rather than replacing public metadata.
+The listener can find Northern Lights from saved public data without a connection. Chapter 21 adds a different task: reconciling user edits between devices rather than replacing a catalog snapshot.
 
 ## Exercises
 
@@ -298,7 +367,7 @@ Use this worksheet after a native host wires the portable service into a screen.
 4. Repeat with large system text, a screen reader and a slow database fixture. Verify that status changes are announced, Refresh remains reachable and the UI stays responsive. A portable test cannot establish those observations.
 5. Exercise a controlled storage-write failure in a test build. Verify that the earlier document remains readable, intent remains pending and the customer receives an actionable storage error. Restore the fixture and confirm that a later successful attempt clears only the matching intent.
 
-For scheduler integration, add separate Android and iOS entries. Document when the OS actually granted execution and how cancellation was signaled. A successful foreground recovery does not prove that a native scheduler ran. Preserve a pending result when equipment or a platform adapter is unavailable.
+When adding a scheduler, record the native execution opportunity and cancellation on Android and iOS separately. Keep that exercise distinct from foreground recovery.
 
 ## Official references
 

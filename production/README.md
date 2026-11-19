@@ -110,3 +110,12 @@ that source, the complete XAML documents for well-formedness, six practical chap
 templates and printed code-line limits. This is source validation, not fresh app
 compilation or runtime verification. Longer PDF listings may split at line boundaries;
 short examples remain together, at the existing 9.5-point code size.
+
+## Draft V3 Chapters 12–21 audit
+
+Run `python production/audit_part34_excerpts.py --code-repo /path/to/companion-clone`.
+This checks 19 printed excerpts against the historical source checkpoints in
+`planning/part34-excerpt-provenance.json`, their line limits and ten consistently
+ordered practical chapter templates. It is source verification, not new app
+execution. Run the existing navigation and EPUB audits on the matching rebuilt
+artifacts; run EPUBCheck separately.

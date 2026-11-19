@@ -12,7 +12,7 @@ existing sophistication. Publication readiness is not established by a page tota
 - Four substantive appendices, glossary and 111-entry linked subject index.
 - Draft publication notice, acknowledgments, reader guide, errata/resources,
   materials notices and author biography.
-- Current Draft V2 proof: 484-page 8 × 10 PDF, 61 bookmarks; matching reflowable EPUB.
+- Current Draft V3 proof: 497-page 8 × 10 PDF, 61 bookmarks; matching reflowable EPUB.
 
 ## Follow-through on the editor's review
 
@@ -74,3 +74,11 @@ current finishing scope.
 Chapters 6–11 have expanded code-led instruction and a consistent practical
 structure. See draft-v2-editorial-revision.md for scope, verification and open work.
 The full editorial pass is ongoing; native screenshots have not been added.
+
+## Draft V3 editorial batch
+
+Chapters 12–21 now have expanded practical instruction, shorter process commentary
+and consistent lab/worked-example/troubleshooting/summary/exercise sections. Source
+checkout links in the companion guide have been clarified. See
+[draft-v3-editorial-revision.md](draft-v3-editorial-revision.md) for scope and checks.
+The remainder of the editorial and technical acceptance work remains open.

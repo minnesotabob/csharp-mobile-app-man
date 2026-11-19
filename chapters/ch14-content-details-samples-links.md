@@ -5,28 +5,13 @@ Selecting a title is the start of a decision. A reader wants to know which editi
 
 Our existing detail page establishes identity: a stable catalog ID resolves to a record. This chapter develops the experience around that identity. We display the optional metadata introduced in Chapter 12, add a short bundled reading sample, and open reviewed website destinations through a native adapter. The same reusable detail view serves the dedicated page and the wide browser layout.
 
-The result remains a catalog application. It does not implement an EPUB reader, stream songs, establish purchase rights, or confirm that a website is reachable. Keeping those responsibilities explicit lets us build a useful detail journey without hiding unfinished systems behind an impressive button.
+The detail page displays catalog information, a bundled plain-text sample and an Open website action. Playback, ebook reading and purchases belong to later features or external services.
 
 ## What You'll Learn
 
 You will learn to resolve detail pages by stable catalog ID; project missing metadata truthfully; distinguish a licensed or original reading sample from an entire ebook; open approved external destinations through a testable adapter; and handle failed, canceled, or obsolete launches without corrupting the active screen.
 
 **Prerequisites:** Chapters 12–13 and the current detail-page navigation implementation. **Deliverable:** A content detail experience that remains useful when optional data or external services are unavailable.
-
-### Guided lab: keep ownership of a detail journey
-
-1. Select a known book ID from the bundled catalog and navigate to its details. Follow the ID through the model and presentation projection; do not rebuild identity from a title.
-2. Inspect a missing optional field. Predict the label the screen should show, and verify that it does not fabricate a date, edition or service entitlement.
-3. Open the bundled sample and identify its provenance. Check the code path that renders it as plain text; it must not evaluate arbitrary HTML.
-4. Replace a reviewed destination with an unapproved host in a test fixture. Verify that the launch is rejected at the application's own boundary, before native browser handoff.
-5. Arrange two detail selections in succession and let the first operation finish last. Confirm that the old completion does not change the second selection.
-6. Use a failing browser adapter to model a canceled or unsuccessful launch. Verify the message and that the user still owns their original browsing context.
-
-**Expected result:** Stable identity survives renamed titles, incomplete metadata remains honest, unsafe destinations are rejected, and obsolete completions cannot replace current detail state. A fake browser adapter verifies the application's logic, not the device browser itself.
-
-### Worked reasoning: a link is not a capability grant
-
-A catalog may show where a recording is listed without having permission to stream it. Likewise, linking to a bookstore does not create an ebook reader or prove a purchase was completed. This separation protects both reader expectations and the integrity of the application: describe the action that the application can actually perform, and handle the operating system's refusal to launch externally.
 
 ## 14.1 Begin with the reader's questions
 
@@ -145,7 +130,7 @@ This is intentionally an explicit teaching allowlist. Adding Amazon, Spotify, or
 
 HasExternalLink combines destination approval with Listed availability. The view shows the parsed host above a button labeled Open website. Current links lead to website catalog pages; the label does not claim to buy a book or play a specific track.
 
-A host allowlist constrains the initial handoff. It does not control a site's redirects, certify all pages on the host, or prove a business transaction. Do not attach tokens, customer details, or private delivery credentials to these public catalog URLs.
+The allowlist constrains the initial destination; the external site controls subsequent redirects. Keep tokens, customer details and private delivery credentials out of public catalog URLs.
 
 ## 14.7 Keep native browser APIs behind an interface
 
@@ -166,7 +151,7 @@ MauiProgram registers IExternalBrowser as a singleton and supplies it to the det
 
 The optional null dependency preserves earlier portable callers. Their detail metadata still works, while the website command remains disabled. In the running application, registration is required for an enabled action; forgetting it should be caught during the native smoke test.
 
-Browser.OpenAsync completes around launching, not around someone finishing a visit. A true result does not prove that the remote page loaded, a user signed in, a song played, or an order was paid. The message therefore says Handed off to the browser.
+Browser.OpenAsync reports the handoff. The message says Handed off to the browser; any later sign-in, playback or payment outcome needs its own service result.
 
 ## 14.8 Distinguish failure, cancellation, and return
 
@@ -201,6 +186,37 @@ Changing selection cannot retract a handoff already sent to the operating system
 
 The model assumes serialized UI use. Load, Clear, and command execution occur on the UI context in the app. This revision counter is not a synchronization primitive for callers manipulating the model from unrelated threads.
 
+### Read the browser handoff and stale-result guard
+
+The complete `OpenAsync` method in `src/GnazzosWorld.Core/Presentation/DetailViewModel.cs` captures the current revision before awaiting the browser:
+
+```csharp
+private async Task OpenAsync()
+{
+    var own = revision;
+    var url = Item!.ExternalUrl!;
+    LinkMessage = ""; Notify(nameof(LinkMessage));
+    string result;
+    try { result = await browser!.OpenAsync(url) ? UiText.BrowserHandedOff :
+        UiText.LinkFailed; }
+    catch (OperationCanceledException) { result = UiText.LinkCanceled; }
+    catch (Exception) { result = UiText.LinkFailed; }
+    if (own != revision) return;
+    LinkMessage = result; Notify(nameof(LinkMessage));
+}
+```
+
+`Load` and `Clear` each advance the revision through `ResetActions`. A browser completion for an earlier item therefore returns without changing the new item’s message. The URL is also captured before the await, so changing selection cannot silently change the destination of an action already started.
+
+| Result | Message belongs to current item? | Presentation |
+|---|---|---|
+| Browser accepts the handoff | Yes | Report that the website was opened |
+| Browser refuses or throws | Yes | Explain that the link could not open |
+| Caller cancels | Yes | Report cancellation |
+| Any completion after another item loads | No | Leave the new item’s message alone |
+
+The handoff result reports a browser action. Purchase and playback outcomes belong to their own services.
+
 ## 14.10 Test journeys rather than platform guesses
 
 DetailJourneyTests uses a fake browser that records destinations and returns controlled tasks. It verifies allowed hosts, wrong schemes, user information, deceptive domains, relative URLs, and nonstandard ports.
@@ -211,9 +227,42 @@ The controlled task tests do not depend on elapsed time. They start an opening, 
 
 Import tests reject samples attached to songs and samples with missing required text. A fixture-provenance test ensures that the bundled demonstration remains labeled as an invented teaching sample rather than a published excerpt.
 
-Run the full portable suite using the repository's documented executable xUnit commands. Compile Android separately to check native API and XAML compatibility. Only an actual launch can establish how the operating system handles the browser transition and return.
+Run the portable detail tests, then launch the same browser journey on the target platform to inspect departure and return.
 
-## 14.11 Hands-on exercise: return without losing context
+## Guided Lab
+
+Keep ownership of a detail journey.
+
+1. Select a known book ID from the bundled catalog and navigate to its details. Follow the ID through the model and presentation projection; do not rebuild identity from a title.
+2. Inspect a missing optional field. Predict the label the screen should show, and verify that it does not fabricate a date, edition or service entitlement.
+3. Open the bundled sample and identify its provenance. Check the code path that renders it as plain text; it must not evaluate arbitrary HTML.
+4. Replace a reviewed destination with an unapproved host in a test fixture. Verify that the launch is rejected at the application's own boundary, before native browser handoff.
+5. Arrange two detail selections in succession and let the first operation finish last. Confirm that the old completion does not change the second selection.
+6. Use a failing browser adapter to model a canceled or unsuccessful launch. Verify the message and that the user still owns their original browsing context.
+
+**Expected result:** Stable identity survives renamed titles, incomplete metadata remains honest, unsafe destinations are rejected, and obsolete completions cannot replace current detail state. A fake browser adapter verifies the application's logic, not the device browser itself.
+
+### Before you begin: a link is not a capability grant
+
+Label the action Open website because its job is to hand a reviewed destination to the browser. Handle a refused launch beside that action and preserve the selected catalog item.
+
+## Worked Example
+
+A reader taps a website link for Kai, then selects Northern Lights before the browser operation returns. The old completion must not place “website opened” beneath the song’s details.
+
+Set a breakpoint before the await and compare the captured revision with the revision after the selection change. In the controlled test, complete the browser task only after loading the song. The final guard should suppress both late success and late failure messages. Repeat with the same item throughout to verify that normal feedback still appears.
+
+## Troubleshooting
+
+- **A detail shows the wrong item after rapid navigation:** Trace stable IDs and the active-operation revision. Reject a late completion for a no-longer-selected record.
+- **An external link does nothing:** Check destination allowlisting, the adapter's explicit failure/cancel result, and the target platform's browser handoff separately.
+- **A reading sample renders as markup:** Verify that only the bundled authorized plain-text content reaches the presentation layer; do not interpret arbitrary HTML.
+
+## Chapter Summary
+
+Content details turn catalog identity into a useful decision screen without claiming ownership of external content. Stable IDs are resolved before presentation, and missing metadata stays missing rather than becoming a fabricated fact. Bundled plain-text reading samples carry provenance and do not imply a complete ebook reader. Reviewed external destinations pass through a constrained, testable adapter; a canceled launch, failed handoff or stale asynchronous completion must not erase the reader's context. The guided lab exercises these boundaries with controlled failures. Portable test doubles verify business and presentation decisions, while real Android and iOS browser behavior, long-text accessibility and return navigation still require native checks.
+
+## Exercises
 
 Start from a known working source revision and use demonstration data.
 
@@ -228,7 +277,7 @@ On Android, open a book detail page, launch the website, and return with the sys
 
 For accessibility, follow focus from the title through metadata, sample heading, credit, body, destination, and button. Check whether the result message is discoverable after a failed opening; a bound Label alone does not prove a screen reader announces changes. Record any announcement or focus improvement needed before claiming accessibility completion.
 
-## 14.12 Review questions
+### Review questions
 
 - Why can a listed song have a website link without having playable audio?
 - What is the difference between validating an HTTPS URL and approving its destination?
@@ -238,16 +287,6 @@ For accessibility, follow focus from the title through metadata, sample heading,
 - Which detail behaviors require device observation even when all portable tests pass?
 
 Chapter 15 moves from discovering content to entering a custom-song request. The form will need a richer state model because a customer's unfinished input must survive validation and navigation rather than being replaced by another catalog selection.
-
-## Troubleshooting the guided lab
-
-- **A detail shows the wrong item after rapid navigation:** Trace stable IDs and the active-operation revision. Reject a late completion for a no-longer-selected record.
-- **An external link does nothing:** Check destination allowlisting, the adapter's explicit failure/cancel result, and the target platform's browser handoff separately.
-- **A reading sample renders as markup:** Verify that only the bundled authorized plain-text content reaches the presentation layer; do not interpret arbitrary HTML.
-
-## Chapter Summary
-
-Content details turn catalog identity into a useful decision screen without claiming ownership of external content. Stable IDs are resolved before presentation, and missing metadata stays missing rather than becoming a fabricated fact. Bundled plain-text reading samples carry provenance and do not imply a complete ebook reader. Reviewed external destinations pass through a constrained, testable adapter; a canceled launch, failed handoff or stale asynchronous completion must not erase the reader's context. The guided lab exercises these boundaries with controlled failures. Portable test doubles verify business and presentation decisions, while real Android and iOS browser behavior, long-text accessibility and return navigation still require native checks.
 
 ## Official references
 
